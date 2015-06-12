@@ -14,31 +14,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.simonneau.geneticAlgorithm.operators.CrossOver;
+package com.simonneau.darwin.operators.evaluation;
 
-import com.simonneau.geneticAlgorithm.operators.Operator;
-import com.simonneau.geneticAlgorithm.population.Individual;
+import com.simonneau.darwin.operators.Operator;
+import com.simonneau.darwin.population.Individual;
 
 /**
  *
  * @param <T> 
  * @author simonneau
  */
-public abstract class CrossOverOperator<T extends Individual> extends Operator {
+public abstract class EvaluationOperator<T extends Individual> extends Operator {
 
     /**
      *
      * @param label
      */
-    public CrossOverOperator(String label) {
+    public EvaluationOperator(String label){
         super(label);
     }
-
     /**
-     * cross male with female.
-     * @param male
-     * @param female
-     * @return return the crossover between male and female.
+     * evaluate individual.
+     * @param individual
      */
-    public abstract T cross(T male, T female);
+    public abstract void evaluate(T individual);
 }

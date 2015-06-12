@@ -14,21 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.simonneau.geneticAlgorithm.problem;
+package com.simonneau.darwin.problem;
 
 
-import com.simonneau.geneticAlgorithm.operators.CrossOver.CrossOverOperator;
-import com.simonneau.geneticAlgorithm.operators.evaluation.EvaluationOperator;
-import com.simonneau.geneticAlgorithm.operators.mutation.MutationOperator;
-import com.simonneau.geneticAlgorithm.operators.Operators;
-import com.simonneau.geneticAlgorithm.operators.selection.ProportionalPerfomanceSelectionOperator;
-import com.simonneau.geneticAlgorithm.operators.selection.ProportionalRankingSelectionOperator;
-import com.simonneau.geneticAlgorithm.operators.selection.RandomSelectionOperator;
-import com.simonneau.geneticAlgorithm.operators.selection.SelectionOperator;
-import com.simonneau.geneticAlgorithm.operators.selection.TournamentSelectionOperator;
-import com.simonneau.geneticAlgorithm.operators.selection.TruncationSelectionOperator;
-import com.simonneau.geneticAlgorithm.population.Individual;
-import com.simonneau.geneticAlgorithm.population.Population;
+import com.simonneau.darwin.operators.crossOver.CrossOverOperator;
+import com.simonneau.darwin.operators.evaluation.EvaluationOperator;
+import com.simonneau.darwin.operators.mutation.MutationOperator;
+import com.simonneau.darwin.operators.Operators;
+import com.simonneau.darwin.operators.selection.ProportionalPerfomanceSelectionOperator;
+import com.simonneau.darwin.operators.selection.ProportionalRankingSelectionOperator;
+import com.simonneau.darwin.operators.selection.RandomSelectionOperator;
+import com.simonneau.darwin.operators.selection.SelectionOperator;
+import com.simonneau.darwin.operators.selection.TournamentSelectionOperator;
+import com.simonneau.darwin.operators.selection.TruncationSelectionOperator;
+import com.simonneau.darwin.population.Individual;
+import com.simonneau.darwin.population.Population;
 import java.util.LinkedList;
 
 /**

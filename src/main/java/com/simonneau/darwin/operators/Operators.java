@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.simonneau.geneticAlgorithm.operators;
+package com.simonneau.darwin.operators;
 
-import com.simonneau.geneticAlgorithm.operators.CrossOver.CrossOverOperator;
-import com.simonneau.geneticAlgorithm.operators.evaluation.EvaluationOperator;
-import com.simonneau.geneticAlgorithm.operators.mutation.MutationOperator;
-import com.simonneau.geneticAlgorithm.operators.selection.SelectionOperator;
+import com.simonneau.darwin.operators.crossOver.CrossOverOperator;
+import com.simonneau.darwin.operators.evaluation.EvaluationOperator;
+import com.simonneau.darwin.operators.mutation.MutationOperator;
+import com.simonneau.darwin.operators.selection.SelectionOperator;
 
 /**
  *

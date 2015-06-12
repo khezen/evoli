@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.simonneau.geneticAlgorithm;
+package com.simonneau.darwin;
 
 
-import com.simonneau.geneticAlgorithm.population.Population;
-import com.simonneau.geneticAlgorithm.problem.Problem;
+import com.simonneau.darwin.population.Population;
+import com.simonneau.darwin.problem.Problem;
 import java.util.Collection;
 import java.util.LinkedList;
 

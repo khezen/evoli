@@ -14,30 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.simonneau.geneticAlgorithm.operators.selection;
-
-import com.simonneau.geneticAlgorithm.operators.Operator;
-import com.simonneau.geneticAlgorithm.population.Population;
+package com.simonneau.darwin;
 
 /**
  *
  * @author simonneau
  */
-public abstract class SelectionOperator extends Operator {
+public class NeitherSelectedProblemException extends RuntimeException{
     
-    /**
-     *
-     * @param label
-     */
-    public SelectionOperator(String label){
-        super(label);
-    }
-
-    /**
-     * select survivorSize individuals form population.
-     * @param population
-     * @param survivorSize
-     * @return
-     */
-    public abstract Population buildNextGeneration(Population population, int survivorSize);
 }

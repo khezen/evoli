@@ -14,12 +14,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.simonneau.geneticAlgorithm;
+package com.simonneau.darwin.operators.mutation;
+
+import com.simonneau.darwin.operators.Operator;
+import com.simonneau.darwin.population.Individual;
 
 /**
  *
+ * @param <T> 
  * @author simonneau
  */
-public class NeitherSelectedProblemException extends RuntimeException{
+public abstract class MutationOperator <T extends Individual> extends Operator {
     
+    /**
+     *
+     * @param label
+     */
+    public MutationOperator(String label){
+        super(label);
+    };
+    
+    /**
+     * mutate individual.
+     * @param individual
+     * @return the mutant individual coming from individual.
+     */
+    public abstract T mutate(T individual);
 }

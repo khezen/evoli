@@ -14,28 +14,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.simonneau.geneticAlgorithm.operators.evaluation;
-
-import com.simonneau.geneticAlgorithm.operators.Operator;
-import com.simonneau.geneticAlgorithm.population.Individual;
+package com.simonneau.darwin.util;
 
 /**
+ * Extrait de la librairie qui ne contenait que cette méthode utile.
  *
- * @param <T> 
- * @author simonneau
+ * @author Yann RICHET
  */
-public abstract class EvaluationOperator<T extends Individual> extends Operator {
-
+public class DoubleArray {
     /**
-     *
-     * @param label
+     * Generates an array of successive values from <em>begin</em> to <em>end</em> with step
+     * size <em>pitch</em>.
+     * @param begin First value in sequence
+     * @param pitch Step size of sequence
+     * @param end Last value of sequence
+     * @return Array of successive values
      */
-    public EvaluationOperator(String label){
-        super(label);
+    public static double[] increment(double begin, double pitch, double end) {
+        double[] array = new double[(int) (((end - begin) / pitch)+1)];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = begin + i * pitch;
+        }
+        return array;
     }
-    /**
-     * evaluate individual.
-     * @param individual
-     */
-    public abstract void evaluate(T individual);
 }

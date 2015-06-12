@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.simonneau.geneticAlgorithm.operators.selection;
+package com.simonneau.darwin.operators.selection;
 
-import com.simonneau.geneticAlgorithm.population.Individual;
-import com.simonneau.geneticAlgorithm.population.Population;
+import com.simonneau.darwin.population.Individual;
+import com.simonneau.darwin.population.Population;
 import java.util.Iterator;
 
 /**

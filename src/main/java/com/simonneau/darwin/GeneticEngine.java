@@ -14,15 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.simonneau.geneticAlgorithm;
+package com.simonneau.darwin;
 
 
-import com.simonneau.geneticAlgorithm.util.Chronometer;
-import com.simonneau.geneticAlgorithm.operators.CrossOver.CrossOverOperator;
-import com.simonneau.geneticAlgorithm.operators.mutation.MutationOperator;
-import com.simonneau.geneticAlgorithm.population.Individual;
-import com.simonneau.geneticAlgorithm.population.Population;
-import com.simonneau.geneticAlgorithm.problem.Problem;
+import com.simonneau.darwin.util.Chronometer;
+import com.simonneau.darwin.operators.crossOver.CrossOverOperator;
+import com.simonneau.darwin.operators.mutation.MutationOperator;
+import com.simonneau.darwin.population.Individual;
+import com.simonneau.darwin.population.Population;
+import com.simonneau.darwin.problem.Problem;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
