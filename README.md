@@ -1,2 +1,2 @@
 # Darwin
-Genetic algorithm framework
+Genetic algorithm Java library
