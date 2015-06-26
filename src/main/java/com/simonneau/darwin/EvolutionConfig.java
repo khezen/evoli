@@ -38,21 +38,18 @@ import java.util.LinkedList;
  */
 public class EvolutionConfig<T extends IndividualImpl> {
 
-    private LinkedList<MutationOperator<T>> availableMutationOperators = new LinkedList<>();
-    private LinkedList<CrossOverOperator<T>> availableCrossOverOperators = new LinkedList<>();
-    private LinkedList<SelectionOperator> availableSelectionOperators = new LinkedList<>();
-    private LinkedList<EvaluationOperator<T>> availableEvaluationOperator = new LinkedList<>();
+    private final LinkedList<MutationOperator<T>> availableMutationOperators = new LinkedList<>();
+    private final LinkedList<CrossOverOperator<T>> availableCrossOverOperators = new LinkedList<>();
+    private final LinkedList<SelectionOperator> availableSelectionOperators = new LinkedList<>();
+    private final LinkedList<EvaluationOperator<T>> availableEvaluationOperator = new LinkedList<>();
     
     private int populationSize = 20;
     private String label;
     private double mutationProbability = 0.1;
     private double crossProbability = 0.2;
     private OperatorSet operators = new OperatorSet();
-    private StopCriteria stopCriteria;
+    private final StopCriteria stopCriteria;
 
-    /**
-     *
-     */
     public EvolutionConfig() {
         this.stopCriteria = new StopCriteria();
         this.addSelectionOperator(RandomSelectionOperator.getInstance());
