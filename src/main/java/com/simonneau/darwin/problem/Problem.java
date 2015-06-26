@@ -17,16 +17,16 @@
 package com.simonneau.darwin.problem;
 
 
-import com.simonneau.darwin.operators.crossOver.CrossOverOperator;
-import com.simonneau.darwin.operators.evaluation.EvaluationOperator;
-import com.simonneau.darwin.operators.mutation.MutationOperator;
-import com.simonneau.darwin.operators.Operators;
-import com.simonneau.darwin.operators.selection.ProportionalPerfomanceSelectionOperator;
-import com.simonneau.darwin.operators.selection.ProportionalRankingSelectionOperator;
-import com.simonneau.darwin.operators.selection.RandomSelectionOperator;
-import com.simonneau.darwin.operators.selection.SelectionOperator;
-import com.simonneau.darwin.operators.selection.TournamentSelectionOperator;
-import com.simonneau.darwin.operators.selection.TruncationSelectionOperator;
+import com.simonneau.darwin.operators.CrossOverOperator;
+import com.simonneau.darwin.operators.EvaluationOperator;
+import com.simonneau.darwin.operators.MutationOperator;
+import com.simonneau.darwin.operators.OperatorSet;
+import com.simonneau.darwin.operators.ProportionalPerfomanceSelectionOperator;
+import com.simonneau.darwin.operators.ProportionalRankingSelectionOperator;
+import com.simonneau.darwin.operators.RandomSelectionOperator;
+import com.simonneau.darwin.operators.SelectionOperator;
+import com.simonneau.darwin.operators.TournamentSelectionOperator;
+import com.simonneau.darwin.operators.TruncationSelectionOperator;
 import com.simonneau.darwin.population.Individual;
 import com.simonneau.darwin.population.Population;
 import java.util.LinkedList;
@@ -47,7 +47,7 @@ public abstract class Problem<T extends Individual> {
     private String label;
     private double mutationProbability = 0.1;
     private double crossProbability = 0.2;
-    private Operators operators = new Operators();
+    private OperatorSet operators = new OperatorSet();
     private StopCriteria stopCriteria;
 
     /**
@@ -267,7 +267,7 @@ public abstract class Problem<T extends Individual> {
      *
      * @param operators
      */
-    protected void setSelectedOperators(Operators operators) {
+    protected void setSelectedOperators(OperatorSet operators) {
         this.operators = operators;
     }
 

@@ -16,16 +16,11 @@
  */
 package com.simonneau.darwin.operators;
 
-import com.simonneau.darwin.operators.crossOver.CrossOverOperator;
-import com.simonneau.darwin.operators.evaluation.EvaluationOperator;
-import com.simonneau.darwin.operators.mutation.MutationOperator;
-import com.simonneau.darwin.operators.selection.SelectionOperator;
-
 /**
  *
  * @author simonneau
  */
-public class Operators {
+public class OperatorSet {
     
     private CrossOverOperator crossoverOperator;
     private EvaluationOperator evaluationOperator;

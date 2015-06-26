@@ -18,8 +18,8 @@ package com.simonneau.darwin;
 
 
 import com.simonneau.darwin.util.Chronometer;
-import com.simonneau.darwin.operators.crossOver.CrossOverOperator;
-import com.simonneau.darwin.operators.mutation.MutationOperator;
+import com.simonneau.darwin.operators.CrossOverOperator;
+import com.simonneau.darwin.operators.MutationOperator;
 import com.simonneau.darwin.population.Individual;
 import com.simonneau.darwin.population.Population;
 import com.simonneau.darwin.problem.Problem;

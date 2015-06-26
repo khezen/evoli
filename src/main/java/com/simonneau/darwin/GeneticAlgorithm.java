@@ -31,7 +31,6 @@ public class GeneticAlgorithm  {
     private LinkedList<Problem> problems;
     private Problem selectedProblem;
     private GeneticEngine geneticEngine;
-    private boolean UIvisible = false;
 
     /**
      *
@@ -106,7 +105,7 @@ public class GeneticAlgorithm  {
         if (this.geneticEngine == null) {
             this.geneticEngine = new GeneticEngine(this.selectedProblem);
         } else {
-            this.geneticEngine.setProblem(selectedProblem);
+            this.geneticEngine.setProblem(this.selectedProblem);
         }
     }
 
