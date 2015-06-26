@@ -16,23 +16,16 @@
  */
 package com.simonneau.darwin.operators;
 
-import com.simonneau.darwin.operators.Operator;
 import com.simonneau.darwin.population.Individual;
+
 
 /**
  *
  * @param <T> 
  * @author simonneau
  */
-public abstract class EvaluationOperator<T extends Individual> extends Operator {
-
-    /**
-     *
-     * @param label
-     */
-    public EvaluationOperator(String label){
-        super(label);
-    }
+public interface EvaluationOperator<T extends Individual>  {
+    
     /**
      * evaluate individual.
      * @param individual

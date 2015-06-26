@@ -16,7 +16,6 @@
  */
 package com.simonneau.darwin.population;
 
-import com.simonneau.darwin.population.Individual;
 import java.util.Comparator;
 
 /**
@@ -24,16 +23,9 @@ import java.util.Comparator;
  * @author simonneau
  */
 public class IndividualComparator implements Comparator<Individual>{
-
-    /**
-     *
-     * @param t
-     * @param t1
-     * @return
-     */
+    
     @Override
     public int compare(Individual t, Individual t1) {
         return -1*t.compareTo(t1);
-    }
-    
+    } 
 }

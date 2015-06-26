@@ -16,23 +16,14 @@
  */
 package com.simonneau.darwin.operators;
 
-import com.simonneau.darwin.operators.selection.*;
-import com.simonneau.darwin.operators.Operator;
+import com.simonneau.darwin.population.Individual;
 import com.simonneau.darwin.population.Population;
 
 /**
  *
  * @author simonneau
  */
-public abstract class SelectionOperator extends Operator {
-    
-    /**
-     *
-     * @param label
-     */
-    public SelectionOperator(String label){
-        super(label);
-    }
+public interface SelectionOperator {    
 
     /**
      * select survivorSize individuals form population.
@@ -40,5 +31,5 @@ public abstract class SelectionOperator extends Operator {
      * @param survivorSize
      * @return
      */
-    public abstract Population buildNextGeneration(Population population, int survivorSize);
+    public abstract Population<? extends Individual> buildNextGeneration(Population<? extends Individual> population, int survivorSize);
 }

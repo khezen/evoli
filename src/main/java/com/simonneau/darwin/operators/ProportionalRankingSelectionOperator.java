@@ -16,25 +16,25 @@
  */
 package com.simonneau.darwin.operators;
 
-import com.simonneau.darwin.operators.selection.*;
+
 import com.simonneau.darwin.population.Individual;
 import com.simonneau.darwin.population.Population;
+import com.simonneau.darwin.population.PopulationImpl;
 import java.util.ArrayList;
-import java.util.List;
+
 
 /**
  *
  * @author simonneau
  */
-public class ProportionalRankingSelectionOperator extends SelectionOperator {
+public class ProportionalRankingSelectionOperator implements SelectionOperator {
 
     private static ProportionalRankingSelectionOperator instance;
-    private static String LABEL = "Proportional ranking selection";
+    private static final String LABEL = "Proportional ranking selection";
     private ArrayList<Integer> ranking;
     private int poolRange;
 
     private ProportionalRankingSelectionOperator() {
-        super(LABEL);
     }
 
     /**
@@ -55,34 +55,24 @@ public class ProportionalRankingSelectionOperator extends SelectionOperator {
      * @return
      */
     @Override
-    public Population buildNextGeneration(Population population, int survivorSize) {
+    public Population<? extends Individual> buildNextGeneration(Population<? extends Individual> population, int survivorSize) {
 
-        Population nextPopulation = new Population(population.getObservableVolume());
-
+        PopulationImpl nextPopulation = new PopulationImpl(population.getPopulationSize());
         if (population.size() <= survivorSize) {
-            nextPopulation.addAll(population.getIndividuals());
-
+            nextPopulation.addAll(population);
         } else {
-
             this.madeRanking(population);
-
             Population p = population.clone();
-
             int survivorCount = 0;
             int i;
             int size;
             int initialSize = p.size();
             double adaptability;
-
             while (survivorCount < survivorSize ) {
-
                 i = 0;
                 size = p.size();
-
                 while (i < size && survivorCount < survivorSize) {
-
                     adaptability = initialSize - this.ranking.get(i) + 1;
-
                     if (Math.random() <= adaptability / this.poolRange) {
 
                         nextPopulation.add(p.remove(i));
@@ -95,21 +85,15 @@ public class ProportionalRankingSelectionOperator extends SelectionOperator {
                 }
             }
         }
-
         return nextPopulation;
     }
 
-    private void madeRanking(Population population) {
-
+    private void madeRanking(Population<? extends Individual> population) {
         this.ranking = new ArrayList<>(population.size());
         this.poolRange = 0;
         population.sort();
-
-        List<Individual> individuals = population.getIndividuals();
         int size = population.size();
-
         for (int i = 1; i <= size; i++) {
-
             this.ranking.add(i);
             this.poolRange += i;
         }

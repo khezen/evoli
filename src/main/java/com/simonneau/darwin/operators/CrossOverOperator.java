@@ -23,15 +23,7 @@ import com.simonneau.darwin.population.Individual;
  * @param <T> 
  * @author simonneau
  */
-public abstract class CrossOverOperator<T extends Individual> extends Operator {
-
-    /**
-     *
-     * @param label
-     */
-    public CrossOverOperator(String label) {
-        super(label);
-    }
+public interface CrossOverOperator<T extends Individual> {
 
     /**
      * cross male with female.

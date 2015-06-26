@@ -16,22 +16,22 @@
  */
 package com.simonneau.darwin.operators;
 
-import com.simonneau.darwin.operators.selection.*;
 import com.simonneau.darwin.population.Individual;
+import com.simonneau.darwin.population.IndividualImpl;
 import com.simonneau.darwin.population.Population;
+import com.simonneau.darwin.population.PopulationImpl;
 import java.util.Iterator;
 
 /**
  *
  * @author simonneau
  */
-public class TruncationSelectionOperator extends SelectionOperator {
+public class TruncationSelectionOperator implements SelectionOperator {
 
     private static TruncationSelectionOperator instance;
-    private static String LABEL = "Truncation selection";
+    private static final String LABEL = "Truncation selection";
 
     private TruncationSelectionOperator() {
-        super(LABEL);
     }
 
     /**
@@ -52,26 +52,21 @@ public class TruncationSelectionOperator extends SelectionOperator {
      * @return
      */
     @Override
-    public Population buildNextGeneration(Population population, int survivorSize) {
-
-        Population nextPopulation = new Population(population.getObservableVolume());
-
+    public Population<? extends Individual> buildNextGeneration(Population<? extends Individual> population, int survivorSize) {
+        PopulationImpl nextPopulation = new PopulationImpl(population.getPopulationSize());
         if (population.size() <= survivorSize) {
-            nextPopulation.addAll(population.getIndividuals());
-            
+            nextPopulation.addAll(population);
         } else {
             population.sort();
-            Iterator<Individual> iterator = population.iterator();
+            Iterator<? extends Individual> iterator = population.iterator();
             Individual individual;
             int i = 0;
-
             while (iterator.hasNext() && i < survivorSize) {
                 individual = iterator.next();
                 nextPopulation.add(individual);
                 i++;
             }
         }
-
         return nextPopulation;
     }
 }

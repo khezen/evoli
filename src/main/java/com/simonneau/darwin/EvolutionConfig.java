@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.simonneau.darwin.problem;
+package com.simonneau.darwin;
 
 
 import com.simonneau.darwin.operators.CrossOverOperator;
@@ -27,8 +27,9 @@ import com.simonneau.darwin.operators.RandomSelectionOperator;
 import com.simonneau.darwin.operators.SelectionOperator;
 import com.simonneau.darwin.operators.TournamentSelectionOperator;
 import com.simonneau.darwin.operators.TruncationSelectionOperator;
-import com.simonneau.darwin.population.Individual;
+import com.simonneau.darwin.population.IndividualImpl;
 import com.simonneau.darwin.population.Population;
+import com.simonneau.darwin.population.PopulationImpl;
 import java.util.LinkedList;
 
 /**
@@ -36,7 +37,7 @@ import java.util.LinkedList;
  * @param <T> 
  * @author simonneau
  */
-public abstract class Problem<T extends Individual> {
+public class EvolutionConfig<T extends IndividualImpl> {
 
     private LinkedList<MutationOperator<T>> availableMutationOperators = new LinkedList<>();
     private LinkedList<CrossOverOperator<T>> availableCrossOverOperators = new LinkedList<>();
@@ -53,7 +54,7 @@ public abstract class Problem<T extends Individual> {
     /**
      *
      */
-    public Problem() {
+    public EvolutionConfig() {
         this.stopCriteria = new StopCriteria();
         this.addSelectionOperator(RandomSelectionOperator.getInstance());
         this.addSelectionOperator(TruncationSelectionOperator.getInstance());
@@ -74,7 +75,7 @@ public abstract class Problem<T extends Individual> {
      *
      * @return the timeout stop criterion.
      */
-    public int getTimeout() {
+    public long getTimeout() {
         return stopCriteria.getTimeout();
     }
 
@@ -114,7 +115,7 @@ public abstract class Problem<T extends Individual> {
      *
      * @return the max step count stop criterion.
      */
-    public int getMaxStepCount() {
+    public long getMaxStepCount() {
         return stopCriteria.getMaxStepCount();
     }
 
@@ -245,24 +246,7 @@ public abstract class Problem<T extends Individual> {
     public int getPopulationSize() {
         return populationSize;
     }
-
-
-    /**
-     *
-     * @return
-     */
-    public abstract Population createInitialPopulation();
-
-    /**
-     *
-     * @return
-     */
-    public String xmlSerialize() {
-        String serialisedPopulation = "";
-        //TODO
-        return serialisedPopulation;
-    }
-
+    
     /**
      *
      * @param operators
@@ -324,7 +308,7 @@ public abstract class Problem<T extends Individual> {
      * @param evolutionCoeff
      * @return return true if the stop criteria are reached. false other wise.
      */
-    public boolean stopCriteriaAreReached(int stepCount, long time, double evolutionCoeff) {
+    public boolean stopCriteriaAreReached(long stepCount, long time, double evolutionCoeff) {
         return this.stopCriteria.areReached(stepCount, time, evolutionCoeff);
     }
 

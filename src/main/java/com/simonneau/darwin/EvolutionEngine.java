@@ -22,7 +22,6 @@ import com.simonneau.darwin.operators.CrossOverOperator;
 import com.simonneau.darwin.operators.MutationOperator;
 import com.simonneau.darwin.population.Individual;
 import com.simonneau.darwin.population.Population;
-import com.simonneau.darwin.problem.Problem;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -30,27 +29,32 @@ import java.util.LinkedList;
 /**
  *
  * @author simonneau
+ * @param <T>
  */
-public class GeneticEngine implements Runnable {
+public class EvolutionEngine<T extends Individual> implements Runnable {
 
-    private Population population;
     private boolean pause = true;
-    private int stepCount = 0;
+    private long stepCount = 0;
     private double evolutionCriterion = 1;
     private double previousBestScore = 0;
     private boolean firstStepDone = false;
     private Chronometer chronometer;
-    private Problem problem;
     private Thread engine;
+    
+    private Population<T> population;
+    private EvolutionConfig config;
+    private final PopulationFactory<T> populationFactory;
+    
 
     /**
      *
      * @param problem
+     * @param populationFactory
      */
-    public GeneticEngine(Problem problem) {
-
+    public EvolutionEngine(EvolutionConfig problem, PopulationFactory populationFactory) {
         this.chronometer = new Chronometer();
         this.setProblem(problem);
+        this.populationFactory = populationFactory;
     }
 
     /**
@@ -61,26 +65,17 @@ public class GeneticEngine implements Runnable {
         return this.pause;
     }
 
-    /**
-     *
-     */
     public void resizePop() {
-        Population pop = this.problem.createInitialPopulation();
-        Iterator<Individual> it = pop.iterator();
-
-        int newSize = this.problem.getPopulationSize();
+        Population<T> pop = this.populationFactory.createRandom();
+        Iterator<T> it = pop.iterator();
+        int newSize = this.config.getPopulationSize();
         int currentSize = this.population.size();
-
-
         while (it.hasNext() && currentSize < newSize) {
             this.population.add(it.next());
             currentSize++;
         }
     }
 
-    /**
-     *
-     */
     public void refreshPopulation() {
         if (!this.pause) {
             this.pause();
@@ -88,42 +83,32 @@ public class GeneticEngine implements Runnable {
         }
     }
 
-    /**
-     *
-     */
     public void reset() {
         this.pause();
         this.chronometer.reset();
         this.evolutionCriterion = 1;
         this.stepCount = 0;
-        this.setPopulation(this.problem.createInitialPopulation());
+        this.setPopulation(this.populationFactory.createRandom());
     }
 
-    
-
-    /**
-     *
-     * @return
-     */
     public Population getPopulation() {
         return population;
     }
 
     /**
      *
-     * @return the treated problem.
+     * @return the treated config.
      */
-    public Problem getProblem() {
-        return problem;
+    public EvolutionConfig getProblem() {
+        return config;
     }
 
     /**
      *
      * @param problem
      */
-    public final void setProblem(Problem problem) {
-
-        this.problem = problem;
+    public final void setProblem(EvolutionConfig problem) {
+        this.config = problem;
         this.pause = true;
         this.reset();
     }
@@ -132,15 +117,13 @@ public class GeneticEngine implements Runnable {
      *
      * @return
      */
-    public int getStepCount() {
-        return stepCount;
+    public long getStepCount() {
+        return this.stepCount;
     }
 
-    private void setPopulation(Population population) {
-
+    private void setPopulation(Population<T> population) {
         this.population = population;
         this.firstStepDone = false;
-
         this.evaluationStep();
     }
 
@@ -162,7 +145,6 @@ public class GeneticEngine implements Runnable {
         if (!this.pause) {
             this.pause = true;
             this.chronometer.stop();
-
             if (this.engine != null) {
                 try {
                     this.engine.join();
@@ -178,24 +160,18 @@ public class GeneticEngine implements Runnable {
      */
     @Override
     public void run() {
-        while (!this.pause && !this.problem.stopCriteriaAreReached(this.stepCount, this.chronometer.getTime(), this.evolutionCriterion)) {
-
+        while (!this.pause && !this.config.stopCriteriaAreReached(this.stepCount, this.chronometer.getTime(), this.evolutionCriterion)) {
             this.evolve();
         }
         this.pause();
     }
-
+    
     private void engine() {
         this.engine = new Thread(this);
         engine.start();
     }
-
-    /**
-     *
-     * @return
-     */
-    public Individual getBestSolution() {
-
+    
+    public T getBestSolution() {
         return this.population.getAlphaIndividual();
     }
 
@@ -204,10 +180,8 @@ public class GeneticEngine implements Runnable {
      */
     private void evaluationStep() {
 
-        ArrayList<Individual> individuals = this.population.getIndividuals();
-
-        individuals.stream().forEach((individual) -> {
-            this.problem.getSelectedEvaluationOperator().evaluate(individual);
+        this.population.stream().forEach((individual) -> {
+            this.config.getSelectedEvaluationOperator().evaluate(individual);
         });
 
         this.population.sort();
@@ -215,17 +189,13 @@ public class GeneticEngine implements Runnable {
     }
 
     private void computeEvolutionCriterion() {
-
-        double bestScore = this.population.getAlphaIndividual().getScore();
-
+        double bestScore = this.population.getAlphaIndividual().getSurvivalScore();
         if (this.firstStepDone) {
             this.evolutionCriterion = Math.abs(this.previousBestScore - bestScore) / Math.abs(this.previousBestScore);
         } else {
             this.firstStepDone = true;
         }
         this.previousBestScore = bestScore;
-
-
     }
 
     /**
@@ -235,8 +205,9 @@ public class GeneticEngine implements Runnable {
     private void buildNextGeneration() {
 
         this.evaluationStep();
-        Population pop = this.problem.getSelectedSelectionOperator().buildNextGeneration(this.population, this.problem.getPopulationSize());
-        this.population.setIndividuals(pop);
+        Population<T> pop = (Population<T>) this.config.getSelectedSelectionOperator().buildNextGeneration(this.population, this.config.getPopulationSize());
+        this.population.clear();
+        this.population.addAll(pop);
     }
 
     /**
@@ -244,43 +215,30 @@ public class GeneticEngine implements Runnable {
      * operator.
      */
     private void crossOverStep() {
-
-        LinkedList<Individual> crossQueue = new LinkedList<>();
-        ArrayList<Individual> individuals = this.population.getIndividuals();
-
-        CrossOverOperator crossoverOperator = this.problem.getSelectedCrossOverOperator();
-        individuals.stream().filter((individual) -> (Math.random() < this.problem.getCrossProbability())).forEach((individual) -> {
+        LinkedList<T> crossQueue = new LinkedList<>();
+        CrossOverOperator<T> crossoverOperator = this.config.getSelectedCrossOverOperator();
+        this.population.stream().filter((individual) -> (Math.random() < this.config.getCrossProbability())).forEach((individual) -> {
             crossQueue.add(individual);
         });
-
         int queueSize = crossQueue.size();
-        Individual male;
-        Individual female = null;
+        T male;
+        T female = null;
         int nbCandidates;
         double sexAppeal;
-
         while (queueSize > 1) {
-
             male = crossQueue.remove(0);
             queueSize--;
-
             nbCandidates = queueSize;
             boolean done = false;
-
             while (nbCandidates > 0 && !done) {
-
-                Iterator<Individual> solutionIterator = crossQueue.iterator();
+                Iterator<T> solutionIterator = crossQueue.iterator();
                 female = solutionIterator.next();
                 sexAppeal = 1 / nbCandidates;
-
                 if (Math.random() < sexAppeal) {
-
                     solutionIterator.remove();
                     queueSize--;
                     done = true;
-
                 } else {
-
                     nbCandidates--;
                 }
             }
@@ -293,12 +251,9 @@ public class GeneticEngine implements Runnable {
      * mutation operator.
      */
     private void mutationStep() {
-
-        MutationOperator mutationOperator = this.problem.getSelectedMutationOperator();
-        ArrayList<Individual> mutants = new ArrayList<>();
-        ArrayList<Individual> individuals = this.population.getIndividuals();
-
-        individuals.stream().filter((individual) -> (Math.random() < this.problem.getMutationProbability())).forEach((individual) -> {
+        MutationOperator<T> mutationOperator = this.config.getSelectedMutationOperator();
+        ArrayList<T> mutants = new ArrayList<>();
+        this.population.stream().filter((individual) -> (Math.random() < this.config.getMutationProbability())).forEach((individual) -> {
             mutants.add(mutationOperator.mutate(individual));
         });
         this.population.addAll(mutants);
@@ -308,7 +263,6 @@ public class GeneticEngine implements Runnable {
      * process all the steps of genetic algorithms.
      */
     public void evolve() {
-
         this.crossOverStep();
         this.mutationStep();
         this.buildNextGeneration();
@@ -319,7 +273,7 @@ public class GeneticEngine implements Runnable {
      * process only one step generation.
      */
     public void step() {
-        if (!this.problem.stopCriteriaAreReached(this.stepCount, this.chronometer.getTime(), this.evolutionCriterion)) {
+        if (!this.config.stopCriteriaAreReached(this.stepCount, this.chronometer.getTime(), this.evolutionCriterion)) {
             this.chronometer.start();
             this.evolve();
             this.chronometer.stop();          

@@ -16,7 +16,7 @@
  */
 package com.simonneau.darwin.operators;
 
-import com.simonneau.darwin.operators.Operator;
+
 import com.simonneau.darwin.population.Individual;
 
 /**
@@ -24,15 +24,7 @@ import com.simonneau.darwin.population.Individual;
  * @param <T> 
  * @author simonneau
  */
-public abstract class MutationOperator <T extends Individual> extends Operator {
-    
-    /**
-     *
-     * @param label
-     */
-    public MutationOperator(String label){
-        super(label);
-    };
+public interface MutationOperator <T extends Individual> {
     
     /**
      * mutate individual.

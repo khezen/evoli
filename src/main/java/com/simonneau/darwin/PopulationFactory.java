@@ -14,41 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.simonneau.darwin.operators;
+package com.simonneau.darwin;
+
+import com.simonneau.darwin.population.Individual;
+import com.simonneau.darwin.population.Population;
 
 /**
  *
- * @author simonneau
+ * @author simonneaug@gmail.com
+ * @param <T>
  */
-public abstract class Operator{
-
-    /**
-     *
-     */
-    protected String label;
-    
-    /**
-     *
-     * @param label
-     */
-    public Operator(String label){
-        this.label = label;
-    }
-    
-    /**
-     *
-     * @return 'this' label.
-     */
-    public String getLabel() {
-        return this.label;
-    }
-    
-    /**
-     *
-     * @return 'this' label.
-     */
-    @Override
-    public String toString(){
-        return this.getLabel();
-    }
+public interface PopulationFactory <T extends Individual> {
+    public abstract Population<T> createRandom();
 }

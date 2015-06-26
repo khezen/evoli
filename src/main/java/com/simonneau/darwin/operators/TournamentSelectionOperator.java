@@ -16,9 +16,9 @@
  */
 package com.simonneau.darwin.operators;
 
-import com.simonneau.darwin.operators.selection.*;
 import com.simonneau.darwin.population.Individual;
 import com.simonneau.darwin.population.Population;
+import com.simonneau.darwin.population.PopulationImpl;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -26,14 +26,13 @@ import java.util.LinkedList;
  *
  * @author simonneau
  */
-public class TournamentSelectionOperator extends SelectionOperator {
+public class TournamentSelectionOperator implements SelectionOperator {
 
     private static TournamentSelectionOperator instance;
-    private static String LABEL = "Tournament selection";
+    private static final String LABEL = "Tournament selection";
     private LinkedList<Individual> draft;
 
     private TournamentSelectionOperator() {
-        super(LABEL);
     }
 
     /**
@@ -54,67 +53,46 @@ public class TournamentSelectionOperator extends SelectionOperator {
      * @return
      */
     @Override
-    public Population buildNextGeneration(Population population, int survivorSize) {
-
-        Population nextPopulation = new Population(population.getObservableVolume());
-
+    public Population<? extends Individual> buildNextGeneration(Population<? extends Individual> population, int survivorSize) {
+        PopulationImpl nextPopulation = new PopulationImpl(population.getPopulationSize());
         if (population.size() <= survivorSize) {
-            nextPopulation.addAll(population.getIndividuals());
-
+            nextPopulation.addAll(population);
         } else {
-
             ArrayList<Individual> individuals = new ArrayList<>();
             this.draft = new LinkedList<>();
-            this.draft.addAll(population.getIndividuals());
-
-
-
+            this.draft.addAll(population);
             int survivorCount = 0;
             int size;
-
             while (survivorCount < survivorSize) {
-
                 individuals.clear();
                 individuals.addAll(this.draft);
                 this.draft.clear();
-
                 size = individuals.size();
                 if (size == 1) {
                     nextPopulation.add(individuals.get(0));
                     survivorCount++;
                 }
                 while (size > 1 && survivorCount < survivorSize) {
-
                     int firstChallengerIndex = (int) Math.round(Math.random() * (size - 1));
                     Individual firstChallenger = individuals.remove(firstChallengerIndex);
                     size--;
-                    double firstScore = firstChallenger.getScore();
-
+                    double firstScore = firstChallenger.getSurvivalScore();
                     int secondChallengerIndex = (int) Math.round(Math.random() * (size - 1));
                     Individual secondChallenger = individuals.remove(secondChallengerIndex);
                     size--;
-                    double secondScore = secondChallenger.getScore();
-
+                    double secondScore = secondChallenger.getSurvivalScore();
                     if (firstScore > secondScore) {
-
                         nextPopulation.add(firstChallenger);
                         survivorCount++;
                         this.draft.add(secondChallenger);
-
                     } else if (firstScore < secondScore) {
-
                         nextPopulation.add(secondChallenger);
                         survivorCount++;
                         this.draft.add(firstChallenger);
-
-
                     } else {
-
                         nextPopulation.add(firstChallenger);
                         survivorCount++;
-
                         if (survivorCount < survivorSize) {
-
                             nextPopulation.add(secondChallenger);
                             survivorCount++;
                         }
@@ -124,9 +102,7 @@ public class TournamentSelectionOperator extends SelectionOperator {
                     this.draft.add(individuals.get(0));
                 }
             }
-
         }
-
         return nextPopulation;
     }
 }

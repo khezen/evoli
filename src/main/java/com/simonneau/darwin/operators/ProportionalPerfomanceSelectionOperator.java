@@ -16,24 +16,23 @@
  */
 package com.simonneau.darwin.operators;
 
-import com.simonneau.darwin.operators.selection.*;
 import com.simonneau.darwin.population.Individual;
 import com.simonneau.darwin.population.Population;
+import com.simonneau.darwin.population.PopulationImpl;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 /**
  *
  * @author simonneau
  */
-public class ProportionalPerfomanceSelectionOperator extends SelectionOperator {
+public class ProportionalPerfomanceSelectionOperator implements SelectionOperator {
 
     private static ProportionalPerfomanceSelectionOperator instance;
-    private static String LABEL = "Proportional perfomance selection";
+    public static final String LABEL = "Proportional perfomance selection";
     private ArrayList<Double> scores;
 
     private ProportionalPerfomanceSelectionOperator() {
-        super(LABEL);
     }
 
     /**
@@ -48,92 +47,58 @@ public class ProportionalPerfomanceSelectionOperator extends SelectionOperator {
     }
 
     /**
-     * select survivorSize individuals from population. each individuals have a cvhance to survivre proportional with his performance.
+     * select survivorSize individuals from population. each individuals have a
+     * cvhance to survivre proportional with his performance.
+     *
      * @param population
      * @param survivorSize
      * @return
      */
     @Override
-    public Population buildNextGeneration(Population population, int survivorSize) {
-
-        Population nextPopulation = new Population(population.getObservableVolume());
-
+    public Population<? extends Individual> buildNextGeneration(Population<? extends Individual> population, int survivorSize) {
+        Population nextPopulation = new PopulationImpl(population.getPopulationSize());
         if (population.size() <= survivorSize) {
-            nextPopulation.addAll(population.getIndividuals());
-
+            nextPopulation.addAll(population);
         } else {
-
             double totalScore = this.getTotalScore(population);
-
             Population p = population.clone();
-
             double score;
-
             int survivorCount = 0;
             int i;
             int size;
-
             while (survivorCount < survivorSize) {
-
                 i = 0;
                 size = p.size();
-
                 while (i < size && survivorCount < survivorSize) {
-
                     score = this.scores.get(i);
-
                     if (Math.random() <= score / totalScore) {
-
                         nextPopulation.add(p.remove(i));
                         this.scores.remove(i);
                         size--;
-
                         totalScore -= score;
                         survivorCount++;
                     }
                     i++;
                 }
-
-
             }
         }
-
         return nextPopulation;
     }
 
-    private double getTotalScore(Population population) {
-
+    private double getTotalScore(Population<? extends Individual> population) {
         this.scores = new ArrayList<>(population.size());
         double minScore = this.getminScore(population);
         double totalScore = 0;
         double score;
-        List<Individual> individuals = population.getIndividuals();
-
-        for (Individual individual : individuals) {
-
-            score = individual.getScore() - minScore + 1;
+        for (Individual individual : population) {
+            score = individual.getSurvivalScore() - minScore + 1;
             this.scores.add(score);
             totalScore += score;
         }
-
         return totalScore;
     }
 
-    private double getminScore(Population population) {
-
-        List<Individual> individuals = population.getIndividuals();
-
-        double minScore = Double.MAX_VALUE;
-        double score;
-
-        for (Individual individual : individuals) {
-
-            score = individual.getScore();
-
-            if (score < minScore) {
-                minScore = score;
-            }
-        }
-        return minScore;
+    private double getminScore(Population<? extends Individual> population) {
+        return Collections.min(population).getSurvivalScore();
     }
 }

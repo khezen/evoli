@@ -18,59 +18,11 @@ package com.simonneau.darwin.population;
 
 /**
  *
- * @param <T> 
- * @author simonneau
+ * @author simonneaug@gmail.com
  */
-public abstract class Individual<T extends Individual> implements Comparable<T> {
-
-    private double score;
-
-    /**
-     * Overall properties of 'this' with 's' properties.
-     *
-     * @param s
-     */
-    protected abstract void set(Individual s);
-
-    /**
-     *
-     * @return 'this' score.
-     */
-    public double getScore() {
-        return this.score;
-    }
-
-    /**
-     * set'this' score.
-     * @param score
-     */
-    public void setScore(double score) {
-        this.score = score;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public abstract String xmlSerialization();
-
-    /**
-     * compare this to t.
-     * @param t
-     * @return 1 if this.getScore() > t.getScore(). 0 if this.getScore() == t.getScore(). -1 otherwise.
-     */
-    @Override
-    public int compareTo(Individual t) {
-        
-        double thisScore = this.getScore();
-        double tScore = t.getScore();
-
-        if (thisScore > tScore) {
-            return 1;
-        } else if (thisScore < tScore) {
-            return -1;
-        } else {
-            return 0;
-        }
-    }
+public interface Individual extends Comparable<Individual>, Cloneable{
+    
+    public double getSurvivalScore();
+    public void setSurvivalScore(double score);
+    
 }

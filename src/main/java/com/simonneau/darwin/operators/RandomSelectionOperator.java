@@ -16,28 +16,23 @@
  */
 package com.simonneau.darwin.operators;
 
-import com.simonneau.darwin.operators.selection.*;
 import com.simonneau.darwin.population.Individual;
 import com.simonneau.darwin.population.Population;
+import com.simonneau.darwin.population.PopulationImpl;
 import java.util.LinkedList;
 
 /**
  *
  * @author simonneau
  */
-public class RandomSelectionOperator extends SelectionOperator {
+public class RandomSelectionOperator implements SelectionOperator {
 
     private static RandomSelectionOperator instance;
-    private static String LABEL = "Random selection";
+    private static final String LABEL = "Random selection";
 
     private RandomSelectionOperator() {
-        super(LABEL);
     }
 
-    /**
-     *
-     * @return
-     */
     public static RandomSelectionOperator getInstance() {
         if (RandomSelectionOperator.instance == null) {
             instance = new RandomSelectionOperator();
@@ -52,21 +47,15 @@ public class RandomSelectionOperator extends SelectionOperator {
      * @return
      */
     @Override
-    public Population buildNextGeneration(Population population, int survivorSize) {
-
-        Population nextPopulation = new Population(population.getObservableVolume());
-
+    public Population<? extends Individual> buildNextGeneration(Population<? extends Individual> population, int survivorSize) {
+        Population nextPopulation = new PopulationImpl(population.getPopulationSize());
         if (population.size() <= survivorSize) {
-            nextPopulation.addAll(population.getIndividuals());
-
+            nextPopulation.addAll(population);
         } else {
-            LinkedList<Individual> individuals = new LinkedList<>(population.getIndividuals());
+            LinkedList<Individual> individuals = new LinkedList<>(population);
             int survivorCount = 0;
-
             int size = individuals.size();
-
             while (survivorCount < survivorSize) {
-
                 int index = (int) Math.round(Math.random() * (size - 1));
                 nextPopulation.add(individuals.remove(index));
                 survivorCount++;

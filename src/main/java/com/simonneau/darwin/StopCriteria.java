@@ -14,15 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.simonneau.darwin.problem;
+package com.simonneau.darwin;
 
 /**
  *
  * @author simonneau
  */
 public class StopCriteria{
-     private int maxStepCount;
-     private int timeout;
+     private long maxStepCount;
+     private long timeout;
      private double evolutionCoeff;
      
      
@@ -49,7 +49,7 @@ public class StopCriteria{
      *
      * @return
      */
-    public int getMaxStepCount() {
+    public long getMaxStepCount() {
         return maxStepCount;
     }
     
@@ -57,7 +57,7 @@ public class StopCriteria{
      *
      * @return
      */
-    public int getTimeout() {
+    public long getTimeout() {
         return timeout;
     }
 
@@ -100,7 +100,7 @@ public class StopCriteria{
      * @param evolutionCoeff
      * @return
      */
-    public boolean areReached(int stepCount, long time, double evolutionCoeff){
+    public boolean areReached(long stepCount, long time, double evolutionCoeff){
         boolean areReached = false;
         
         if(this.maxStepCount != 0 && stepCount >= this.maxStepCount){
