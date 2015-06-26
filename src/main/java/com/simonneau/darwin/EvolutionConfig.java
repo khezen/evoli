@@ -28,8 +28,7 @@ import com.simonneau.darwin.operators.SelectionOperator;
 import com.simonneau.darwin.operators.TournamentSelectionOperator;
 import com.simonneau.darwin.operators.TruncationSelectionOperator;
 import com.simonneau.darwin.population.IndividualImpl;
-import com.simonneau.darwin.population.Population;
-import com.simonneau.darwin.population.PopulationImpl;
+
 import java.util.LinkedList;
 
 /**

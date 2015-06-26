@@ -16,7 +16,7 @@
  */
 package com.simonneau.darwin.util;
 
-import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  *
@@ -24,7 +24,7 @@ import java.util.Date;
  */
 public class Chronometer {
 
-    private Date date;
+    private GregorianCalendar date;
     private long currentSessionTimeCount = 0;
     private long previousSessionTimeCount = 0;
     private boolean stoped = true;
@@ -49,7 +49,7 @@ public class Chronometer {
      * start 'this' chronometer.
      */
     public void start() {
-        this.date = new Date();
+        this.date = new GregorianCalendar();
         this.stoped = false;
     }
 
@@ -58,7 +58,7 @@ public class Chronometer {
      */
     public void stop() {
         if (!this.stoped) {
-            this.previousSessionTimeCount += new Date().getTime() - this.date.getTime();
+            this.previousSessionTimeCount += new GregorianCalendar().getTimeInMillis()- this.date.getTimeInMillis();
             this.stoped = true;
         }
     }
@@ -78,7 +78,7 @@ public class Chronometer {
      */
     public long getTime() {
         if (!this.stoped) {
-            this.currentSessionTimeCount = new Date().getTime() - this.date.getTime();
+            this.currentSessionTimeCount = new GregorianCalendar().getTimeInMillis()- this.date.getTimeInMillis();
         }
         return this.currentSessionTimeCount + this.previousSessionTimeCount;
     }

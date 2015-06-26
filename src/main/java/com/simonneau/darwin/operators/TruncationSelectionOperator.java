@@ -17,7 +17,6 @@
 package com.simonneau.darwin.operators;
 
 import com.simonneau.darwin.population.Individual;
-import com.simonneau.darwin.population.IndividualImpl;
 import com.simonneau.darwin.population.Population;
 import com.simonneau.darwin.population.PopulationImpl;
 import java.util.Iterator;
