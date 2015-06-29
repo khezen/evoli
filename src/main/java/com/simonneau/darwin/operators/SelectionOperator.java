@@ -16,7 +16,7 @@
  */
 package com.simonneau.darwin.operators;
 
-import com.simonneau.darwin.population.Individual;
+import com.simonneau.darwin.population.Genotype;
 import com.simonneau.darwin.population.Population;
 
 /**
@@ -31,5 +31,5 @@ public interface SelectionOperator {
      * @param survivorSize
      * @return
      */
-    public abstract Population<? extends Individual> buildNextGeneration(Population<? extends Individual> population, int survivorSize);
+    public abstract Population<? extends Genotype> buildNextGeneration(Population<? extends Genotype> population, int survivorSize);
 }

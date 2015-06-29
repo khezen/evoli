@@ -20,7 +20,7 @@ package com.simonneau.darwin.population;
  *
  * @author simonneau
  */
-public class IndividualImpl implements Individual {
+public class GenotypeImpl implements Genotype {
 
     private double score;
     
@@ -49,7 +49,7 @@ public class IndividualImpl implements Individual {
      * @return 1 if this.getScore() > t.getScore(). 0 if this.getScore() == t.getScore(). -1 otherwise.
      */
     @Override
-    public int compareTo(Individual t) {
+    public int compareTo(Genotype t) {
         double thisScore = this.getSurvivalScore();
         double tScore = t.getSurvivalScore();
 
@@ -63,8 +63,8 @@ public class IndividualImpl implements Individual {
     }
     
     @Override
-    public Individual clone(){
-        Individual clone = new IndividualImpl();
+    public Genotype clone(){
+        Genotype clone = new GenotypeImpl();
         clone.setSurvivalScore(this.score);
         return clone;
     }

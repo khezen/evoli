@@ -17,7 +17,7 @@
 package com.simonneau.darwin.operators;
 
 
-import com.simonneau.darwin.population.Individual;
+import com.simonneau.darwin.population.Genotype;
 import com.simonneau.darwin.population.Population;
 import com.simonneau.darwin.population.PopulationImpl;
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public class ProportionalRankingSelectionOperator implements SelectionOperator {
      * @return
      */
     @Override
-    public Population<? extends Individual> buildNextGeneration(Population<? extends Individual> population, int survivorSize) {
+    public Population<? extends Genotype> buildNextGeneration(Population<? extends Genotype> population, int survivorSize) {
 
         PopulationImpl nextPopulation = new PopulationImpl(population.getPopulationSize());
         if (population.size() <= survivorSize) {
@@ -88,7 +88,7 @@ public class ProportionalRankingSelectionOperator implements SelectionOperator {
         return nextPopulation;
     }
 
-    private void madeRanking(Population<? extends Individual> population) {
+    private void madeRanking(Population<? extends Genotype> population) {
         this.ranking = new ArrayList<>(population.size());
         this.poolRange = 0;
         population.sort();

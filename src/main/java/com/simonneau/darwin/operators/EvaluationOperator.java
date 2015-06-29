@@ -16,7 +16,7 @@
  */
 package com.simonneau.darwin.operators;
 
-import com.simonneau.darwin.population.Individual;
+import com.simonneau.darwin.population.Genotype;
 
 
 /**
@@ -24,7 +24,7 @@ import com.simonneau.darwin.population.Individual;
  * @param <T> 
  * @author simonneau
  */
-public interface EvaluationOperator<T extends Individual>  {
+public interface EvaluationOperator<T extends Genotype>  {
     
     /**
      * evaluate individual.

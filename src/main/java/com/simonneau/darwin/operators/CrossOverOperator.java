@@ -16,14 +16,14 @@
  */
 package com.simonneau.darwin.operators;
 
-import com.simonneau.darwin.population.Individual;
+import com.simonneau.darwin.population.Genotype;
 
 /**
  *
  * @param <T> 
  * @author simonneau
  */
-public interface CrossOverOperator<T extends Individual> {
+public interface CrossOverOperator<T extends Genotype> {
 
     /**
      * cross male with female.

@@ -20,7 +20,7 @@ package com.simonneau.darwin.population;
  *
  * @author simonneaug@gmail.com
  */
-public interface Individual extends Comparable<Individual>, Cloneable{
+public interface Genotype extends Comparable<Genotype>, Cloneable{
     
     public double getSurvivalScore();
     public void setSurvivalScore(double score);

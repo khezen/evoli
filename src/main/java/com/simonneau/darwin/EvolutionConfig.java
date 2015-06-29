@@ -27,7 +27,7 @@ import com.simonneau.darwin.operators.RandomSelectionOperator;
 import com.simonneau.darwin.operators.SelectionOperator;
 import com.simonneau.darwin.operators.TournamentSelectionOperator;
 import com.simonneau.darwin.operators.TruncationSelectionOperator;
-import com.simonneau.darwin.population.IndividualImpl;
+import com.simonneau.darwin.population.GenotypeImpl;
 
 import java.util.LinkedList;
 
@@ -36,7 +36,7 @@ import java.util.LinkedList;
  * @param <T> 
  * @author simonneau
  */
-public class EvolutionConfig<T extends IndividualImpl> {
+public class EvolutionConfig<T extends GenotypeImpl> {
 
     private final LinkedList<MutationOperator<T>> availableMutationOperators = new LinkedList<>();
     private final LinkedList<CrossOverOperator<T>> availableCrossOverOperators = new LinkedList<>();

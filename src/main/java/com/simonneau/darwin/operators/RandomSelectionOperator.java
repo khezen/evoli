@@ -16,7 +16,7 @@
  */
 package com.simonneau.darwin.operators;
 
-import com.simonneau.darwin.population.Individual;
+import com.simonneau.darwin.population.Genotype;
 import com.simonneau.darwin.population.Population;
 import com.simonneau.darwin.population.PopulationImpl;
 import java.util.LinkedList;
@@ -47,12 +47,12 @@ public class RandomSelectionOperator implements SelectionOperator {
      * @return
      */
     @Override
-    public Population<? extends Individual> buildNextGeneration(Population<? extends Individual> population, int survivorSize) {
+    public Population<? extends Genotype> buildNextGeneration(Population<? extends Genotype> population, int survivorSize) {
         Population nextPopulation = new PopulationImpl(population.getPopulationSize());
         if (population.size() <= survivorSize) {
             nextPopulation.addAll(population);
         } else {
-            LinkedList<Individual> individuals = new LinkedList<>(population);
+            LinkedList<Genotype> individuals = new LinkedList<>(population);
             int survivorCount = 0;
             int size = individuals.size();
             while (survivorCount < survivorSize) {

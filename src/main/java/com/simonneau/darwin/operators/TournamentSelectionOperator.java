@@ -16,7 +16,7 @@
  */
 package com.simonneau.darwin.operators;
 
-import com.simonneau.darwin.population.Individual;
+import com.simonneau.darwin.population.Genotype;
 import com.simonneau.darwin.population.Population;
 import com.simonneau.darwin.population.PopulationImpl;
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class TournamentSelectionOperator implements SelectionOperator {
 
     private static TournamentSelectionOperator instance;
     private static final String LABEL = "Tournament selection";
-    private LinkedList<Individual> draft;
+    private LinkedList<Genotype> draft;
 
     private TournamentSelectionOperator() {
     }
@@ -53,12 +53,12 @@ public class TournamentSelectionOperator implements SelectionOperator {
      * @return
      */
     @Override
-    public Population<? extends Individual> buildNextGeneration(Population<? extends Individual> population, int survivorSize) {
+    public Population<? extends Genotype> buildNextGeneration(Population<? extends Genotype> population, int survivorSize) {
         PopulationImpl nextPopulation = new PopulationImpl(population.getPopulationSize());
         if (population.size() <= survivorSize) {
             nextPopulation.addAll(population);
         } else {
-            ArrayList<Individual> individuals = new ArrayList<>();
+            ArrayList<Genotype> individuals = new ArrayList<>();
             this.draft = new LinkedList<>();
             this.draft.addAll(population);
             int survivorCount = 0;
@@ -74,11 +74,11 @@ public class TournamentSelectionOperator implements SelectionOperator {
                 }
                 while (size > 1 && survivorCount < survivorSize) {
                     int firstChallengerIndex = (int) Math.round(Math.random() * (size - 1));
-                    Individual firstChallenger = individuals.remove(firstChallengerIndex);
+                    Genotype firstChallenger = individuals.remove(firstChallengerIndex);
                     size--;
                     double firstScore = firstChallenger.getSurvivalScore();
                     int secondChallengerIndex = (int) Math.round(Math.random() * (size - 1));
-                    Individual secondChallenger = individuals.remove(secondChallengerIndex);
+                    Genotype secondChallenger = individuals.remove(secondChallengerIndex);
                     size--;
                     double secondScore = secondChallenger.getSurvivalScore();
                     if (firstScore > secondScore) {

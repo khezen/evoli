@@ -26,9 +26,9 @@ import java.util.Iterator;
  * @author simonneau
  * @param <T>
  */
-public class PopulationImpl<T extends Individual> implements Population<T>{
+public class PopulationImpl<T extends Genotype> implements Population<T>{
 
-    private ArrayList<T> individuals;
+    private ArrayList<T> genotypes;
     private int populationSize;
     
     public PopulationImpl() {
@@ -36,7 +36,7 @@ public class PopulationImpl<T extends Individual> implements Population<T>{
     }
 
     public PopulationImpl(int populationSize) {
-        this.individuals = new ArrayList<>();
+        this.genotypes = new ArrayList<>();
         this.populationSize = populationSize;
     }
 
@@ -49,8 +49,8 @@ public class PopulationImpl<T extends Individual> implements Population<T>{
     }
     
     @Override
-    public T getAlphaIndividual() {
-       return Collections.max(this.individuals);
+    public T getAlphaGenotype() {
+       return Collections.max(this.genotypes);
     }
 
     @Override
@@ -60,79 +60,79 @@ public class PopulationImpl<T extends Individual> implements Population<T>{
 
     @Override
     public void sort() {
-        Collections.sort(this.individuals, new IndividualComparator());
+        Collections.sort(this.genotypes, new GenotypeComparator());
     }
 
     @Override
     public int size() {
-        return this.individuals.size();
+        return this.genotypes.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return this.individuals.isEmpty();
+        return this.genotypes.isEmpty();
     }
 
     @Override
     public boolean contains(Object o) {
-        return this.individuals.contains(o);
+        return this.genotypes.contains(o);
     }
 
     @Override
     public Iterator<T> iterator() {
-        return this.individuals.iterator();
+        return this.genotypes.iterator();
     }
 
     @Override
     public Object[] toArray() {
-        return this.individuals.toArray();
+        return this.genotypes.toArray();
     }
 
     @Override
     public <T> T[] toArray(T[] a) {
-        return this.individuals.toArray(a);
+        return this.genotypes.toArray(a);
     }
 
     @Override
     public boolean add(T e) {
-        return this.individuals.add(e);
+        return this.genotypes.add(e);
     }
 
     @Override
     public boolean remove(Object o) {
-        return this.individuals.remove(o);
+        return this.genotypes.remove(o);
     }
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        return this.individuals.containsAll(c);
+        return this.genotypes.containsAll(c);
     }
 
     @Override
     public boolean addAll(Collection<? extends T> c) {
-        return this.individuals.addAll(c);
+        return this.genotypes.addAll(c);
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        return this.individuals.removeAll(c);
+        return this.genotypes.removeAll(c);
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        return this.individuals.retainAll(c);
+        return this.genotypes.retainAll(c);
     }
 
     @Override
     public void clear() {
-        this.individuals.clear();
+        this.genotypes.clear();
     }
 
     
     @Override
     public Population<T> clone(){
         PopulationImpl<T> clone = new PopulationImpl<>(this.populationSize);
-        clone.individuals = (ArrayList<T>) this.individuals.clone();
+        clone.genotypes = (ArrayList<T>) this.genotypes.clone();
         return clone;
     }
     

@@ -16,7 +16,7 @@
  */
 package com.simonneau.darwin.operators;
 
-import com.simonneau.darwin.population.Individual;
+import com.simonneau.darwin.population.Genotype;
 import com.simonneau.darwin.population.Population;
 import com.simonneau.darwin.population.PopulationImpl;
 import java.util.Iterator;
@@ -51,14 +51,14 @@ public class TruncationSelectionOperator implements SelectionOperator {
      * @return
      */
     @Override
-    public Population<? extends Individual> buildNextGeneration(Population<? extends Individual> population, int survivorSize) {
+    public Population<? extends Genotype> buildNextGeneration(Population<? extends Genotype> population, int survivorSize) {
         PopulationImpl nextPopulation = new PopulationImpl(population.getPopulationSize());
         if (population.size() <= survivorSize) {
             nextPopulation.addAll(population);
         } else {
             population.sort();
-            Iterator<? extends Individual> iterator = population.iterator();
-            Individual individual;
+            Iterator<? extends Genotype> iterator = population.iterator();
+            Genotype individual;
             int i = 0;
             while (iterator.hasNext() && i < survivorSize) {
                 individual = iterator.next();

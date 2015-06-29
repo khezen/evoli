@@ -22,10 +22,10 @@ import java.util.Comparator;
  *
  * @author simonneau
  */
-public class IndividualComparator implements Comparator<Individual>{
+public class GenotypeComparator implements Comparator<Genotype>{
     
     @Override
-    public int compare(Individual t, Individual t1) {
+    public int compare(Genotype t, Genotype t1) {
         return -1*t.compareTo(t1);
     } 
 }

@@ -20,7 +20,7 @@ package com.simonneau.darwin;
 import com.simonneau.darwin.util.Chronometer;
 import com.simonneau.darwin.operators.CrossOverOperator;
 import com.simonneau.darwin.operators.MutationOperator;
-import com.simonneau.darwin.population.Individual;
+import com.simonneau.darwin.population.Genotype;
 import com.simonneau.darwin.population.Population;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -31,7 +31,7 @@ import java.util.LinkedList;
  * @author simonneau
  * @param <T>
  */
-public class EvolutionEngine<T extends Individual> implements Runnable {
+public class EvolutionEngine<T extends Genotype> implements Runnable {
 
     private boolean pause = true;
     private long stepCount = 0;
@@ -172,16 +172,16 @@ public class EvolutionEngine<T extends Individual> implements Runnable {
     }
     
     public T getBestSolution() {
-        return this.population.getAlphaIndividual();
+        return this.population.getAlphaGenotype();
     }
 
     /**
-     * Evaluate all the individuals using their evaluation method.
+     * Evaluate all the genotypes using their evaluation method.
      */
     private void evaluationStep() {
 
-        this.population.stream().forEach((individual) -> {
-            this.config.getSelectedEvaluationOperator().evaluate(individual);
+        this.population.stream().forEach((genotype) -> {
+            this.config.getSelectedEvaluationOperator().evaluate(genotype);
         });
 
         this.population.sort();
@@ -189,7 +189,7 @@ public class EvolutionEngine<T extends Individual> implements Runnable {
     }
 
     private void computeEvolutionCriterion() {
-        double bestScore = this.population.getAlphaIndividual().getSurvivalScore();
+        double bestScore = this.population.getAlphaGenotype().getSurvivalScore();
         if (this.firstStepDone) {
             this.evolutionCriterion = Math.abs(this.previousBestScore - bestScore) / Math.abs(this.previousBestScore);
         } else {
@@ -211,14 +211,14 @@ public class EvolutionEngine<T extends Individual> implements Runnable {
     }
 
     /**
-     * Randomly crosses Individuals between them using the selected cross over
+     * Randomly crosses Genotypes between them using the selected cross over
      * operator.
      */
     private void crossOverStep() {
         LinkedList<T> crossQueue = new LinkedList<>();
         CrossOverOperator<T> crossoverOperator = this.config.getSelectedCrossOverOperator();
-        this.population.stream().filter((individual) -> (Math.random() < this.config.getCrossProbability())).forEach((individual) -> {
-            crossQueue.add(individual);
+        this.population.stream().filter((genotype) -> (Math.random() < this.config.getCrossProbability())).forEach((genotype) -> {
+            crossQueue.add(genotype);
         });
         int queueSize = crossQueue.size();
         T male;
@@ -247,14 +247,14 @@ public class EvolutionEngine<T extends Individual> implements Runnable {
     }
 
     /**
-     * Randomly makes some individual victim of mutations using the selected
+     * Randomly makes some genotype victim of mutations using the selected
      * mutation operator.
      */
     private void mutationStep() {
         MutationOperator<T> mutationOperator = this.config.getSelectedMutationOperator();
         ArrayList<T> mutants = new ArrayList<>();
-        this.population.stream().filter((individual) -> (Math.random() < this.config.getMutationProbability())).forEach((individual) -> {
-            mutants.add(mutationOperator.mutate(individual));
+        this.population.stream().filter((genotype) -> (Math.random() < this.config.getMutationProbability())).forEach((genotype) -> {
+            mutants.add(mutationOperator.mutate(genotype));
         });
         this.population.addAll(mutants);
     }

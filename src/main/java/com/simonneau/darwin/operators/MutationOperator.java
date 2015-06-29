@@ -17,14 +17,14 @@
 package com.simonneau.darwin.operators;
 
 
-import com.simonneau.darwin.population.Individual;
+import com.simonneau.darwin.population.Genotype;
 
 /**
  *
  * @param <T> 
  * @author simonneau
  */
-public interface MutationOperator <T extends Individual> {
+public interface MutationOperator <T extends Genotype> {
     
     /**
      * mutate individual.

@@ -16,7 +16,7 @@
  */
 package com.simonneau.darwin.operators;
 
-import com.simonneau.darwin.population.Individual;
+import com.simonneau.darwin.population.Genotype;
 import com.simonneau.darwin.population.Population;
 import com.simonneau.darwin.population.PopulationImpl;
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public class ProportionalPerfomanceSelectionOperator implements SelectionOperato
      * @return
      */
     @Override
-    public Population<? extends Individual> buildNextGeneration(Population<? extends Individual> population, int survivorSize) {
+    public Population<? extends Genotype> buildNextGeneration(Population<? extends Genotype> population, int survivorSize) {
         Population nextPopulation = new PopulationImpl(population.getPopulationSize());
         if (population.size() <= survivorSize) {
             nextPopulation.addAll(population);
@@ -85,12 +85,12 @@ public class ProportionalPerfomanceSelectionOperator implements SelectionOperato
         return nextPopulation;
     }
 
-    private double getTotalScore(Population<? extends Individual> population) {
+    private double getTotalScore(Population<? extends Genotype> population) {
         this.scores = new ArrayList<>(population.size());
         double minScore = this.getminScore(population);
         double totalScore = 0;
         double score;
-        for (Individual individual : population) {
+        for (Genotype individual : population) {
             score = individual.getSurvivalScore() - minScore + 1;
             this.scores.add(score);
             totalScore += score;
@@ -98,7 +98,7 @@ public class ProportionalPerfomanceSelectionOperator implements SelectionOperato
         return totalScore;
     }
 
-    private double getminScore(Population<? extends Individual> population) {
+    private double getminScore(Population<? extends Genotype> population) {
         return Collections.min(population).getSurvivalScore();
     }
 }

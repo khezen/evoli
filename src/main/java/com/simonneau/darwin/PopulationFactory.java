@@ -16,7 +16,7 @@
  */
 package com.simonneau.darwin;
 
-import com.simonneau.darwin.population.Individual;
+import com.simonneau.darwin.population.Genotype;
 import com.simonneau.darwin.population.Population;
 
 /**
@@ -24,6 +24,6 @@ import com.simonneau.darwin.population.Population;
  * @author simonneaug@gmail.com
  * @param <T>
  */
-public interface PopulationFactory <T extends Individual> {
+public interface PopulationFactory <T extends Genotype> {
     public abstract Population<T> createRandom();
 }

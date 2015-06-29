@@ -23,10 +23,10 @@ import java.util.Collection;
  * @author simonneaug@gmail.com
  * @param <T>
  */
-public interface Population<T extends Individual> extends Collection<T>, Cloneable{
+public interface Population<T extends Genotype> extends Collection<T>, Cloneable{
     public void setPopulationSize(int populationSize);
     public int getPopulationSize();
-    public T getAlphaIndividual();
+    public T getAlphaGenotype();
     public void sort();
     public Population<T> clone();
 }
