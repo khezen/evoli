@@ -25,5 +25,5 @@ import com.simonneau.darwin.population.Population;
  * @param <T>
  */
 public interface PopulationFactory <T extends Genotype> {
-    public abstract Population<T> createRandom();
+    public abstract Population<T> create();
 }

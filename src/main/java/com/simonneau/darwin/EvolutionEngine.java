@@ -66,7 +66,7 @@ public class EvolutionEngine<T extends Genotype> implements Runnable {
     }
 
     public void resizePop() {
-        Population<T> pop = this.populationFactory.createRandom();
+        Population<T> pop = this.populationFactory.create();
         Iterator<T> it = pop.iterator();
         int newSize = this.config.getPopulationSize();
         int currentSize = this.population.size();
@@ -88,7 +88,7 @@ public class EvolutionEngine<T extends Genotype> implements Runnable {
         this.chronometer.reset();
         this.evolutionCriterion = 1;
         this.stepCount = 0;
-        this.setPopulation(this.populationFactory.createRandom());
+        this.setPopulation(this.populationFactory.create());
     }
 
     public Population getPopulation() {
