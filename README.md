@@ -1,2 +1,2 @@
 # Darwin
-Genetic algorithm Java library
+Genetic algorithm go package
