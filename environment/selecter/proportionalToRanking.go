@@ -8,8 +8,8 @@ import (
 
 type proportionalToRankingSelecter struct{}
 
-func (s proportionalToRankingSelecter) Select(pop *population.Population, survivorsCount uint) (*population.Population, error) {
-	err := checkArgs(pop, survivorsCount)
+func (s proportionalToRankingSelecter) Select(pop *population.Population, survivorsSize uint) (*population.Population, error) {
+	err := checkArgs(pop, survivorsSize)
 	if err != nil {
 		return nil, err
 	}

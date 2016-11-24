@@ -8,19 +8,18 @@ import (
 
 type randomSelecter struct{}
 
-func (s randomSelecter) Select(pop *population.Population, survivorsCount uint) (*population.Population, error) {
-	err := checkArgs(pop, survivorsCount)
+func (s randomSelecter) Select(pop *population.Population, survivorsSize uint) (*population.Population, error) {
+	err := checkArgs(pop, survivorsSize)
 	if err != nil {
 		return nil, err
 	}
 	count := uint(0)
-	survivors := population.New(pop.Cap())
-	for count < survivorsCount {
-		survivor := pop.Remove(rand.Intn(pop.Len() - 1))
-		survivors.Append(survivor)
+	size := pop.Len() - survivorsSize
+	for count < size {
+		pop.Remove(rand.Intn(pop.Len() - 1))
 		count++
 	}
-	return &survivors, nil
+	return pop, nil
 }
 
 // NewRandomSelecter is the constrctor for truncation selecter

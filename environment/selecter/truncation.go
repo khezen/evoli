@@ -4,13 +4,13 @@ import "github.com/khezen/darwin/environment/population"
 
 type truncationSelecter struct{}
 
-func (s truncationSelecter) Select(pop *population.Population, survivorsCount uint) (*population.Population, error) {
-	err := checkArgs(pop, survivorsCount)
+func (s truncationSelecter) Select(pop *population.Population, survivorsSize uint) (*population.Population, error) {
+	err := checkArgs(pop, survivorsSize)
 	if err != nil {
 		return nil, err
 	}
 	pop.Sort()
-	pop.Truncate(survivorsCount - 1)
+	pop.Truncate(survivorsSize - 1)
 	return pop, nil
 }
 
