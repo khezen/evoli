@@ -2,7 +2,7 @@ package operators
 
 import "github.com/khezen/darwin/evolution/individual"
 
-// Evaluater computes phenotype resilience
+// Evaluater computes and set individual resilience
 type Evaluater interface {
-	Evaluate(*individual.Phenotyped)
+	Evaluate(*individual.Interface)
 }
