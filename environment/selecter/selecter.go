@@ -17,5 +17,7 @@ func checkArgs(pop *population.Population, survivorsCount uint) error {
 		return errors.New("pop cannot be nil")
 	case survivorsCount > uint(pop.Len()):
 		return errors.New("survivalSize cannot be >= pop.Size()")
+	default:
+		return nil
 	}
 }
