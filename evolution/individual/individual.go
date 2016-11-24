@@ -17,11 +17,11 @@ func New() Individual {
 }
 
 // Resilience returns the strength of a individual regarding to its environement. Higher is stronger.
-func (g *Individual) Resilience() float32 {
-	return g.resilience
+func (indiv *Individual) Resilience() float32 {
+	return indiv.resilience
 }
 
 // SetResilience set the strength of a individual regarding to its environement. Higher is stronger.
-func (g *Individual) SetResilience(resilience float32) {
-	g.resilience = resilience
+func (indiv *Individual) SetResilience(resilience float32) {
+	indiv.resilience = resilience
 }
