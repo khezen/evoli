@@ -1,7 +1,10 @@
 package selecter
 
-import "github.com/khezen/darwin/environment/population"
-import "errors"
+import (
+	"errors"
+
+	"github.com/khezen/darwin/environment/population"
+)
 
 type proportionalToRankingSelecter struct{}
 
