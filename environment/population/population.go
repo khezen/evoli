@@ -15,6 +15,7 @@ type Interface interface {
 	Truncate(uint)
 	Append(individual.Interface)
 	Get(int) individual.Interface
+	Remove(int) individual.Interface
 }
 
 // Population is a set of individuals in population genetics.
@@ -24,7 +25,7 @@ type Population struct {
 
 // New is population constructor
 func New(capacity uint) Population {
-	return Population{make([]individual.Interface, capacity, capacity)}
+	return Population{make([]individual.Interface, 0, capacity)}
 }
 
 // Len returns the current livings count of a population
@@ -60,10 +61,13 @@ func (pop *Population) SetCap(newCap uint) {
 	currentCap := pop.Cap()
 	if newCap != currentCap {
 		tmp := pop.individuals
-		if newCap < currentCap {
+		switch {
+		case newCap < currentCap:
 			tmp = pop.individuals[0:newCap]
+			pop.individuals = make([]individual.Interface, newCap, newCap)
+		case newCap > currentCap:
+			pop.individuals = make([]individual.Interface, currentCap, newCap)
 		}
-		pop.individuals = make([]individual.Interface, newCap, newCap)
 		copy(tmp, pop.individuals)
 	}
 }
@@ -75,12 +79,20 @@ func (pop *Population) Truncate(length uint) {
 	}
 }
 
-// Append adds an individual to a population
-func (pop *Population) Append(indiv individual.Interface) {
+// Append adds an individual to a population. If the populagtion has already reached its capacity, capacity is incremented.
+func (pop *Population) Append(indiv individual.Interface) error {
 	pop.individuals = append(pop.individuals, indiv)
 }
 
 // Get returns the individual at index i
 func (pop *Population) Get(i int) individual.Interface {
 	return pop.individuals[i]
+}
+
+// Remove removes and returns the individual at index i
+func (pop *Population) Remove(i int) individual.Interface {
+	removed := pop.Get(i)
+	new := pop.individuals[0 : i-1]
+	pop.individuals = append(new, pop.individuals[i+1:pop.Len()-1]...)
+	return removed
 }

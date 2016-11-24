@@ -16,7 +16,7 @@ func (s randomSelecter) Select(pop *population.Population, survivorsCount uint) 
 	count := uint(0)
 	survivors := population.New(pop.Cap())
 	for count < survivorsCount {
-		survivor := pop.Get(rand.Intn(pop.Len() - 1))
+		survivor := pop.Remove(rand.Intn(pop.Len() - 1))
 		survivors.Append(survivor)
 		count++
 	}
