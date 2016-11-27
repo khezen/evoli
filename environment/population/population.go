@@ -16,6 +16,8 @@ type Interface interface {
 	Append(individual.Interface)
 	Get(int) individual.Interface
 	Remove(int) individual.Interface
+	Max() individual.Interface
+	Min() individual.Interface
 }
 
 // Population is a set of individuals in population genetics.
@@ -36,13 +38,13 @@ func (pop *Population) Len() int {
 // Less reports whether the element with
 // index i should sort before the element with index j.
 func (pop *Population) Less(i, j int) bool {
-	return pop.individuals[i].Resilience() >= pop.individuals[j].Resilience()
+	return pop.Get(uint(i)).Resilience() >= pop.Get(uint(j)).Resilience()
 }
 
 // Swap swaps the elements with indexes i and j.
 func (pop *Population) Swap(i, j int) {
-	tmp := pop.individuals[i]
-	pop.individuals[i] = pop.individuals[j]
+	tmp := pop.Get(uint(i))
+	pop.individuals[i] = pop.Get(uint(j))
 	pop.individuals[j] = tmp
 }
 
@@ -80,19 +82,41 @@ func (pop *Population) Truncate(length uint) {
 }
 
 // Append adds an individual to a population. If the populagtion has already reached its capacity, capacity is incremented.
-func (pop *Population) Append(indiv individual.Interface) error {
+func (pop *Population) Append(indiv individual.Interface) {
 	pop.individuals = append(pop.individuals, indiv)
 }
 
 // Get returns the individual at index i
-func (pop *Population) Get(i int) individual.Interface {
+func (pop *Population) Get(i uint) individual.Interface {
 	return pop.individuals[i]
 }
 
 // Remove removes and returns the individual at index i
-func (pop *Population) Remove(i int) individual.Interface {
+func (pop *Population) Remove(i uint) individual.Interface {
 	removed := pop.Get(i)
 	new := pop.individuals[0 : i-1]
 	pop.individuals = append(new, pop.individuals[i+1:pop.Len()-1]...)
 	return removed
+}
+
+// Min returns the least Resilent individual
+func (pop *Population) Min() individual.Interface {
+	var min, length = pop.Get(0), uint(pop.Len())
+	for i := uint(1); i < length; i++ {
+		if pop.Get(i).Resilience() < min.Resilience() {
+			min = pop.Get(i)
+		}
+	}
+	return min
+}
+
+// Max returns the most Resilent individual
+func (pop *Population) Max() individual.Interface {
+	var max, length = pop.Get(0), uint(pop.Len())
+	for i := uint(1); i < length; i++ {
+		if pop.Get(i).Resilience() > max.Resilience() {
+			max = pop.Get(i)
+		}
+	}
+	return max
 }

@@ -13,9 +13,9 @@ func (s randomSelecter) Select(pop *population.Population, survivorsSize uint) (
 	if err != nil {
 		return nil, err
 	}
-	count := uint(0)
+	
 	size := pop.Len() - survivorsSize
-	for count < size {
+	for count := uint(0); count < size {
 		pop.Remove(rand.Intn(pop.Len() - 1))
 		count++
 	}
