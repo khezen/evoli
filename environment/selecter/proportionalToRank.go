@@ -1,32 +1,36 @@
 package selecter
 
-import "github.com/khezen/darwin/environment/population"
+import (
+	"math/rand"
+
+	"github.com/khezen/darwin/environment/population"
+)
 
 type proportionalToRankSelecter struct{}
 
-func (s proportionalToRankSelecter) Select(pop *population.Population, survivorsSize uint) (*population.Population, error) {
+func (s proportionalToRankSelecter) Select(pop *population.Population, survivorsSize int) (*population.Population, error) {
 	err := checkArgs(pop, survivorsSize)
 	if err != nil {
 		return nil, err
 	}
-	newPop = population.New(pop.Cap())
+	newPop := population.New(pop.Cap())
 	pop.Sort()
 	totalScore := s.computeTotalScore(pop)
-	for uint(newPop.Len()) < survivorsSize {
+	for newPop.Len() < survivorsSize {
 		for i := 0; i < pop.Len(); i++ {
-			score := length - i
-			if rand.float32() <=  score/totalScore {
+			score := float32(pop.Len() - i)
+			if rand.Float32() <= score/totalScore {
 				newPop.Append(pop.Remove(i))
 				totalScore -= score
 			}
 		}
 	}
-	return newPop&
+	return &newPop, nil
 }
 
-func (s proportionalToResilienceSelecter) computeTotalScore(pop *Population) totalScore float32 {
-	n := pop.Len()
-	return 1/2*n*(n+1) // 1+2+3+...+n
+func (s proportionalToRankSelecter) computeTotalScore(pop *population.Population) (totalScore float32) {
+	n := float32(pop.Len())
+	return 1 / 2 * n * (n + 1) // 1+2+3+...+n
 }
 
 // NewProportionalToRankSelecter is the constrctor for truncation selecter

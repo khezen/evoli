@@ -1,6 +1,7 @@
 package population
 
 import (
+	"math/rand"
 	"sort"
 
 	"github.com/khezen/darwin/evolution/individual"
@@ -10,9 +11,9 @@ import (
 type Interface interface {
 	sort.Interface
 	Sort()
-	Cap() uint
-	SetCap(uint)
-	Truncate(uint)
+	Cap() int
+	SetCap(int)
+	Truncate(int)
 	Append(individual.Interface)
 	Get(int) individual.Interface
 	Remove(int) individual.Interface
@@ -26,7 +27,7 @@ type Population struct {
 }
 
 // New is population constructor
-func New(capacity uint) Population {
+func New(capacity int) Population {
 	return Population{make([]individual.Interface, 0, capacity)}
 }
 
@@ -38,13 +39,13 @@ func (pop *Population) Len() int {
 // Less reports whether the element with
 // index i should sort before the element with index j.
 func (pop *Population) Less(i, j int) bool {
-	return pop.Get(uint(i)).Resilience() >= pop.Get(uint(j)).Resilience()
+	return pop.Get(int(i)).Resilience() >= pop.Get(int(j)).Resilience()
 }
 
 // Swap swaps the elements with indexes i and j.
 func (pop *Population) Swap(i, j int) {
-	tmp := pop.Get(uint(i))
-	pop.individuals[i] = pop.Get(uint(j))
+	tmp := pop.Get(int(i))
+	pop.individuals[i] = pop.Get(int(j))
 	pop.individuals[j] = tmp
 }
 
@@ -54,12 +55,12 @@ func (pop *Population) Sort() {
 }
 
 // Cap returns the population capacity
-func (pop *Population) Cap() uint {
-	return uint(cap(pop.individuals))
+func (pop *Population) Cap() int {
+	return int(cap(pop.individuals))
 }
 
 // SetCap set the resize the population capacity
-func (pop *Population) SetCap(newCap uint) {
+func (pop *Population) SetCap(newCap int) {
 	currentCap := pop.Cap()
 	if newCap != currentCap {
 		tmp := pop.individuals
@@ -75,8 +76,8 @@ func (pop *Population) SetCap(newCap uint) {
 }
 
 // Truncate rduce population size to the given length
-func (pop *Population) Truncate(length uint) {
-	if length < uint(pop.Len()) {
+func (pop *Population) Truncate(length int) {
+	if length < int(pop.Len()) {
 		pop.individuals = pop.individuals[0 : length-1]
 	}
 }
@@ -87,12 +88,12 @@ func (pop *Population) Append(indiv individual.Interface) {
 }
 
 // Get returns the individual at index i
-func (pop *Population) Get(i uint) individual.Interface {
+func (pop *Population) Get(i int) individual.Interface {
 	return pop.individuals[i]
 }
 
 // Remove removes and returns the individual at index i
-func (pop *Population) Remove(i uint) individual.Interface {
+func (pop *Population) Remove(i int) individual.Interface {
 	removed := pop.Get(i)
 	new := pop.individuals[0 : i-1]
 	pop.individuals = append(new, pop.individuals[i+1:pop.Len()-1]...)
@@ -101,8 +102,8 @@ func (pop *Population) Remove(i uint) individual.Interface {
 
 // Min returns the least Resilent individual
 func (pop *Population) Min() individual.Interface {
-	var min, length = pop.Get(0), uint(pop.Len())
-	for i := uint(1); i < length; i++ {
+	var min, length = pop.Get(0), int(pop.Len())
+	for i := int(1); i < length; i++ {
 		if pop.Get(i).Resilience() < min.Resilience() {
 			min = pop.Get(i)
 		}
@@ -112,11 +113,25 @@ func (pop *Population) Min() individual.Interface {
 
 // Max returns the most Resilent individual
 func (pop *Population) Max() individual.Interface {
-	var max, length = pop.Get(0), uint(pop.Len())
-	for i := uint(1); i < length; i++ {
+	var max, length = pop.Get(0), int(pop.Len())
+	for i := int(1); i < length; i++ {
 		if pop.Get(i).Resilience() > max.Resilience() {
 			max = pop.Get(i)
 		}
 	}
 	return max
+}
+
+// PickCouple returns the index of two randomly choosen individuals
+func (pop *Population) PickCouple() (index1, index2 int) {
+	var i, j = rand.Intn(pop.Len() - 1), rand.Intn(pop.Len() - 1)
+	if i == j {
+		switch i {
+		case pop.Len() - 1:
+			j = i - 1
+		default:
+			j = i + 1
+		}
+	}
+	return i, j
 }

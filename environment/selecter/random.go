@@ -8,14 +8,14 @@ import (
 
 type randomSelecter struct{}
 
-func (s randomSelecter) Select(pop *population.Population, survivorsSize uint) (*population.Population, error) {
+func (s randomSelecter) Select(pop *population.Population, survivorsSize int) (*population.Population, error) {
 	err := checkArgs(pop, survivorsSize)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	size := pop.Len() - survivorsSize
-	for count := uint(0); count < size {
+	for count := 0; count < size; {
 		pop.Remove(rand.Intn(pop.Len() - 1))
 		count++
 	}

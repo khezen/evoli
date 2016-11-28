@@ -4,7 +4,7 @@ import "github.com/khezen/darwin/environment/population"
 
 type truncationSelecter struct{}
 
-func (s truncationSelecter) Select(pop *population.Population, survivorsSize uint) (*population.Population, error) {
+func (s truncationSelecter) Select(pop *population.Population, survivorsSize int) (*population.Population, error) {
 	err := checkArgs(pop, survivorsSize)
 	if err != nil {
 		return nil, err
