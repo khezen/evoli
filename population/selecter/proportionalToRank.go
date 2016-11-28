@@ -9,9 +9,8 @@ import (
 type proportionalToRankSelecter struct{}
 
 func (s proportionalToRankSelecter) Select(pop *population.Population, survivorsSize int) *population.Population {
-	newPop := population.New(pop.Cap())
+	var newPop, totalScore = population.New(pop.Cap()), s.computeTotalScore(pop)
 	pop.Sort()
-	totalScore := s.computeTotalScore(pop)
 	for newPop.Len() < survivorsSize {
 		for i := 0; i < pop.Len(); i++ {
 			score := float32(pop.Len() - i)

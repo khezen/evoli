@@ -99,8 +99,7 @@ func (pop *Population) Get(i int) individual.Interface {
 
 // Remove removes and returns the individual at index i
 func (pop *Population) Remove(i int) individual.Interface {
-	removed := pop.Get(i)
-	new := pop.individuals[0 : i-1]
+	var removed, new = pop.Get(i), pop.individuals[0 : i-1]
 	pop.individuals = append(new, pop.individuals[i+1:pop.Len()-1]...)
 	return removed
 }
