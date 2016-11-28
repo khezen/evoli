@@ -30,8 +30,7 @@ func (s proportionalToResilienceSelecter) computeScore(indiv individual.Interfac
 }
 
 func (s proportionalToResilienceSelecter) computeTotalScore(pop *population.Population, minResilience float32) float32 {
-	totalScore := float32(0)
-	length := pop.Len()
+	var length, totalScore = pop.Len(), float32(0)
 	for i := 0; i < length; i++ {
 		totalScore += s.computeScore(pop.Get(i), minResilience)
 	}
