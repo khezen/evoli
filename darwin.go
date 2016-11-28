@@ -35,12 +35,13 @@ func (l Lifecycle) evaluation(pop *population.Population) *population.Population
 		individual := pop.Get(i)
 		individual.SetResilience(l.Evaluater.Evaluate(individual))
 	}
+	return pop
 }
 
 func (l Lifecycle) crossovers(pop *population.Population, mutationProbability float32) *population.Population {
-	length := pop.Len()
 	newBorns := population.New(pop.Cap() - pop.Len())
-	for newBorns.Len() <= newBorns.Cap() {
+	capacity := newBorns.Cap()
+	for newBorns.Len() <= capacity {
 		var i, j = pop.PickCouple()
 		newBorn := l.Crosser.Cross(pop.Get(i), pop.Get(j))
 		if rand.Float32() <= mutationProbability {
@@ -48,6 +49,6 @@ func (l Lifecycle) crossovers(pop *population.Population, mutationProbability fl
 		}
 		newBorns.Append(newBorn)
 	}
-	pop.AppendAll(newBorns)
+	pop.AppendAll(&newBorns)
 	return pop
 }
