@@ -1,6 +1,6 @@
 package selecter
 
-import "github.com/khezen/darwin/environment/population"
+import "github.com/khezen/darwin/population"
 
 // Interface is the selecter operator interface
 type Interface interface {

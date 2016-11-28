@@ -3,8 +3,8 @@ package selecter
 import (
 	"math/rand"
 
-	"github.com/khezen/darwin/environment/population"
-	"github.com/khezen/darwin/evolution/individual"
+	"github.com/khezen/darwin/population"
+	"github.com/khezen/darwin/population/individual"
 )
 
 type proportionalToResilienceSelecter struct{}

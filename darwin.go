@@ -3,21 +3,21 @@ package main
 import (
 	"math/rand"
 
-	"github.com/khezen/darwin/environment/population"
-	"github.com/khezen/darwin/environment/selecter"
-	"github.com/khezen/darwin/evolution/operators"
+	"github.com/khezen/darwin/population"
+	"github.com/khezen/darwin/population/individual"
+	"github.com/khezen/darwin/population/selecter"
 )
 
 // Lifecycle is a genetic algorithm implementation
 type Lifecycle struct {
 	Selecter  selecter.Interface
-	Crosser   operators.Crosser
-	Mutater   operators.Mutater
-	Evaluater operators.Evaluater
+	Crosser   individual.Crosser
+	Mutater   individual.Mutater
+	Evaluater individual.Evaluater
 }
 
 // New is the constructor for Lifecycle struct
-func New(s selecter.Interface, c operators.Crosser, m operators.Mutater, e operators.Evaluater) Lifecycle {
+func New(s selecter.Interface, c individual.Crosser, m individual.Mutater, e individual.Evaluater) Lifecycle {
 	return Lifecycle{s, c, m, e}
 }
 

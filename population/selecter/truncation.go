@@ -1,6 +1,6 @@
 package selecter
 
-import "github.com/khezen/darwin/environment/population"
+import "github.com/khezen/darwin/population"
 
 type truncationSelecter struct{}
 

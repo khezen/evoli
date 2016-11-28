@@ -3,7 +3,7 @@ package selecter
 import (
 	"math/rand"
 
-	"github.com/khezen/darwin/environment/population"
+	"github.com/khezen/darwin/population"
 )
 
 type tournamentSelecter struct{}
