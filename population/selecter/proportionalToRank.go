@@ -24,7 +24,7 @@ func (s proportionalToRankSelecter) Select(pop *population.Population, survivors
 	return &newPop
 }
 
-func (s proportionalToRankSelecter) computeTotalScore(pop *population.Population) (totalScore float32) {
+func (s proportionalToRankSelecter) computeTotalScore(pop *population.Population) float32 {
 	n := float32(pop.Len())
 	return 1 / 2 * n * (n + 1) // 1+2+3+...+n
 }

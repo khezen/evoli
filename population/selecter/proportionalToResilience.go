@@ -25,12 +25,12 @@ func (s proportionalToResilienceSelecter) Select(pop *population.Population, sur
 	return &newPop
 }
 
-func (s proportionalToResilienceSelecter) computeScore(indiv individual.Interface, minResilience float32) (totalScore float32) {
+func (s proportionalToResilienceSelecter) computeScore(indiv individual.Interface, minResilience float32) float32 {
 	return indiv.Resilience() - minResilience + 1
 }
 
-func (s proportionalToResilienceSelecter) computeTotalScore(pop *population.Population, minResilience float32) (totalScore float32) {
-	totalScore = float32(0)
+func (s proportionalToResilienceSelecter) computeTotalScore(pop *population.Population, minResilience float32) float32 {
+	totalScore := float32(0)
 	length := pop.Len()
 	for i := 0; i < length; i++ {
 		totalScore += s.computeScore(pop.Get(i), minResilience)
