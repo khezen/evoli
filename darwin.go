@@ -22,10 +22,10 @@ func New(s selecter.Interface, c operators.Crosser, m operators.Mutater, e opera
 }
 
 // Generation takes a Population and produce a the new generation of this population
-func (l Lifecycle) Generation(pop *population.Population, survivorSizeForSelection int, mutationProb float32) *population.Population {
+func (l Lifecycle) Generation(pop *population.Population, survivorSizeForSelection int, mutationProbability float32) *population.Population {
 	l.evaluation(pop)
 	newPop, err := l.Selecter.Select(pop, survivorSizeForSelection)
-	newPop = l.crossovers(pop, mutationProb)
+	newPop = l.crossovers(pop, mutationProbability)
 	return newPop
 }
 
@@ -37,13 +37,13 @@ func (l Lifecycle) evaluation(pop *population.Population) *population.Population
 	}
 }
 
-func (l Lifecycle) crossovers(pop *population.Population, mutationProb float32) *population.Population {
+func (l Lifecycle) crossovers(pop *population.Population, mutationProbability float32) *population.Population {
 	length := pop.Len()
 	newBorns := population.New(pop.Cap() - pop.Len())
 	for newBorns.Len() <= newBorns.Cap() {
 		var i, j = pop.PickCouple()
 		newBorn := l.Crosser.Cross(pop.Get(i), pop.Get(j))
-		if rand.Float32() <= mutationProb {
+		if rand.Float32() <= mutationProbability {
 			newBorn = l.Mutater.Mutate(newBorn)
 		}
 		newBorns.Append(newBorn)

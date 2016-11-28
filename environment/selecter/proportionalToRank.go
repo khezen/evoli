@@ -8,11 +8,7 @@ import (
 
 type proportionalToRankSelecter struct{}
 
-func (s proportionalToRankSelecter) Select(pop *population.Population, survivorsSize int) (*population.Population, error) {
-	err := checkArgs(pop, survivorsSize)
-	if err != nil {
-		return nil, err
-	}
+func (s proportionalToRankSelecter) Select(pop *population.Population, survivorsSize int) *population.Population {
 	newPop := population.New(pop.Cap())
 	pop.Sort()
 	totalScore := s.computeTotalScore(pop)
@@ -25,7 +21,7 @@ func (s proportionalToRankSelecter) Select(pop *population.Population, survivors
 			}
 		}
 	}
-	return &newPop, nil
+	return &newPop
 }
 
 func (s proportionalToRankSelecter) computeTotalScore(pop *population.Population) (totalScore float32) {
