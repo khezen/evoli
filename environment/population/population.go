@@ -4,6 +4,7 @@ import (
 	"math/rand"
 	"sort"
 
+	"github.com/khezen/darwin/environment/population"
 	"github.com/khezen/darwin/evolution/individual"
 )
 
@@ -85,6 +86,11 @@ func (pop *Population) Truncate(length int) {
 // Append adds an individual to a population. If the populagtion has already reached its capacity, capacity is incremented.
 func (pop *Population) Append(indiv individual.Interface) {
 	pop.individuals = append(pop.individuals, indiv)
+}
+
+// AppendAll adds all individuals from a population to a population. If the populagtion has already reached its capacity, capacity is incremented.
+func (pop *Population) AppendAll(externalPop *population.Population) {
+	pop.individuals = append(pop.individuals, externalPop.individuals)
 }
 
 // Get returns the individual at index i

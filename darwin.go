@@ -48,5 +48,6 @@ func (l Lifecycle) crossovers(pop *population.Population, mutationProb float32) 
 		}
 		newBorns.Append(newBorn)
 	}
+	pop.AppendAll(newBorns)
 	return pop
 }
