@@ -22,18 +22,16 @@ type Interface interface {
 }
 
 // Population is a set of individuals in population genetics.
-type Population struct {
-	individuals []individual.Interface
-}
+type Population []individual.Interface
 
 // New is population constructor
 func New(capacity int) Population {
-	return Population{make([]individual.Interface, 0, capacity)}
+	return make([]individual.Interface, 0, capacity)
 }
 
 // Len returns the current livings count of a population
 func (pop *Population) Len() int {
-	return len(pop.individuals)
+	return len(*pop)
 }
 
 // Less reports whether the element with
@@ -44,9 +42,9 @@ func (pop *Population) Less(i, j int) bool {
 
 // Swap swaps the elements with indexes i and j.
 func (pop *Population) Swap(i, j int) {
-	tmp := pop.Get(i)
-	pop.individuals[i] = pop.Get(j)
-	pop.individuals[j] = tmp
+	tmp := (*pop)[i]
+	(*pop)[i] = (*pop)[j]
+	(*pop)[j] = tmp
 }
 
 // Sort sort the population
@@ -56,51 +54,51 @@ func (pop *Population) Sort() {
 
 // Cap returns the population capacity
 func (pop *Population) Cap() int {
-	return cap(pop.individuals)
+	return cap(*pop)
 }
 
 // SetCap set the resize the population capacity
 func (pop *Population) SetCap(newCap int) {
 	currentCap := pop.Cap()
 	if newCap != currentCap {
-		tmp := pop.individuals
+		tmp := *pop
 		switch {
 		case newCap < currentCap:
-			tmp = pop.individuals[0:newCap]
-			pop.individuals = make([]individual.Interface, newCap, newCap)
+			tmp = (*pop)[0:newCap]
+			*pop = make([]individual.Interface, newCap, newCap)
 		case newCap > currentCap:
-			pop.individuals = make([]individual.Interface, currentCap, newCap)
+			*pop = make([]individual.Interface, currentCap, newCap)
 		}
-		copy(tmp, pop.individuals)
+		copy(tmp, *pop)
 	}
 }
 
 // Truncate rduce population size to the given length
 func (pop *Population) Truncate(length int) {
 	if length < pop.Len() {
-		pop.individuals = pop.individuals[0 : length-1]
+		*pop = (*pop)[0 : length-1]
 	}
 }
 
 // Append adds an individual to a population. If the populagtion has already reached its capacity, capacity is incremented.
 func (pop *Population) Append(indiv individual.Interface) {
-	pop.individuals = append(pop.individuals, indiv)
+	*pop = append(*pop, indiv)
 }
 
 // AppendAll adds all individuals from a population to a population. If the populagtion has already reached its capacity, capacity is incremented.
 func (pop *Population) AppendAll(externalPop *Population) {
-	pop.individuals = append(pop.individuals, externalPop.individuals...)
+	*pop = append(*pop, *externalPop...)
 }
 
 // Get returns the individual at index i
 func (pop *Population) Get(i int) individual.Interface {
-	return pop.individuals[i]
+	return (*pop)[i]
 }
 
 // Remove removes and returns the individual at index i
 func (pop *Population) Remove(i int) individual.Interface {
-	var removed, new = pop.Get(i), pop.individuals[0 : i-1]
-	pop.individuals = append(new, pop.individuals[i+1:pop.Len()-1]...)
+	var removed, new = pop.Get(i), (*pop)[0 : i-1]
+	*pop = append(new, (*pop)[i+1:pop.Len()-1]...)
 	return removed
 }
 
