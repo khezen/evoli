@@ -39,13 +39,13 @@ func (pop *Population) Len() int {
 // Less reports whether the element with
 // index i should sort before the element with index j.
 func (pop *Population) Less(i, j int) bool {
-	return pop.Get(int(i)).Resilience() >= pop.Get(int(j)).Resilience()
+	return pop.Get(i).Resilience() >= pop.Get(j).Resilience()
 }
 
 // Swap swaps the elements with indexes i and j.
 func (pop *Population) Swap(i, j int) {
-	tmp := pop.Get(int(i))
-	pop.individuals[i] = pop.Get(int(j))
+	tmp := pop.Get(i)
+	pop.individuals[i] = pop.Get(j)
 	pop.individuals[j] = tmp
 }
 
@@ -56,7 +56,7 @@ func (pop *Population) Sort() {
 
 // Cap returns the population capacity
 func (pop *Population) Cap() int {
-	return int(cap(pop.individuals))
+	return cap(pop.individuals)
 }
 
 // SetCap set the resize the population capacity
@@ -77,7 +77,7 @@ func (pop *Population) SetCap(newCap int) {
 
 // Truncate rduce population size to the given length
 func (pop *Population) Truncate(length int) {
-	if length < int(pop.Len()) {
+	if length < pop.Len() {
 		pop.individuals = pop.individuals[0 : length-1]
 	}
 }
@@ -106,8 +106,8 @@ func (pop *Population) Remove(i int) individual.Interface {
 
 // Min returns the least Resilent individual
 func (pop *Population) Min() individual.Interface {
-	var min, length = pop.Get(0), int(pop.Len())
-	for i := int(1); i < length; i++ {
+	var min, length = pop.Get(0), pop.Len()
+	for i := 1; i < length; i++ {
 		if pop.Get(i).Resilience() < min.Resilience() {
 			min = pop.Get(i)
 		}
@@ -117,8 +117,8 @@ func (pop *Population) Min() individual.Interface {
 
 // Max returns the most Resilent individual
 func (pop *Population) Max() individual.Interface {
-	var max, length = pop.Get(0), int(pop.Len())
-	for i := int(1); i < length; i++ {
+	var max, length = pop.Get(0), pop.Len()
+	for i := 1; i < length; i++ {
 		if pop.Get(i).Resilience() > max.Resilience() {
 			max = pop.Get(i)
 		}
