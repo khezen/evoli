@@ -21,3 +21,7 @@ func testProportionalToRank(t *testing.T) {
 func testProportionalToResilience(t *testing.T) {
 
 }
+
+func testSelecter(t *testing.T, s Interface) {
+
+}
