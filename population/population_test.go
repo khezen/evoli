@@ -63,7 +63,7 @@ func TestCap(t *testing.T) {
 	}
 }
 
-func testSetCap(t *testing.T) {
+func TestSetCap(t *testing.T) {
 	cases := []struct {
 		in, expected int
 	}{
@@ -84,7 +84,7 @@ func testSetCap(t *testing.T) {
 	}
 }
 
-func testTruncate(t *testing.T) {
+func TestTruncate(t *testing.T) {
 	var i1, i2, i3 = individual.New(0.2), individual.New(0.7), individual.New(1)
 	cases := []struct {
 		in       Population
@@ -111,7 +111,7 @@ func testTruncate(t *testing.T) {
 	}
 }
 
-func testAppend(t *testing.T) {
+func TestAppend(t *testing.T) {
 	var i1, i2, i3 = individual.New(0.2), individual.New(0.7), individual.New(1)
 	pop := Population{i2, i1}
 	pop.SetCap(10)
@@ -138,7 +138,7 @@ func testAppend(t *testing.T) {
 	}
 }
 
-func testAppendAll(t *testing.T) {
+func TestAppendAll(t *testing.T) {
 	var i1, i2, i3, i4 = individual.New(0.2), individual.New(0.7), individual.New(1), individual.New(42.42)
 	cases := []struct {
 		in, toAp, expected Population
@@ -164,31 +164,31 @@ func testAppendAll(t *testing.T) {
 	}
 }
 
-func testGet(t *testing.T) {
+func TestGet(t *testing.T) {
 
 }
 
-func testRemove(t *testing.T) {
+func TestRemove(t *testing.T) {
 
 }
 
-func testMax(t *testing.T) {
+func TestMax(t *testing.T) {
 
 }
 
-func testMin(t *testing.T) {
+func TestMin(t *testing.T) {
 
 }
 
-func testLen(t *testing.T) {
+func TestLen(t *testing.T) {
 
 }
 
-func testLess(t *testing.T) {
+func TestLess(t *testing.T) {
 
 }
 
-func testSwap(t *testing.T) {
+func TestSwap(t *testing.T) {
 
 }
 
