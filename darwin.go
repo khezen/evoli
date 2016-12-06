@@ -1,4 +1,4 @@
-package main
+package darwin
 
 import (
 	"math/rand"

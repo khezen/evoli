@@ -1,9 +1,5 @@
 package individual
 
-import (
-	"fmt"
-)
-
 // Interface is an interface for an individual
 type Interface interface {
 	Resilience() float32
@@ -14,8 +10,9 @@ type Interface interface {
 type Individual float32
 
 // New is the constructor for individuals
-func New(resilience float32) Individual {
-	return Individual(resilience)
+func New(resilience float32) *Individual {
+	indiv := Individual(resilience)
+	return &indiv
 }
 
 // Resilience returns the strength of a individual regarding to its environement. Higher is stronger.
@@ -24,10 +21,6 @@ func (indiv *Individual) Resilience() float32 {
 }
 
 // SetResilience set the strength of a individual regarding to its environement. Higher is stronger.
-func (indiv *Individual) SetResilience(resilience float32) error {
-	if resilience < 0 {
-		return fmt.Errorf("SetResilience(%float32): argument must be > 0", resilience)
-	}
+func (indiv *Individual) SetResilience(resilience float32) {
 	*indiv = Individual(resilience)
-	return nil
 }
