@@ -14,12 +14,13 @@ type Interface interface {
 	Cap() int
 	SetCap(int) error
 	Truncate(int) error
-	Append(individual.Interface)
-	AppendAll(Interface)
+	Append(individual.Interface) error
+	AppendAll(Interface) error
 	Get(int) (individual.Interface, error)
 	Remove(int) (individual.Interface, error)
 	Max() individual.Interface
 	Min() individual.Interface
+	PickCouple() (index1, index2 int)
 }
 
 // Population is a set of individuals in population genetics.
@@ -87,16 +88,18 @@ func (pop *Population) Truncate(length int) error {
 }
 
 // Append adds an individual to a population. If the populagtion has already reached its capacity, capacity is incremented.
-func (pop *Population) Append(indiv individual.Interface) {
+func (pop *Population) Append(indiv individual.Interface) error {
 	*pop = append(*pop, indiv)
+	return nil
 }
 
 // AppendAll adds all individuals from a population to a population. If the populagtion has already reached its capacity, capacity is incremented.
-func (pop *Population) AppendAll(externalPop Interface) {
+func (pop *Population) AppendAll(externalPop Interface) error {
 	for i := 0; i < externalPop.Len(); i++ {
 		indiv, _ := externalPop.Get(i)
 		pop.Append(indiv)
 	}
+	return nil
 }
 
 // Get returns the individual at index i
@@ -105,11 +108,11 @@ func (pop *Population) Get(i int) (individual.Interface, error) {
 }
 
 // Remove removes and returns the individual at index i
-func (pop *Population) Remove(i int) individual.Interface {
+func (pop *Population) Remove(i int) (individual.Interface, error) {
 	removed, _ := pop.Get(i)
 	new := (*pop)[0 : i-1]
 	*pop = append(new, (*pop)[i+1:pop.Len()-1]...)
-	return removed
+	return removed, nil
 }
 
 // Min returns the least Resilent individual

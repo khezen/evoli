@@ -85,11 +85,83 @@ func testSetCap(t *testing.T) {
 }
 
 func testTruncate(t *testing.T) {
-
+	var i1, i2, i3 = individual.New(0.2), individual.New(0.7), individual.New(1)
+	cases := []struct {
+		in       Population
+		size     int
+		expected Population
+	}{
+		{Population{i1, i2, i3}, 3, Population{i3, i2, i1}},
+		{Population{i1, i3, i2}, 4, Population{i3, i2, i1, nil}},
+		{Population{i3, i2, i1}, 2, Population{i3, i2}},
+		{Population{i3, i2, i1}, 0, Population{}},
+	}
+	for _, c := range cases {
+		c.in.Truncate(c.size)
+		for i := range c.in {
+			if c.in[i] != c.expected[i] {
+				t.Errorf(".Truncate(%v) => %v; expected = %v", c.size, c.in, c.expected)
+			}
+		}
+	}
+	pop := Population{i1, i2, i3}
+	err := pop.Truncate(-15)
+	if err == nil {
+		t.Errorf("expected != nil")
+	}
 }
 
 func testAppend(t *testing.T) {
+	var i1, i2, i3 = individual.New(0.2), individual.New(0.7), individual.New(1)
+	pop := Population{i2, i1}
+	pop.SetCap(10)
+	cases := []struct {
+		in       Population
+		indiv    individual.Interface
+		expected Population
+	}{
+		{Population{i1, i2}, i3, Population{i3, i2, i1}},
+		{Population{}, i2, Population{i2}},
+		{pop, i3, Population{i3, i2, i1}},
+	}
+	for _, c := range cases {
+		c.in.Append(c.indiv)
+		for i := range c.in {
+			if c.in[i] != c.expected[i] {
+				t.Errorf(".Append(%v) => %v; expected = %v", c.indiv, c.in, c.expected)
+			}
+		}
+	}
+	err := pop.Append(nil)
+	if err == nil {
+		t.Errorf("expected != nil")
+	}
+}
 
+func testAppendAll(t *testing.T) {
+	var i1, i2, i3, i4 = individual.New(0.2), individual.New(0.7), individual.New(1), individual.New(42.42)
+	cases := []struct {
+		in, toAp, expected Population
+	}{
+		{Population{i1, i2}, Population{i3}, Population{i1, i2, i3}},
+		{Population{}, Population{i1, i3}, Population{i1, i3}},
+		{Population{i1, i2}, Population{i3, i4}, Population{i1, i2, i3, i4}},
+		{Population{i4, i1}, Population{}, Population{i4, i1}},
+		{Population{}, Population{}, Population{}},
+	}
+	for _, c := range cases {
+		c.in.AppendAll(&c.toAp)
+		for i := range c.in {
+			if c.in[i] != c.expected[i] {
+				t.Errorf(".AppendAll(%v) => %v; expected = %v", c.toAp, c.in, c.expected)
+			}
+		}
+	}
+	pop := Population{i2, i1}
+	err := pop.AppendAll(nil)
+	if err == nil {
+		t.Errorf("expected != nil")
+	}
 }
 
 func testGet(t *testing.T) {
@@ -117,5 +189,9 @@ func testLess(t *testing.T) {
 }
 
 func testSwap(t *testing.T) {
+
+}
+
+func TestPickCouple(t *testing.T) {
 
 }
