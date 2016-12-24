@@ -40,16 +40,21 @@ func (pop *Population) Len() int {
 // Less reports whether the element with
 // index i should sort before the element with index j.
 func (pop *Population) Less(i, j int) bool {
-	indivi, _ := pop.Get(i)
-	indivj, _ := pop.Get(j)
+	indivi, erri := pop.Get(i)
+	indivj, errj := pop.Get(j)
+	if erri != nil || errj != nil {
+		return false
+	}
 	return indivi.Resilience() >= indivj.Resilience()
 }
 
 // Swap swaps the elements with indexes i and j.
 func (pop *Population) Swap(i, j int) {
-	tmp := (*pop)[i]
-	(*pop)[i] = (*pop)[j]
-	(*pop)[j] = tmp
+	if i != j && i >= 0 && j >= 0 && i < pop.Len() && j < pop.Len() {
+		tmp := (*pop)[i]
+		(*pop)[i] = (*pop)[j]
+		(*pop)[j] = tmp
+	}
 }
 
 // Sort sort the population
