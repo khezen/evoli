@@ -40,7 +40,7 @@ func testSelecter(t *testing.T, s Interface) {
 		{population.Population{}, 3, 0, 3},
 	}
 	for _, c := range cases {
-		newPop := s.Select(&c.in, c.survivalSize)
+		newPop, _ := s.Select(&c.in, c.survivalSize)
 		length, capacity := newPop.Len(), newPop.Cap()
 		if length != c.expectedLen {
 			t.Errorf("s.Select(%v, %v) returned %v which has a length of %v instead of %v", c.in, c.survivalSize, newPop, length, c.expectedLen)
@@ -49,5 +49,17 @@ func testSelecter(t *testing.T, s Interface) {
 			t.Errorf("s.Select(%v, %v) returned %v which has a capacity of %v instead of %v", c.in, c.survivalSize, newPop, capacity, c.expectedCap)
 		}
 	}
-	// error cases
+	pop := population.Population{i1, i2, i3}
+	_, err := s.Select(&pop, -1)
+	if err == nil {
+		t.Errorf("expected != nil")
+	}
+	_, err = s.Select(nil, 2)
+	if err == nil {
+		t.Errorf("expected != nil")
+	}
+	_, err = s.Select(nil, -1)
+	if err == nil {
+		t.Errorf("expected != nil")
+	}
 }

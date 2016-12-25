@@ -9,7 +9,7 @@ import (
 
 type proportionalToResilienceSelecter struct{}
 
-func (s proportionalToResilienceSelecter) Select(pop *population.Population, survivorsSize int) *population.Population {
+func (s proportionalToResilienceSelecter) Select(pop *population.Population, survivorsSize int) (*population.Population, error) {
 	newPop, _ := population.New(pop.Cap())
 	minResilience := pop.Min().Resilience()
 	totalScore := s.computeTotalScore(pop, minResilience)
@@ -24,7 +24,7 @@ func (s proportionalToResilienceSelecter) Select(pop *population.Population, sur
 			}
 		}
 	}
-	return newPop
+	return newPop, nil
 }
 
 func (s proportionalToResilienceSelecter) computeScore(indiv individual.Interface, minResilience float32) float32 {

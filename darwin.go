@@ -23,8 +23,8 @@ func New(s selecter.Interface, c individual.Crosser, m individual.Mutater, e ind
 
 // Generation takes a Population and produce a the new generation of this population
 func (l Lifecycle) Generation(pop *population.Population, survivorSizeForSelection int, mutationProbability float32) *population.Population {
-	l.evaluation(pop)
-	newPop := l.Selecter.Select(pop, survivorSizeForSelection)
+	newPop := l.evaluation(pop)
+	newPop, _ = l.Selecter.Select(pop, survivorSizeForSelection)
 	newPop = l.crossovers(pop, mutationProbability)
 	return newPop
 }

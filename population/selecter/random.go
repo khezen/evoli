@@ -8,13 +8,13 @@ import (
 
 type randomSelecter struct{}
 
-func (s randomSelecter) Select(pop *population.Population, survivorsSize int) *population.Population {
+func (s randomSelecter) Select(pop *population.Population, survivorsSize int) (*population.Population, error) {
 	size := pop.Len() - survivorsSize
 	for count := 0; count < size; {
 		pop.Remove(rand.Intn(pop.Len() - 1))
 		count++
 	}
-	return pop
+	return pop, nil
 }
 
 // NewRandomSelecter is the constrctor for truncation selecter
