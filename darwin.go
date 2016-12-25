@@ -32,23 +32,23 @@ func (l Lifecycle) Generation(pop *population.Population, survivorSizeForSelecti
 func (l Lifecycle) evaluation(pop *population.Population) *population.Population {
 	length := pop.Len()
 	for i := 0; i < length; i++ {
-		individual := pop.Get(i)
+		individual, _ := pop.Get(i)
 		individual.SetResilience(l.Evaluater.Evaluate(individual))
 	}
 	return pop
 }
 
 func (l Lifecycle) crossovers(pop *population.Population, mutationProbability float32) *population.Population {
-	newBorns := population.New(pop.Cap() - pop.Len())
+	newBorns, _ := population.New(pop.Cap() - pop.Len())
 	capacity := newBorns.Cap()
 	for newBorns.Len() <= capacity {
-		var i, j = pop.PickCouple()
-		newBorn := l.Crosser.Cross(pop.Get(i), pop.Get(j))
+		var _, indiv1, _, indiv2 = pop.PickCouple()
+		newBorn := l.Crosser.Cross(indiv1, indiv2)
 		if rand.Float32() <= mutationProbability {
 			newBorn = l.Mutater.Mutate(newBorn)
 		}
 		newBorns.Append(newBorn)
 	}
-	pop.AppendAll(&newBorns)
+	pop.AppendAll(newBorns)
 	return pop
 }

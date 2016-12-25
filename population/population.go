@@ -20,7 +20,7 @@ type Interface interface {
 	Remove(int) (individual.Interface, error)
 	Max() individual.Interface
 	Min() individual.Interface
-	PickCouple() (index1, index2 int)
+	PickCouple() (index1 int, indiv1 individual.Interface, index2 int, indiv2 individual.Interface)
 }
 
 // Population is a set of individuals in population genetics.
@@ -147,7 +147,7 @@ func (pop *Population) Max() individual.Interface {
 }
 
 // PickCouple returns the index of two randomly choosen individuals
-func (pop *Population) PickCouple() (index1, index2 int) {
+func (pop *Population) PickCouple() (index1 int, indiv1 individual.Interface, index2 int, indiv2 individual.Interface) {
 	var i, j = rand.Intn(pop.Len() - 1), rand.Intn(pop.Len() - 1)
 	if i == j {
 		switch i {
@@ -157,5 +157,7 @@ func (pop *Population) PickCouple() (index1, index2 int) {
 			j = i + 1
 		}
 	}
-	return i, j
+	indivi, _ := pop.Get(i)
+	indivj, _ := pop.Get(j)
+	return i, indivi, j, indivj
 }

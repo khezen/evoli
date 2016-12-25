@@ -3,7 +3,6 @@ package population
 import (
 	"testing"
 
-	"github.com/khezen/darwin/population"
 	"github.com/khezen/darwin/population/individual"
 )
 
@@ -308,11 +307,13 @@ func TestSwap(t *testing.T) {
 		{Population{i1, i2, i3}, 1000, -1, Population{i1, i2, i3}},
 	}
 	for _, c := range cases {
-		pop := population.New(c.in.Cap())
-		pop.AppendAll(c.in)
+		pop, _ := New(c.in.Cap())
+		pop.AppendAll(&c.in)
 		pop.Swap(c.i, c.j)
-		for i := range pop {
-			if pop[i] != c.expected[i] {
+		for i := range *pop {
+			indiv, _ := pop.Get(i)
+			expected, _ := c.expected.Get(i)
+			if indiv != expected {
 				t.Errorf("%v.Swap(%v, %v) resulted in %v instead of %v", c.in, c.i, c.j, pop, c.expected)
 				break
 			}
@@ -321,9 +322,9 @@ func TestSwap(t *testing.T) {
 }
 
 func TestPickCouple(t *testing.T) {
-	i1, i2, i3, i4, i5, i6 := Indvidual.New(1), Indvidual.New(2), Indvidual.New(3), Indvidual.New(4), Indvidual.New(5), Indvidual.New(6)
+	i1, i2, i3, i4, i5, i6 := individual.New(1), individual.New(2), individual.New(3), individual.New(4), individual.New(5), individual.New(6)
 	pop := Population{i1, i2, i3, i4, i5, i6}
-	index1, index2 := pop.PickCouple()
+	index1, _, index2, _ := pop.PickCouple()
 	if index1 < 0 || index1 >= pop.Len() || index2 < 0 || index2 >= pop.Len() {
 		t.Errorf("%v.PickCouple() returned indexes %v, %v which are out of bounds", pop, index1, index2)
 	}

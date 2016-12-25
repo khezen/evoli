@@ -9,22 +9,26 @@ import (
 type tournamentSelecter struct{}
 
 func (s tournamentSelecter) Select(pop *population.Population, survivorsSize int) *population.Population {
-	newPop := population.New(pop.Cap())
+	newPop, _ := population.New(pop.Cap())
 	for newPop.Len() <= survivorsSize {
 		switch pop.Len() {
 		case 1:
-			newPop.Append(pop.Remove(0))
+			indiv, _ := pop.Remove(0)
+			pop.Append(indiv)
 		default:
-			var i, j = pop.PickCouple()
+			var i, _, j, _ = pop.PickCouple()
 			survivorIndex := s.fightForYourLives(pop, i, j)
-			newPop.Append(pop.Remove(survivorIndex))
+			indiv, _ := pop.Remove(survivorIndex)
+			newPop.Append(indiv)
 		}
 	}
-	return &newPop
+	return newPop
 }
 
 func (s tournamentSelecter) fightForYourLives(pop *population.Population, index1 int, index2 int) (survivorIndex int) {
-	var r1, r2 = pop.Get(index1).Resilience(), pop.Get(index2).Resilience()
+	i1, _ := pop.Get(index1)
+	i2, _ := pop.Get(index2)
+	r1, r2 := i1.Resilience(), i2.Resilience()
 	total := r1 + r2
 	switch {
 	case rand.Float32() <= r1/total:

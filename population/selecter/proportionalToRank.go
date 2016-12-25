@@ -9,18 +9,20 @@ import (
 type proportionalToRankSelecter struct{}
 
 func (s proportionalToRankSelecter) Select(pop *population.Population, survivorsSize int) *population.Population {
-	var newPop, totalScore = population.New(pop.Cap()), s.computeTotalScore(pop)
+	newPop, _ := population.New(pop.Cap())
+	totalScore := s.computeTotalScore(pop)
 	pop.Sort()
 	for newPop.Len() < survivorsSize {
 		for i := 0; i < pop.Len(); i++ {
 			score := float32(pop.Len() - i)
 			if rand.Float32() <= score/totalScore {
-				newPop.Append(pop.Remove(i))
+				indiv, _ := pop.Remove(i)
+				newPop.Append(indiv)
 				totalScore -= score
 			}
 		}
 	}
-	return &newPop
+	return newPop
 }
 
 func (s proportionalToRankSelecter) computeTotalScore(pop *population.Population) float32 {
