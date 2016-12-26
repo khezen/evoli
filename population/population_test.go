@@ -332,3 +332,40 @@ func TestPickCouple(t *testing.T) {
 		t.Errorf("%v.PickCouple() returned indexes %v, %v which are equals", pop, index1, index2)
 	}
 }
+
+func TestContains(t *testing.T) {
+	i1, i2, i3 := individual.New(0.2), individual.New(0.7), individual.New(1)
+	cases := []struct {
+		in       Population
+		indiv    individual.Interface
+		expected bool
+	}{
+		{Population{i1, i2}, i1, true},
+		{Population{i1, i2}, i3, false},
+	}
+	for _, c := range cases {
+		contains := c.in.Contains(c.indiv)
+		if contains != c.expected {
+			t.Errorf("%v.Contains(%v) returned %v instead of %v", c.in, c.indiv, contains, c.expected)
+		}
+	}
+}
+
+func TestIndexOf(t *testing.T) {
+	i1, i2, i3 := individual.New(0.2), individual.New(0.7), individual.New(1)
+	cases := []struct {
+		in       Population
+		indiv    individual.Interface
+		expected int
+	}{
+		{Population{i1, i2}, i1, 0},
+		{Population{i1, i2}, i2, 1},
+		{Population{i1, i2}, i3, -1},
+	}
+	for _, c := range cases {
+		index, _ := c.in.IndexOf(c.indiv)
+		if index != c.expected {
+			t.Errorf("%v.Contains(%v) returned %v instead of %v", c.in, c.indiv, index, c.expected)
+		}
+	}
+}

@@ -54,10 +54,12 @@ func testSelecter(t *testing.T, s Interface) {
 	if err == nil {
 		t.Errorf("expected != nil")
 	}
+	pop = population.Population{i1, i2, i3}
 	_, err = s.Select(nil, 2)
 	if err == nil {
 		t.Errorf("expected != nil")
 	}
+	pop = population.Population{i1, i2, i3}
 	_, err = s.Select(nil, -1)
 	if err == nil {
 		t.Errorf("expected != nil")

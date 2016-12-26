@@ -4,6 +4,8 @@ import (
 	"math/rand"
 	"sort"
 
+	"fmt"
+
 	"github.com/khezen/darwin/population/individual"
 )
 
@@ -21,6 +23,8 @@ type Interface interface {
 	Max() individual.Interface
 	Min() individual.Interface
 	PickCouple() (index1 int, indiv1 individual.Interface, index2 int, indiv2 individual.Interface)
+	Contains(individual.Interface) bool
+	IndexOf(individual.Interface) (int, error)
 }
 
 // Population is a set of individuals in population genetics.
@@ -160,4 +164,25 @@ func (pop *Population) PickCouple() (index1 int, indiv1 individual.Interface, in
 	indivi, _ := pop.Get(i)
 	indivj, _ := pop.Get(j)
 	return i, indivi, j, indivj
+}
+
+// Contains return true if the specified individual is in the population
+func (pop *Population) Contains(indiv individual.Interface) bool {
+	_, err := pop.IndexOf(indiv)
+	switch {
+	case err != nil:
+		return false
+	default:
+		return true
+	}
+}
+
+// IndexOf returns the inde of the specified individual if it exists
+func (pop *Population) IndexOf(indiv individual.Interface) (int, error) {
+	for i, current := range *pop {
+		if current == indiv {
+			return i, nil
+		}
+	}
+	return -1, fmt.Errorf("individual %v not found in population %v", indiv, pop)
 }

@@ -8,6 +8,11 @@ import (
 	"github.com/khezen/darwin/population/selecter"
 )
 
+// Interface for genetic algorithm step
+type Interface interface {
+	Generation(pop *population.Population, survivorSizeForSelection int, mutationProbability float32) (**population.Population, error)
+}
+
 // Lifecycle is a genetic algorithm implementation
 type Lifecycle struct {
 	Selecter  selecter.Interface
@@ -17,16 +22,16 @@ type Lifecycle struct {
 }
 
 // New is the constructor for Lifecycle struct
-func New(s selecter.Interface, c individual.Crosser, m individual.Mutater, e individual.Evaluater) Lifecycle {
-	return Lifecycle{s, c, m, e}
+func New(s selecter.Interface, c individual.Crosser, m individual.Mutater, e individual.Evaluater) (Lifecycle, error) {
+	return Lifecycle{s, c, m, e}, nil
 }
 
 // Generation takes a Population and produce a the new generation of this population
-func (l Lifecycle) Generation(pop *population.Population, survivorSizeForSelection int, mutationProbability float32) *population.Population {
+func (l Lifecycle) Generation(pop *population.Population, survivorSizeForSelection int, mutationProbability float32) (*population.Population, error) {
 	newPop := l.evaluation(pop)
 	newPop, _ = l.Selecter.Select(pop, survivorSizeForSelection)
-	newPop = l.crossovers(pop, mutationProbability)
-	return newPop
+	newPop, _ = l.crossovers(pop, mutationProbability)
+	return newPop, nil
 }
 
 func (l Lifecycle) evaluation(pop *population.Population) *population.Population {
@@ -38,7 +43,7 @@ func (l Lifecycle) evaluation(pop *population.Population) *population.Population
 	return pop
 }
 
-func (l Lifecycle) crossovers(pop *population.Population, mutationProbability float32) *population.Population {
+func (l Lifecycle) crossovers(pop *population.Population, mutationProbability float32) (*population.Population, error) {
 	newBorns, _ := population.New(pop.Cap() - pop.Len())
 	capacity := newBorns.Cap()
 	for newBorns.Len() <= capacity {
@@ -50,5 +55,5 @@ func (l Lifecycle) crossovers(pop *population.Population, mutationProbability fl
 		newBorns.Append(newBorn)
 	}
 	pop.AppendAll(newBorns)
-	return pop
+	return pop, nil
 }
