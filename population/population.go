@@ -32,6 +32,10 @@ type Population []individual.Interface
 
 // New is population constructor
 func New(capacity int) (*Population, error) {
+	err := checkCap(capacity)
+	if err != nil {
+		return nil, err
+	}
 	pop := Population(make([]individual.Interface, 0, capacity))
 	return &pop, nil
 }
@@ -73,6 +77,10 @@ func (pop *Population) Cap() int {
 
 // SetCap set the resize the population capacity
 func (pop *Population) SetCap(newCap int) error {
+	err := checkCap(newCap)
+	if err != nil {
+		return err
+	}
 	currentCap := pop.Cap()
 	if newCap != currentCap {
 		tmp := *pop
@@ -90,7 +98,14 @@ func (pop *Population) SetCap(newCap int) error {
 
 // Truncate rduce population size to the given length
 func (pop *Population) Truncate(length int) error {
-	if length < pop.Len() {
+	err := checkLength(length)
+	switch {
+	case err != nil:
+		return err
+	case length == 0:
+		newPop, _ := New(0)
+		*pop = *newPop
+	case length < pop.Len():
 		*pop = (*pop)[0 : length-1]
 	}
 	return nil
@@ -98,26 +113,46 @@ func (pop *Population) Truncate(length int) error {
 
 // Append adds an individual to a population. If the populagtion has already reached its capacity, capacity is incremented.
 func (pop *Population) Append(indiv individual.Interface) error {
+	err := checkIndivNotNil(indiv)
+	if err != nil {
+		return err
+	}
 	*pop = append(*pop, indiv)
 	return nil
 }
 
 // AppendAll adds all individuals from a population to a population. If the populagtion has already reached its capacity, capacity is incremented.
-func (pop *Population) AppendAll(externalPop Interface) error {
+func (pop *Population) AppendAll(externalPop *Population) error {
+	err := checkPopNotNil(externalPop)
+	if err != nil {
+		return err
+	}
 	for i := 0; i < externalPop.Len(); i++ {
 		indiv, _ := externalPop.Get(i)
-		pop.Append(indiv)
+		err = checkIndivNotNil(indiv)
+		if err != nil {
+			return err
+		}
 	}
+	*pop = append(*pop, *externalPop...)
 	return nil
 }
 
 // Get returns the individual at index i
 func (pop *Population) Get(i int) (individual.Interface, error) {
+	err := checkIndex(i, pop.Len())
+	if err != nil {
+		return nil, err
+	}
 	return (*pop)[i], nil
 }
 
 // Remove removes and returns the individual at index i
 func (pop *Population) Remove(i int) (individual.Interface, error) {
+	err := checkIndex(i, pop.Len())
+	if err != nil {
+		return nil, err
+	}
 	removed, _ := pop.Get(i)
 	new := (*pop)[0 : i-1]
 	*pop = append(new, (*pop)[i+1:pop.Len()-1]...)
@@ -179,10 +214,58 @@ func (pop *Population) Contains(indiv individual.Interface) bool {
 
 // IndexOf returns the inde of the specified individual if it exists
 func (pop *Population) IndexOf(indiv individual.Interface) (int, error) {
+	err := checkIndivNotNil(indiv)
+	if err != nil {
+		return -1, err
+	}
 	for i, current := range *pop {
 		if current == indiv {
 			return i, nil
 		}
 	}
 	return -1, fmt.Errorf("individual %v not found in population %v", indiv, pop)
+}
+
+func checkPositive(value int, message string) error {
+	switch {
+	case value < 0:
+		return fmt.Errorf(message)
+	default:
+		return nil
+	}
+}
+
+func checkCap(cap int) error {
+	return checkPositive(cap, "capcity must be >= 0")
+}
+
+func checkLength(length int) error {
+	return checkPositive(length, "length must be >= 0")
+}
+
+func checkIndex(index, length int) error {
+	err := checkPositive(index, "index must be >= 0")
+	switch {
+	case err != nil:
+		return err
+	default:
+		if index >= length {
+			return fmt.Errorf("index must be < length")
+		}
+		return nil
+	}
+}
+
+func checkIndivNotNil(indiv individual.Interface) error {
+	if indiv == nil {
+		return fmt.Errorf("Nil pointer on individual")
+	}
+	return nil
+}
+
+func checkPopNotNil(pop *Population) error {
+	if pop == nil {
+		return fmt.Errorf("Nil pointer on population")
+	}
+	return nil
 }
