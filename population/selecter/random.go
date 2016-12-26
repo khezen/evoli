@@ -9,6 +9,10 @@ import (
 type randomSelecter struct{}
 
 func (s randomSelecter) Select(pop *population.Population, survivorsSize int) (*population.Population, error) {
+	err := checkParams(pop, survivorsSize)
+	if err != nil {
+		return nil, err
+	}
 	size := pop.Len() - survivorsSize
 	for count := 0; count < size; {
 		pop.Remove(rand.Intn(pop.Len() - 1))

@@ -37,7 +37,7 @@ func TestSort(t *testing.T) {
 	}
 	for _, c := range cases {
 		c.in.Sort()
-		for i := range c.in {
+		for i := range c.expected {
 			if c.in[i] != c.expected[i] {
 				t.Errorf(".Sort() => %v; expected = %v", c.in, c.expected)
 				break
@@ -96,11 +96,12 @@ func TestTruncate(t *testing.T) {
 		{Population{i1, i3, i2}, 4, Population{i3, i2, i1}},
 		{Population{i3, i2, i1}, 2, Population{i3, i2}},
 		{Population{i3, i2, i1}, 0, Population{}},
+		{Population{i1}, 3, Population{i1}},
 	}
 	for _, c := range cases {
 		c.in.Truncate(c.size)
-		for i := range c.in {
-			if c.in[i] != c.expected[i] {
+		for i := range c.expected {
+			if !c.expected.Contains(c.in[i]) {
 				t.Errorf(".Truncate(%v) => %v; expected = %v", c.size, c.in, c.expected)
 				break
 			}
@@ -126,7 +127,7 @@ func TestAppend(t *testing.T) {
 	}
 	for _, c := range cases {
 		c.in.Append(c.indiv)
-		for i := range c.in {
+		for i := range c.expected {
 			if c.in[i] != c.expected[i] {
 				t.Errorf(".Append(%v) => %v; expected = %v", c.indiv, c.in, c.expected)
 				break

@@ -10,6 +10,10 @@ import (
 type proportionalToResilienceSelecter struct{}
 
 func (s proportionalToResilienceSelecter) Select(pop *population.Population, survivorsSize int) (*population.Population, error) {
+	err := checkParams(pop, survivorsSize)
+	if err != nil {
+		return nil, err
+	}
 	newPop, _ := population.New(pop.Cap())
 	minResilience := pop.Min().Resilience()
 	totalScore := s.computeTotalScore(pop, minResilience)

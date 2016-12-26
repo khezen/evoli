@@ -5,8 +5,12 @@ import "github.com/khezen/darwin/population"
 type truncationSelecter struct{}
 
 func (s truncationSelecter) Select(pop *population.Population, survivorsSize int) (*population.Population, error) {
+	err := checkParams(pop, survivorsSize)
+	if err != nil {
+		return nil, err
+	}
 	pop.Sort()
-	pop.Truncate(survivorsSize - 1)
+	pop.Truncate(survivorsSize)
 	return pop, nil
 }
 

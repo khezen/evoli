@@ -9,6 +9,10 @@ import (
 type tournamentSelecter struct{}
 
 func (s tournamentSelecter) Select(pop *population.Population, survivorsSize int) (*population.Population, error) {
+	err := checkParams(pop, survivorsSize)
+	if err != nil {
+		return nil, err
+	}
 	newPop, _ := population.New(pop.Cap())
 	for newPop.Len() <= survivorsSize {
 		switch pop.Len() {

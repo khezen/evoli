@@ -99,18 +99,18 @@ func (pop *Population) SetCap(newCap int) error {
 // Truncate reduce population size to the given length
 func (pop *Population) Truncate(length int) error {
 	err := checkLength(length)
-	switch {
-	case err != nil:
+	if err != nil {
 		return err
+	}
+	switch {
 	case length == 0:
 		newPop, _ := New(0)
 		*pop = *newPop
 	case length < pop.Len():
 		*pop = (*pop)[0:length]
-
 	case length > pop.Cap():
 		newPop, _ := New(length)
-		copy(*pop, *newPop)
+		newPop.AppendAll(pop)
 		*pop = *newPop
 	}
 	return nil
@@ -118,7 +118,7 @@ func (pop *Population) Truncate(length int) error {
 
 // Append adds an individual to a population. If the populagtion has already reached its capacity, capacity is incremented.
 func (pop *Population) Append(indiv individual.Interface) error {
-	err := checkIndivNotNil(indiv)
+	err := individual.CheckIndivNotNil(indiv)
 	if err != nil {
 		return err
 	}
@@ -128,13 +128,13 @@ func (pop *Population) Append(indiv individual.Interface) error {
 
 // AppendAll adds all individuals from a population to a population. If the populagtion has already reached its capacity, capacity is incremented.
 func (pop *Population) AppendAll(externalPop *Population) error {
-	err := checkPopNotNil(externalPop)
+	err := CheckPopNotNil(externalPop)
 	if err != nil {
 		return err
 	}
 	for i := 0; i < externalPop.Len(); i++ {
 		indiv, _ := externalPop.Get(i)
-		err = checkIndivNotNil(indiv)
+		err = individual.CheckIndivNotNil(indiv)
 		if err != nil {
 			return err
 		}
@@ -219,7 +219,7 @@ func (pop *Population) Contains(indiv individual.Interface) bool {
 
 // IndexOf returns the inde of the specified individual if it exists
 func (pop *Population) IndexOf(indiv individual.Interface) (int, error) {
-	err := checkIndivNotNil(indiv)
+	err := individual.CheckIndivNotNil(indiv)
 	if err != nil {
 		return -1, err
 	}
@@ -231,7 +231,8 @@ func (pop *Population) IndexOf(indiv individual.Interface) (int, error) {
 	return -1, fmt.Errorf("individual %v not found in population %v", indiv, pop)
 }
 
-func checkPositive(value int, message string) error {
+// CheckPositive check that an int is positve
+func CheckPositive(value int, message string) error {
 	switch {
 	case value < 0:
 		return fmt.Errorf(message)
@@ -241,15 +242,15 @@ func checkPositive(value int, message string) error {
 }
 
 func checkCap(cap int) error {
-	return checkPositive(cap, "capcity must be >= 0")
+	return CheckPositive(cap, "capcity must be >= 0")
 }
 
 func checkLength(length int) error {
-	return checkPositive(length, "length must be >= 0")
+	return CheckPositive(length, "length must be >= 0")
 }
 
 func checkIndex(index, length int) error {
-	err := checkPositive(index, "index must be >= 0")
+	err := CheckPositive(index, "index must be >= 0")
 	switch {
 	case err != nil:
 		return err
@@ -261,14 +262,8 @@ func checkIndex(index, length int) error {
 	}
 }
 
-func checkIndivNotNil(indiv individual.Interface) error {
-	if indiv == nil {
-		return fmt.Errorf("Nil pointer on individual")
-	}
-	return nil
-}
-
-func checkPopNotNil(pop *Population) error {
+//CheckPopNotNil checks that population is not nil
+func CheckPopNotNil(pop *Population) error {
 	if pop == nil {
 		return fmt.Errorf("Nil pointer on population")
 	}
