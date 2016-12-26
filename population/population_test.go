@@ -93,7 +93,7 @@ func TestTruncate(t *testing.T) {
 		expected Population
 	}{
 		{Population{i1, i2, i3}, 3, Population{i1, i2, i3}},
-		{Population{i1, i3, i2}, 4, Population{i3, i2, i1, nil}},
+		{Population{i1, i3, i2}, 4, Population{i3, i2, i1}},
 		{Population{i3, i2, i1}, 2, Population{i3, i2}},
 		{Population{i3, i2, i1}, 0, Population{}},
 	}
@@ -153,14 +153,14 @@ func TestAppendAll(t *testing.T) {
 	}
 	for _, c := range cases {
 		c.in.AppendAll(&c.toAp)
-		for i := range c.in {
+		for i := range c.expected {
 			if c.in[i] != c.expected[i] {
 				t.Errorf(".AppendAll(%v) => %v; expected = %v", c.toAp, c.in, c.expected)
 				break
 			}
 		}
 	}
-	pop := Population{i2, i1}
+	pop := &Population{i2, i1}
 	err := pop.AppendAll(nil)
 	if err == nil {
 		t.Errorf("expected != nil")
