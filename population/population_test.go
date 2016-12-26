@@ -92,7 +92,7 @@ func TestTruncate(t *testing.T) {
 		size     int
 		expected Population
 	}{
-		{Population{i1, i2, i3}, 3, Population{i3, i2, i1}},
+		{Population{i1, i2, i3}, 3, Population{i1, i2, i3}},
 		{Population{i1, i3, i2}, 4, Population{i3, i2, i1, nil}},
 		{Population{i3, i2, i1}, 2, Population{i3, i2}},
 		{Population{i3, i2, i1}, 0, Population{}},
@@ -188,7 +188,6 @@ func TestGet(t *testing.T) {
 func TestRemove(t *testing.T) {
 	i1, i2, i3 := individual.New(0.2), individual.New(0.7), individual.New(1)
 	pop := Population{i2, i1, i3}
-
 	_, err := pop.Remove(-1000)
 	if err == nil {
 		t.Errorf("expected != nil")
@@ -255,13 +254,13 @@ func TestLess(t *testing.T) {
 		expected bool
 	}{
 		{Population{i1, i2, i3}, 0, 0, true},
-		{Population{i1, i2, i3}, 0, 1, true},
-		{Population{i1, i2, i3}, 0, 2, true},
-		{Population{i1, i2, i3}, 1, 0, false},
+		{Population{i1, i2, i3}, 0, 1, false},
+		{Population{i1, i2, i3}, 0, 2, false},
+		{Population{i1, i2, i3}, 1, 0, true},
 		{Population{i1, i2, i3}, 1, 1, true},
-		{Population{i1, i2, i3}, 1, 2, true},
-		{Population{i1, i2, i3}, 2, 0, false},
-		{Population{i1, i2, i3}, 2, 1, false},
+		{Population{i1, i2, i3}, 1, 2, false},
+		{Population{i1, i2, i3}, 2, 0, true},
+		{Population{i1, i2, i3}, 2, 1, true},
 		{Population{i1, i2, i3}, 2, 2, true},
 		{Population{i1, i2, i3}, -1, 0, false},
 		{Population{i1, i2, i3}, 0, -1, false},
@@ -293,7 +292,7 @@ func TestSwap(t *testing.T) {
 		{Population{i1, i2, i3}, 0, 2, Population{i3, i2, i1}},
 		{Population{i1, i2, i3}, 1, 0, Population{i2, i1, i3}},
 		{Population{i1, i2, i3}, 1, 1, Population{i1, i2, i3}},
-		{Population{i1, i2, i3}, 1, 2, Population{i1, i2, i3}},
+		{Population{i1, i2, i3}, 1, 2, Population{i1, i3, i2}},
 		{Population{i1, i2, i3}, 2, 0, Population{i3, i2, i1}},
 		{Population{i1, i2, i3}, 2, 1, Population{i1, i3, i2}},
 		{Population{i1, i2, i3}, 2, 2, Population{i1, i2, i3}},

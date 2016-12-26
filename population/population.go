@@ -96,7 +96,7 @@ func (pop *Population) SetCap(newCap int) error {
 	return nil
 }
 
-// Truncate rduce population size to the given length
+// Truncate reduce population size to the given length
 func (pop *Population) Truncate(length int) error {
 	err := checkLength(length)
 	switch {
@@ -106,7 +106,12 @@ func (pop *Population) Truncate(length int) error {
 		newPop, _ := New(0)
 		*pop = *newPop
 	case length < pop.Len():
-		*pop = (*pop)[0 : length-1]
+		*pop = (*pop)[0:length]
+
+	case length > pop.Cap():
+		newPop, _ := New(length)
+		copy(*pop, *newPop)
+		*pop = *newPop
 	}
 	return nil
 }
@@ -154,8 +159,8 @@ func (pop *Population) Remove(i int) (individual.Interface, error) {
 		return nil, err
 	}
 	removed, _ := pop.Get(i)
-	new := (*pop)[0 : i-1]
-	*pop = append(new, (*pop)[i+1:pop.Len()-1]...)
+	new := (*pop)[0:i]
+	*pop = append(new, (*pop)[i+1:pop.Len()]...)
 	return removed, nil
 }
 
