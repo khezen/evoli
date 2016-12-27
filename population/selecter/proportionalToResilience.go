@@ -14,6 +14,9 @@ func (s proportionalToResilienceSelecter) Select(pop *population.Population, sur
 	if err != nil {
 		return nil, err
 	}
+	if survivorsSize >= pop.Len() {
+		return pop, nil
+	}
 	newPop, _ := population.New(pop.Cap())
 	minResilience := pop.Min().Resilience()
 	totalScore := s.computeTotalScore(pop, minResilience)

@@ -13,10 +13,13 @@ func (s tournamentSelecter) Select(pop *population.Population, survivorsSize int
 	if err != nil {
 		return nil, err
 	}
+	if survivorsSize >= pop.Len() {
+		return pop, nil
+	}
 	newPop, _ := population.New(pop.Cap())
-	for newPop.Len() <= survivorsSize {
-		switch pop.Len() {
-		case 1:
+	for newPop.Len() < survivorsSize {
+		switch {
+		case pop.Len() == 1:
 			indiv, _ := pop.Remove(0)
 			pop.Append(indiv)
 		default:

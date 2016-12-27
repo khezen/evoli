@@ -16,5 +16,8 @@ func checkParams(pop *population.Population, survivorsSize int) error {
 	if err != nil {
 		return err
 	}
+	if survivorsSize > pop.Cap() {
+		pop.SetCap(survivorsSize)
+	}
 	return nil
 }

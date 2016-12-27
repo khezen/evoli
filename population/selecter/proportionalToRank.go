@@ -13,6 +13,9 @@ func (s proportionalToRankSelecter) Select(pop *population.Population, survivors
 	if err != nil {
 		return nil, err
 	}
+	if survivorsSize >= pop.Len() {
+		return pop, nil
+	}
 	newPop, _ := population.New(pop.Cap())
 	totalScore := s.computeTotalScore(pop)
 	pop.Sort()
@@ -31,7 +34,7 @@ func (s proportionalToRankSelecter) Select(pop *population.Population, survivors
 
 func (s proportionalToRankSelecter) computeTotalScore(pop *population.Population) float32 {
 	n := float32(pop.Len())
-	return 1 / 2 * n * (n + 1) // 1+2+3+...+n
+	return n * (n + 1) / 2 // 1+2+3+...+n
 }
 
 // NewProportionalToRankSelecter is the constrctor for truncation selecter
