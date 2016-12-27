@@ -118,7 +118,8 @@ func (pop *Population) Truncate(length int) error {
 
 // Append adds an individual to a population. If the populagtion has already reached its capacity, capacity is incremented.
 func (pop *Population) Append(indiv individual.Interface) error {
-	err := individual.CheckIndivNotNil(indiv)
+	fmt.Printf("%v", indiv)
+	err := checkIndivNotNil(indiv)
 	if err != nil {
 		return err
 	}
@@ -134,7 +135,7 @@ func (pop *Population) AppendAll(externalPop *Population) error {
 	}
 	for i := 0; i < externalPop.Len(); i++ {
 		indiv, _ := externalPop.Get(i)
-		err = individual.CheckIndivNotNil(indiv)
+		err = checkIndivNotNil(indiv)
 		if err != nil {
 			return err
 		}
@@ -219,7 +220,7 @@ func (pop *Population) Contains(indiv individual.Interface) bool {
 
 // IndexOf returns the inde of the specified individual if it exists
 func (pop *Population) IndexOf(indiv individual.Interface) (int, error) {
-	err := individual.CheckIndivNotNil(indiv)
+	err := checkIndivNotNil(indiv)
 	if err != nil {
 		return -1, err
 	}
@@ -264,8 +265,15 @@ func checkIndex(index, length int) error {
 
 //CheckPopNotNil checks that population is not nil
 func CheckPopNotNil(pop *Population) error {
-	if pop == nil {
+	if (*Population)(pop) == (*Population)(nil) {
 		return fmt.Errorf("Nil pointer on population")
+	}
+	return nil
+}
+
+func checkIndivNotNil(indiv individual.Interface) error {
+	if indiv == nil {
+		return fmt.Errorf("Nil pointer on individual")
 	}
 	return nil
 }

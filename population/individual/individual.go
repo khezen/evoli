@@ -1,7 +1,5 @@
 package individual
 
-import "fmt"
-
 // Interface is an interface for an individual
 type Interface interface {
 	Resilience() float32
@@ -25,12 +23,4 @@ func (indiv *Individual) Resilience() float32 {
 // SetResilience set the strength of a individual regarding to its environement. Higher is stronger.
 func (indiv *Individual) SetResilience(resilience float32) {
 	*indiv = Individual(resilience)
-}
-
-// CheckIndivNotNil checks that individual is not nil
-func CheckIndivNotNil(indiv Interface) error {
-	if indiv == nil {
-		return fmt.Errorf("Nil pointer on individual")
-	}
-	return nil
 }
