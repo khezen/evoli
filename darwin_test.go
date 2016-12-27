@@ -56,11 +56,13 @@ func TestNew(t *testing.T) {
 func TestGeneration(t *testing.T) {
 	i1, i2, i3, i4, i5, i6 := individual.New(1), individual.New(2), individual.New(3), individual.New(4), individual.New(5), individual.New(6)
 	pop := population.Population{i1, i2, i3, i4, i5, i6}
+	cpy, _ := population.New(pop.Cap())
+	cpy.AppendAll(&pop)
 	lifecycle, _ := New(selecter.NewTruncationSelecter(), crosserMock{}, mutaterMock{}, evaluaterMock{})
-	newPop, _ := lifecycle.Generation(&pop, 3, 0.5)
+	newPop, _ := lifecycle.Generation(&pop, 5, 0.5)
 	isNewPopDifferent := false
 	for _, indiv := range *newPop {
-		if !pop.Contains(indiv) {
+		if !cpy.Contains(indiv) {
 			isNewPopDifferent = true
 			break
 		}
@@ -69,17 +71,17 @@ func TestGeneration(t *testing.T) {
 		t.Errorf("the new Generation should be different from the previous one")
 	}
 	errorCases := []struct {
-		pop          population.Population
+		pop          *population.Population
 		survivorSize int
 		mutationProb float32
 	}{
 		{nil, 2, 0.2},
-		{population.Population{i1, i2, i3}, -10, 0.2},
-		{population.Population{i1, i2, i3}, 2, 1.2},
-		{population.Population{i1, i2, i3}, 2, -0.2},
+		{&population.Population{i1, i2, i3}, -10, 0.2},
+		{&population.Population{i1, i2, i3}, 2, 1.2},
+		{&population.Population{i1, i2, i3}, 2, -0.2},
 	}
 	for _, c := range errorCases {
-		_, err := lifecycle.Generation(&c.pop, c.survivorSize, c.mutationProb)
+		_, err := lifecycle.Generation(c.pop, c.survivorSize, c.mutationProb)
 		if err == nil {
 			t.Errorf("expected != nil")
 		}

@@ -23,7 +23,7 @@ func (s tournamentSelecter) Select(pop *population.Population, survivorsSize int
 			indiv, _ := pop.Remove(0)
 			pop.Append(indiv)
 		default:
-			var i, _, j, _ = pop.PickCouple()
+			var i, _, j, _, _ = pop.PickCouple()
 			survivorIndex := s.fightForYourLives(pop, i, j)
 			indiv, _ := pop.Remove(survivorIndex)
 			newPop.Append(indiv)

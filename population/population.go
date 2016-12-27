@@ -118,7 +118,6 @@ func (pop *Population) Truncate(length int) error {
 
 // Append adds an individual to a population. If the populagtion has already reached its capacity, capacity is incremented.
 func (pop *Population) Append(indiv individual.Interface) error {
-	fmt.Printf("%v", indiv)
 	err := checkIndivNotNil(indiv)
 	if err != nil {
 		return err
@@ -192,7 +191,10 @@ func (pop *Population) Max() individual.Interface {
 }
 
 // PickCouple returns the index of two randomly choosen individuals
-func (pop *Population) PickCouple() (index1 int, indiv1 individual.Interface, index2 int, indiv2 individual.Interface) {
+func (pop *Population) PickCouple() (int, individual.Interface, int, individual.Interface, error) {
+	if pop.Len() < 2 {
+		return -1, nil, -1, nil, fmt.Errorf("pop must contains at least 2 individuals to pick a couple")
+	}
 	var i, j = rand.Intn(pop.Len() - 1), rand.Intn(pop.Len() - 1)
 	if i == j {
 		switch i {
@@ -204,7 +206,7 @@ func (pop *Population) PickCouple() (index1 int, indiv1 individual.Interface, in
 	}
 	indivi, _ := pop.Get(i)
 	indivj, _ := pop.Get(j)
-	return i, indivi, j, indivj
+	return i, indivi, j, indivj, nil
 }
 
 // Contains return true if the specified individual is in the population
@@ -232,26 +234,26 @@ func (pop *Population) IndexOf(indiv individual.Interface) (int, error) {
 	return -1, fmt.Errorf("individual %v not found in population %v", indiv, pop)
 }
 
-// CheckPositive check that an int is positve
-func CheckPositive(value int, message string) error {
+// CheckSuperior check that an int is positve
+func CheckSuperior(value int, threshold int, label string) error {
 	switch {
-	case value < 0:
-		return fmt.Errorf(message)
+	case value < threshold:
+		return fmt.Errorf("%v must be >= %v", label, threshold)
 	default:
 		return nil
 	}
 }
 
 func checkCap(cap int) error {
-	return CheckPositive(cap, "capcity must be >= 0")
+	return CheckSuperior(cap, 0, "capcity")
 }
 
 func checkLength(length int) error {
-	return CheckPositive(length, "length must be >= 0")
+	return CheckSuperior(length, 0, "length")
 }
 
 func checkIndex(index, length int) error {
-	err := CheckPositive(index, "index must be >= 0")
+	err := CheckSuperior(index, 0, "index")
 	switch {
 	case err != nil:
 		return err

@@ -324,12 +324,17 @@ func TestSwap(t *testing.T) {
 func TestPickCouple(t *testing.T) {
 	i1, i2, i3, i4, i5, i6 := individual.New(1), individual.New(2), individual.New(3), individual.New(4), individual.New(5), individual.New(6)
 	pop := Population{i1, i2, i3, i4, i5, i6}
-	index1, _, index2, _ := pop.PickCouple()
+	index1, _, index2, _, _ := pop.PickCouple()
 	if index1 < 0 || index1 >= pop.Len() || index2 < 0 || index2 >= pop.Len() {
 		t.Errorf("%v.PickCouple() returned indexes %v, %v which are out of bounds", pop, index1, index2)
 	}
 	if index1 == index2 {
 		t.Errorf("%v.PickCouple() returned indexes %v, %v which are equals", pop, index1, index2)
+	}
+	pop = Population{i1}
+	_, _, _, _, err := pop.PickCouple()
+	if err == nil {
+		t.Errorf("expected err != nil")
 	}
 }
 
@@ -390,7 +395,7 @@ func TestCheckPopNil(t *testing.T) {
 	}
 }
 
-func TestCheckPositive(t *testing.T) {
+func TestCheckSuperior(t *testing.T) {
 	cases := []struct {
 		in         int
 		shouldFail bool
@@ -399,7 +404,7 @@ func TestCheckPositive(t *testing.T) {
 		{-1000, true},
 	}
 	for _, c := range cases {
-		err := CheckPositive(c.in, "")
+		err := CheckSuperior(c.in, 0, "")
 		if c.shouldFail && err == nil {
 			t.Errorf("expected err != nil")
 		}

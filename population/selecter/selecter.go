@@ -12,7 +12,7 @@ func checkParams(pop *population.Population, survivorsSize int) error {
 	if err != nil {
 		return err
 	}
-	err = population.CheckPositive(survivorsSize, "survivorSize must be >= 0")
+	err = population.CheckSuperior(survivorsSize, 2, "survivorSize")
 	if err != nil {
 		return err
 	}
