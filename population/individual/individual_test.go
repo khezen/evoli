@@ -36,3 +36,22 @@ func TestResilience(t *testing.T) {
 		}
 	}
 }
+
+func TestCheckIndivNil(t *testing.T) {
+	cases := []struct {
+		in         *Individual
+		shouldFail bool
+	}{
+		{New(0), false},
+		{nil, true},
+	}
+	for _, c := range cases {
+		err := CheckIndivNotNil(c.in)
+		if c.shouldFail && err == nil {
+			t.Errorf("expected err != nil")
+		}
+		if !c.shouldFail && err != nil {
+			t.Error("expected err == nil")
+		}
+	}
+}
