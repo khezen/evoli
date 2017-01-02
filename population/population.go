@@ -22,7 +22,7 @@ type Interface interface {
 	Remove(int) (individual.Interface, error)
 	Max() individual.Interface
 	Min() individual.Interface
-	PickCouple() (index1 int, indiv1 individual.Interface, index2 int, indiv2 individual.Interface)
+	PickCouple() (index1 int, indiv1 individual.Interface, index2 int, indiv2 individual.Interface, err error)
 	Contains(individual.Interface) bool
 	IndexOf(individual.Interface) (int, error)
 }
