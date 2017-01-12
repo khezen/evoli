@@ -18,12 +18,12 @@ func (s proportionalToResilienceSelecter) Select(pop *population.Population, sur
 		return pop, nil
 	}
 	newPop, _ := population.New(pop.Cap())
-	minResilience := pop.Min().Resilience()
-	totalScore := s.computeTotalScore(pop, minResilience)
+	offset := s.computeOffset(pop)
+	totalScore := s.computeTotalScore(pop, offset)
 	for newPop.Len() < survivorsSize {
 		for i := 0; i < pop.Len(); i++ {
 			indiv, _ := pop.Get(i)
-			score := s.computeScore(indiv, minResilience)
+			score := s.computeScore(indiv, offset)
 			if rand.Float32() <= score/totalScore {
 				pop.Remove(i)
 				newPop.Append(indiv)
@@ -34,17 +34,36 @@ func (s proportionalToResilienceSelecter) Select(pop *population.Population, sur
 	return newPop, nil
 }
 
-func (s proportionalToResilienceSelecter) computeScore(indiv individual.Interface, minResilience float32) float32 {
-	return indiv.Resilience() - minResilience + 1
+func (s proportionalToResilienceSelecter) computeScore(indiv individual.Interface, offset float32) float32 {
+	return indiv.Resilience() + offset
 }
 
-func (s proportionalToResilienceSelecter) computeTotalScore(pop *population.Population, minResilience float32) float32 {
+func (s proportionalToResilienceSelecter) computeTotalScore(pop *population.Population, offset float32) float32 {
 	var length, totalScore = pop.Len(), float32(0)
 	for i := 0; i < length; i++ {
 		indiv, _ := pop.Get(i)
-		totalScore += s.computeScore(indiv, minResilience)
+		totalScore += s.computeScore(indiv, offset)
 	}
 	return totalScore
+}
+
+func (s proportionalToResilienceSelecter) computeOffset(pop *population.Population) float32 {
+	min := pop.Min().Resilience()
+	max := pop.Max().Resilience()
+	var offset float32
+	switch {
+	case min < 0:
+		offset += -min
+	case min > 0:
+		offset += min
+	}
+	switch {
+	case max < 0:
+		offset += -max
+	case max > 0:
+		offset += max
+	}
+	return offset
 }
 
 // NewProportionalToResilienceSelecter is the constrctor for truncation selecter

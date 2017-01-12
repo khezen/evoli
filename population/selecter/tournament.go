@@ -37,6 +37,20 @@ func (s tournamentSelecter) fightForYourLives(pop *population.Population, index1
 	i2, _ := pop.Get(index2)
 	r1, r2 := i1.Resilience(), i2.Resilience()
 
+	offset := s.computeOffset(r1, r2)
+	r1 += offset
+	r2 += offset
+	total := r1 + r2
+
+	switch {
+	case rand.Float32() <= r1/total:
+		return index1
+	default:
+		return index2
+	}
+}
+
+func (s tournamentSelecter) computeOffset(r1, r2 float32) float32 {
 	var offset float32
 	switch {
 	case r1 < 0:
@@ -50,16 +64,7 @@ func (s tournamentSelecter) fightForYourLives(pop *population.Population, index1
 	case r2 > 0:
 		offset += r2
 	}
-	r1 += offset
-	r2 += offset
-	total := r1 + r2
-
-	switch {
-	case rand.Float32() <= r1/total:
-		return index1
-	default:
-		return index2
-	}
+	return offset
 }
 
 // NewTournamentSelecter is the constrctor for truncation selecter
