@@ -36,7 +36,24 @@ func (s tournamentSelecter) fightForYourLives(pop *population.Population, index1
 	i1, _ := pop.Get(index1)
 	i2, _ := pop.Get(index2)
 	r1, r2 := i1.Resilience(), i2.Resilience()
+
+	var offset float32
+	switch {
+	case r1 < 0:
+		offset += -r1
+	case r1 > 0:
+		offset += r1
+	}
+	switch {
+	case r2 < 0:
+		offset += -r2
+	case r2 > 0:
+		offset += r2
+	}
+	r1 += offset
+	r2 += offset
 	total := r1 + r2
+
 	switch {
 	case rand.Float32() <= r1/total:
 		return index1
