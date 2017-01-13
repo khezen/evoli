@@ -225,6 +225,15 @@ func TestMin(t *testing.T) {
 	}
 }
 
+func TestExtremums(t *testing.T) {
+	i1, i2, i3 := individual.New(0.2), individual.New(0.7), individual.New(1)
+	pop := Population{i2, i1, i3}
+	min, max := pop.Extremums()
+	if min != i1 || max != i3 {
+		t.Errorf("%v.Extremums() returned (%v, %v) instead of (%v, %v)", pop, min, max, i1, i3)
+	}
+}
+
 func TestLen(t *testing.T) {
 	i1, i2, i3 := individual.New(0.2), individual.New(0.7), individual.New(1)
 	cases := []struct {
