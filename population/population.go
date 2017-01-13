@@ -2,6 +2,7 @@ package population
 
 import (
 	"math/rand"
+	"reflect"
 	"sort"
 
 	"fmt"
@@ -22,6 +23,7 @@ type Interface interface {
 	Remove(int) (individual.Interface, error)
 	Max() individual.Interface
 	Min() individual.Interface
+	Extremums() (individual.Interface, individual.Interface)
 	PickCouple() (index1 int, indiv1 individual.Interface, index2 int, indiv2 individual.Interface, err error)
 	Contains(individual.Interface) bool
 	IndexOf(individual.Interface) (int, error)
@@ -118,7 +120,7 @@ func (pop *Population) Truncate(length int) error {
 
 // Append adds an individual to a population. If the populagtion has already reached its capacity, capacity is incremented.
 func (pop *Population) Append(indiv individual.Interface) error {
-	err := checkIndivNotNil(indiv)
+	err := individual.CheckIndivNotNil(indiv)
 	if err != nil {
 		return err
 	}
@@ -127,19 +129,22 @@ func (pop *Population) Append(indiv individual.Interface) error {
 }
 
 // AppendAll adds all individuals from a population to a population. If the populagtion has already reached its capacity, capacity is incremented.
-func (pop *Population) AppendAll(externalPop *Population) error {
+func (pop *Population) AppendAll(externalPop Interface) error {
 	err := CheckPopNotNil(externalPop)
 	if err != nil {
 		return err
 	}
 	for i := 0; i < externalPop.Len(); i++ {
 		indiv, _ := externalPop.Get(i)
-		err = checkIndivNotNil(indiv)
+		err = individual.CheckIndivNotNil(indiv)
 		if err != nil {
 			return err
 		}
 	}
-	*pop = append(*pop, *externalPop...)
+	for i := 0; i < externalPop.Len(); i++ {
+		indiv, _ := externalPop.Get(i)
+		pop.Append(indiv)
+	}
 	return nil
 }
 
@@ -166,28 +171,31 @@ func (pop *Population) Remove(i int) (individual.Interface, error) {
 
 // Min returns the least Resilent individual
 func (pop *Population) Min() individual.Interface {
-	min, _ := pop.Get(0)
-	length := pop.Len()
-	for i := 1; i < length; i++ {
-		indiv, _ := pop.Get(i)
-		if indiv.Resilience() < min.Resilience() {
-			min, _ = pop.Get(i)
-		}
-	}
+	min, _ := pop.Extremums()
 	return min
 }
 
 // Max returns the most Resilent individual
 func (pop *Population) Max() individual.Interface {
-	max, _ := pop.Get(0)
+	_, max := pop.Extremums()
+	return max
+}
+
+// Extremums returns the Min() & the Max() of the poplation
+func (pop *Population) Extremums() (min, max individual.Interface) {
+	max, _ = pop.Get(0)
+	min, _ = pop.Get(0)
 	length := pop.Len()
 	for i := 1; i < length; i++ {
 		indiv, _ := pop.Get(i)
 		if indiv.Resilience() > max.Resilience() {
 			max, _ = pop.Get(i)
 		}
+		if indiv.Resilience() < min.Resilience() {
+			min, _ = pop.Get(i)
+		}
 	}
-	return max
+	return min, max
 }
 
 // PickCouple returns the index of two randomly choosen individuals
@@ -222,7 +230,7 @@ func (pop *Population) Contains(indiv individual.Interface) bool {
 
 // IndexOf returns the inde of the specified individual if it exists
 func (pop *Population) IndexOf(indiv individual.Interface) (int, error) {
-	err := checkIndivNotNil(indiv)
+	err := individual.CheckIndivNotNil(indiv)
 	if err != nil {
 		return -1, err
 	}
@@ -266,16 +274,9 @@ func checkIndex(index, length int) error {
 }
 
 //CheckPopNotNil checks that population is not nil
-func CheckPopNotNil(pop *Population) error {
-	if (*Population)(pop) == (*Population)(nil) {
+func CheckPopNotNil(pop Interface) error {
+	if pop == nil || reflect.ValueOf(pop).IsNil() {
 		return fmt.Errorf("Nil pointer on population")
-	}
-	return nil
-}
-
-func checkIndivNotNil(indiv individual.Interface) error {
-	if indiv == nil {
-		return fmt.Errorf("Nil pointer on individual")
 	}
 	return nil
 }

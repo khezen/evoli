@@ -8,7 +8,7 @@ import (
 
 type randomSelecter struct{}
 
-func (s randomSelecter) Select(pop *population.Population, survivorsSize int) (*population.Population, error) {
+func (s randomSelecter) Select(pop population.Interface, survivorsSize int) (population.Interface, error) {
 	err := checkParams(pop, survivorsSize)
 	if err != nil {
 		return nil, err

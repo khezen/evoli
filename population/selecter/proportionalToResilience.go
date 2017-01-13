@@ -9,7 +9,7 @@ import (
 
 type proportionalToResilienceSelecter struct{}
 
-func (s proportionalToResilienceSelecter) Select(pop *population.Population, survivorsSize int) (*population.Population, error) {
+func (s proportionalToResilienceSelecter) Select(pop population.Interface, survivorsSize int) (population.Interface, error) {
 	err := checkParams(pop, survivorsSize)
 	if err != nil {
 		return nil, err
@@ -38,7 +38,7 @@ func (s proportionalToResilienceSelecter) computeScore(indiv individual.Interfac
 	return indiv.Resilience() + offset
 }
 
-func (s proportionalToResilienceSelecter) computeTotalScore(pop *population.Population, offset float32) float32 {
+func (s proportionalToResilienceSelecter) computeTotalScore(pop population.Interface, offset float32) float32 {
 	var length, totalScore = pop.Len(), float32(0)
 	for i := 0; i < length; i++ {
 		indiv, _ := pop.Get(i)
@@ -47,7 +47,7 @@ func (s proportionalToResilienceSelecter) computeTotalScore(pop *population.Popu
 	return totalScore
 }
 
-func (s proportionalToResilienceSelecter) computeOffset(pop *population.Population) float32 {
+func (s proportionalToResilienceSelecter) computeOffset(pop population.Interface) float32 {
 	min := pop.Min().Resilience()
 	max := pop.Max().Resilience()
 	var offset float32

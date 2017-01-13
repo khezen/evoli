@@ -15,7 +15,8 @@ func TestNew(t *testing.T) {
 		{7, 7},
 	}
 	for _, c := range cases {
-		got, _ := New(c.in)
+		var got Interface
+		got, _ = New(c.in)
 		if got.Cap() != c.expected {
 			t.Errorf("expected  %v", c.expected)
 		}
@@ -377,21 +378,14 @@ func TestIndexOf(t *testing.T) {
 
 func TestCheckPopNil(t *testing.T) {
 	i1, i2, i3 := individual.New(0.2), individual.New(0.7), individual.New(1)
-	cases := []struct {
-		in         *Population
-		shouldFail bool
-	}{
-		{&Population{i1, i2, i3}, false},
-		{nil, true},
+	err := CheckPopNotNil(&Population{i1, i2, i3})
+	if err != nil {
+		t.Errorf("expected err == nil")
 	}
-	for _, c := range cases {
-		err := CheckPopNotNil(c.in)
-		if c.shouldFail && err == nil {
-			t.Errorf("expected err != nil")
-		}
-		if !c.shouldFail && err != nil {
-			t.Error("expected err == nil")
-		}
+	var pop Interface
+	err = CheckPopNotNil(pop)
+	if err == nil {
+		t.Error("expected err != nil")
 	}
 }
 

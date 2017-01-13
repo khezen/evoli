@@ -61,7 +61,8 @@ func TestGeneration(t *testing.T) {
 	lifecycle, _ := New(selecter.NewTruncationSelecter(), crosserMock{}, mutaterMock{}, evaluaterMock{})
 	newPop, _ := lifecycle.Generation(&pop, 5, 0.5)
 	isNewPopDifferent := false
-	for _, indiv := range *newPop {
+	for i := 0; i < newPop.Len(); i++ {
+		indiv, _ := newPop.Get(i)
 		if !cpy.Contains(indiv) {
 			isNewPopDifferent = true
 			break
@@ -71,7 +72,7 @@ func TestGeneration(t *testing.T) {
 		t.Errorf("the new Generation should be different from the previous one")
 	}
 	errorCases := []struct {
-		pop          *population.Population
+		pop          population.Interface
 		survivorSize int
 		mutationProb float32
 	}{

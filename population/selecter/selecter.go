@@ -4,10 +4,10 @@ import "github.com/khezen/darwin/population"
 
 // Interface is the selecter operator interface
 type Interface interface {
-	Select(pop *population.Population, survivorsSize int) (*population.Population, error)
+	Select(pop population.Interface, survivorsSize int) (population.Interface, error)
 }
 
-func checkParams(pop *population.Population, survivorsSize int) error {
+func checkParams(pop population.Interface, survivorsSize int) error {
 	err := population.CheckPopNotNil(pop)
 	if err != nil {
 		return err

@@ -8,7 +8,7 @@ import (
 
 type tournamentSelecter struct{}
 
-func (s tournamentSelecter) Select(pop *population.Population, survivorsSize int) (*population.Population, error) {
+func (s tournamentSelecter) Select(pop population.Interface, survivorsSize int) (population.Interface, error) {
 	err := checkParams(pop, survivorsSize)
 	if err != nil {
 		return nil, err
@@ -32,7 +32,7 @@ func (s tournamentSelecter) Select(pop *population.Population, survivorsSize int
 	return newPop, nil
 }
 
-func (s tournamentSelecter) fightForYourLives(pop *population.Population, index1 int, index2 int) (survivorIndex int) {
+func (s tournamentSelecter) fightForYourLives(pop population.Interface, index1 int, index2 int) (survivorIndex int) {
 	i1, _ := pop.Get(index1)
 	i2, _ := pop.Get(index2)
 	r1, r2 := i1.Resilience(), i2.Resilience()

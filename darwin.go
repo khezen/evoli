@@ -12,7 +12,7 @@ import (
 
 // Interface for genetic algorithm step
 type Interface interface {
-	Generation(pop *population.Population, survivorSizeForSelection int, mutationProbability float32) (**population.Population, error)
+	Generation(pop population.Interface, survivorSizeForSelection int, mutationProbability float32) (*population.Interface, error)
 }
 
 // Lifecycle is a genetic algorithm implementation
@@ -41,7 +41,7 @@ func New(s selecter.Interface, c individual.Crosser, m individual.Mutater, e ind
 }
 
 // Generation takes a Population and produce a the new generation of this population
-func (l Lifecycle) Generation(pop *population.Population, survivorSizeForSelection int, mutationProbability float32) (*population.Population, error) {
+func (l Lifecycle) Generation(pop population.Interface, survivorSizeForSelection int, mutationProbability float32) (population.Interface, error) {
 	err := population.CheckPopNotNil(pop)
 	if err != nil {
 		return pop, err
@@ -58,7 +58,7 @@ func (l Lifecycle) Generation(pop *population.Population, survivorSizeForSelecti
 	return newPop, nil
 }
 
-func (l Lifecycle) evaluation(pop *population.Population) *population.Population {
+func (l Lifecycle) evaluation(pop population.Interface) population.Interface {
 	length := pop.Len()
 	for i := 0; i < length; i++ {
 		individual, _ := pop.Get(i)
@@ -67,7 +67,7 @@ func (l Lifecycle) evaluation(pop *population.Population) *population.Population
 	return pop
 }
 
-func (l Lifecycle) crossovers(pop *population.Population, mutationProbability float32) (*population.Population, error) {
+func (l Lifecycle) crossovers(pop population.Interface, mutationProbability float32) (population.Interface, error) {
 	if mutationProbability < 0 || mutationProbability > 1 {
 		return pop, fmt.Errorf("mutation probability = %v. Expected: 0 <= probability <= 1", mutationProbability)
 	}
