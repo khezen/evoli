@@ -48,8 +48,8 @@ func (s proportionalToResilienceSelecter) computeTotalScore(pop population.Inter
 }
 
 func (s proportionalToResilienceSelecter) computeOffset(pop population.Interface) float32 {
-	min := pop.Min().Resilience()
-	max := pop.Max().Resilience()
+	minIndiv, maxIndiv := pop.Extremums()
+	min, max := minIndiv.Resilience(), maxIndiv.Resilience()
 	var offset float32
 	switch {
 	case min < 0:
