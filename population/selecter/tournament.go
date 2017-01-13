@@ -43,7 +43,7 @@ func (s tournamentSelecter) fightForYourLives(pop population.Interface, index1 i
 	total := r1 + r2
 
 	switch {
-	case rand.Float32() <= r1/total:
+	case total == 0 || rand.Float32() <= r1/total:
 		return index1
 	default:
 		return index2

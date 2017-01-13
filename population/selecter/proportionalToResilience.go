@@ -24,7 +24,7 @@ func (s proportionalToResilienceSelecter) Select(pop population.Interface, survi
 		for i := 0; i < pop.Len(); i++ {
 			indiv, _ := pop.Get(i)
 			score := s.computeScore(indiv, offset)
-			if rand.Float32() <= score/totalScore {
+			if totalScore == 0 || rand.Float32() <= score/totalScore {
 				pop.Remove(i)
 				newPop.Append(indiv)
 				totalScore -= score
