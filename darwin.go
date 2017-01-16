@@ -42,11 +42,10 @@ func New(s selecter.Interface, c individual.Crosser, m individual.Mutater, e ind
 
 // Generation takes a Population and produce a the new generation of this population
 func (l Lifecycle) Generation(pop population.Interface, survivorSizeForSelection int, mutationProbability float32) (population.Interface, error) {
-	err := population.CheckPopNotNil(pop)
+	newPop, err := l.evaluation(pop)
 	if err != nil {
 		return pop, err
 	}
-	newPop := l.evaluation(pop)
 	newPop, err = l.Selecter.Select(newPop, survivorSizeForSelection)
 	if err != nil {
 		return pop, err
@@ -58,13 +57,17 @@ func (l Lifecycle) Generation(pop population.Interface, survivorSizeForSelection
 	return newPop, nil
 }
 
-func (l Lifecycle) evaluation(pop population.Interface) population.Interface {
+func (l Lifecycle) evaluation(pop population.Interface) (population.Interface, error) {
+	err := population.CheckPopNotNil(pop)
+	if err != nil {
+		return pop, err
+	}
 	length := pop.Len()
 	for i := 0; i < length; i++ {
 		individual, _ := pop.Get(i)
 		individual.SetResilience(l.Evaluater.Evaluate(individual))
 	}
-	return pop
+	return pop, nil
 }
 
 func (l Lifecycle) crossovers(pop population.Interface, mutationProbability float32) (population.Interface, error) {
