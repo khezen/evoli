@@ -134,17 +134,15 @@ func (pop *Population) AppendAll(externalPop Interface) error {
 	if err != nil {
 		return err
 	}
+	newPop, _ := New(pop.Cap())
 	for i := 0; i < externalPop.Len(); i++ {
 		indiv, _ := externalPop.Get(i)
-		err = individual.CheckIndivNotNil(indiv)
+		err := newPop.Append(indiv)
 		if err != nil {
 			return err
 		}
 	}
-	for i := 0; i < externalPop.Len(); i++ {
-		indiv, _ := externalPop.Get(i)
-		pop.Append(indiv)
-	}
+	*pop = *newPop
 	return nil
 }
 
