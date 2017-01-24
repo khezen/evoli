@@ -1,6 +1,5 @@
 language: go
 go:
   - 1.7.x
-  - master
 go_import_path: github.com/khezen/darwin
 script: go test ./...
