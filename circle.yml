@@ -11,10 +11,10 @@ test:
   pre:
     - go vet ./...
   override:
-    - go test -race -coverprofile=coverage.txt -covermode=atomic .
-    - go test -race -coverprofile=coverage.txt -covermode=atomic ./population
-    - go test -race -coverprofile=coverage.txt -covermode=atomic ./population/individual
-    - go test -race -coverprofile=coverage.txt -covermode=atomic ./population/selecter
+    - go test -race -coverprofile=darwin.txt -covermode=atomic .
+    - go test -race -coverprofile=population.txt -covermode=atomic ./population
+    - go test -race -coverprofile=individual.txt -covermode=atomic ./population/individual
+    - go test -race -coverprofile=selecter.txt -covermode=atomic ./population/selecter
   #   - godep go test ./...
   post:
     - bash <(curl -s https://codecov.io/bash)
