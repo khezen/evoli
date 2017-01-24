@@ -254,15 +254,10 @@ func checkLength(length int) error {
 
 func checkIndex(index, length int) error {
 	err := CheckSuperior(index, 0, "index")
-	switch {
-	case err != nil:
-		return err
-	default:
-		if index >= length {
-			return fmt.Errorf("index must be < length")
-		}
-		return nil
+	if index >= length {
+		return fmt.Errorf("index must be < length")
 	}
+	return err
 }
 
 //CheckPopNotNil checks that population is not nil
