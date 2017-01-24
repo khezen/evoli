@@ -11,7 +11,7 @@ test:
   pre:
     - go vet ./...
    override:
-      - go test -race -coverprofile=coverage.txt -covermode=atomic
+      - go test -trace -coverprofile=coverage.txt -covermode=atomic
   #   - godep go test ./...
   post:
     - bash <(curl -s https://codecov.io/bash)
