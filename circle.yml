@@ -1,3 +1,19 @@
+machine:
+  environment:
+    IMPORT_PATH: "github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME"
+# dependencies:
+#   pre:
+#     - go get github.com/tools/godep
+#   override: #if already vendored, build can fly
+#     - mkdir -p "$GOPATH/src/$IMPORT_PATH"
+#     - rsync -azC --delete ./ "$GOPATH/src/$IMPORT_PATH/"
 test:
+  pre:
+    - go vet ./...
+  # override:
+  #   - godep go test ./...
   post:
     - bash <(curl -s https://codecov.io/bash)
+
+
+  
