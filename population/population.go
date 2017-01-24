@@ -192,7 +192,7 @@ func (pop *Population) Extremums() (min, max individual.Interface) {
 	return pop.Min(), pop.Max()
 }
 
-// PickCouple returns the index of two randomly choosen individuals
+// PickCouple returns the index of two randomly chosen individuals
 func (pop *Population) PickCouple() (int, individual.Interface, int, individual.Interface, error) {
 	if pop.Len() < 2 {
 		return -1, nil, -1, nil, fmt.Errorf("pop must contains at least 2 individuals to pick a couple")
@@ -236,7 +236,7 @@ func (pop *Population) IndexOf(indiv individual.Interface) (int, error) {
 	return -1, fmt.Errorf("individual %v not found in population %v", indiv, pop)
 }
 
-// CheckSuperior check that an int is positve
+// CheckSuperior check that an int is positive
 func CheckSuperior(value int, threshold int, label string) error {
 	switch {
 	case value < threshold:
