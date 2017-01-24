@@ -128,22 +128,20 @@ func (pop *Population) Append(indiv individual.Interface) error {
 	return nil
 }
 
-// AppendAll adds all individuals from a population to a population. If the populagtion has already reached its capacity, capacity is incremented.
+// AppendAll adds all individuals from a population to a population. If the populagtion has already reached its capacity, capacity is incremented. Nil individuals are not appended
 func (pop *Population) AppendAll(externalPop Interface) error {
 	err := CheckPopNotNil(externalPop)
 	if err != nil {
 		return err
 	}
-	newPop, _ := New(pop.Cap())
 	for i := 0; i < externalPop.Len(); i++ {
 		indiv, _ := externalPop.Get(i)
-		err := newPop.Append(indiv)
-		if err != nil {
-			return err
+		appendErr := pop.Append(indiv)
+		if appendErr != nil { // indiv has not been appended
+			err = appendErr
 		}
 	}
-	*pop = *newPop
-	return nil
+	return err
 }
 
 // Get returns the individual at index i
@@ -169,31 +167,29 @@ func (pop *Population) Remove(i int) (individual.Interface, error) {
 
 // Min returns the least Resilent individual
 func (pop *Population) Min() individual.Interface {
-	min, _ := pop.Extremums()
-	return min
+	return pop.extremum(false)
 }
 
 // Max returns the most Resilent individual
 func (pop *Population) Max() individual.Interface {
-	_, max := pop.Extremums()
-	return max
+	return pop.extremum(true)
+}
+
+func (pop *Population) extremum(greaterThan bool) individual.Interface {
+	extremum, _ := pop.Get(0)
+	length := pop.Len()
+	for i := 1; i < length; i++ {
+		indiv, _ := pop.Get(i)
+		if (greaterThan && indiv.Resilience() > extremum.Resilience()) || (!greaterThan && indiv.Resilience() < extremum.Resilience()) {
+			extremum = indiv
+		}
+	}
+	return extremum
 }
 
 // Extremums returns the Min() & the Max() of the poplation
 func (pop *Population) Extremums() (min, max individual.Interface) {
-	max, _ = pop.Get(0)
-	min, _ = pop.Get(0)
-	length := pop.Len()
-	for i := 1; i < length; i++ {
-		indiv, _ := pop.Get(i)
-		if indiv.Resilience() > max.Resilience() {
-			max, _ = pop.Get(i)
-		}
-		if indiv.Resilience() < min.Resilience() {
-			min, _ = pop.Get(i)
-		}
-	}
-	return min, max
+	return pop.Min(), pop.Max()
 }
 
 // PickCouple returns the index of two randomly choosen individuals
