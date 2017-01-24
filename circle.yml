@@ -12,7 +12,7 @@ test:
     - go build
     - go vet ./...
   override:
-    - go test -race -coverprofile=coverage.txt -covermode=atomic -coverpkg "github.com/Khezen/darwin","github.com/khezen/darwin/population","github.com/khezen/darwin/population/individual","github.com/khezen/darwin/population/selecter"
+    - go test -coverprofile=coverage.txt -covermode=set -coverpkg "github.com/Khezen/darwin","github.com/khezen/darwin/population","github.com/khezen/darwin/population/individual","github.com/khezen/darwin/population/selecter"
   #   - godep go test ./...
   post:
     - bash <(curl -s https://codecov.io/bash)
