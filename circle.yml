@@ -10,8 +10,8 @@ machine:
 test:
   pre:
     - go vet ./...
-   override:
-      - go test -trace -coverprofile=coverage.txt -covermode=atomic
+  override:
+    - go test -trace -coverprofile=coverage.txt -covermode=atomic
   #   - godep go test ./...
   post:
     - bash <(curl -s https://codecov.io/bash)
