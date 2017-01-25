@@ -19,7 +19,5 @@ test:
             rm profile.out \n
         fi \n
       done"
-  #  - go test -race -coverprofile=coverage.txt -covermode=atomic -coverpkg "github.com/Khezen/darwin","github.com/khezen/darwin/population","github.com/khezen/darwin/population/individual","github.com/khezen/darwin/population/selecter"
-  #   - godep go test ./...
   post:
     - bash <(curl -s https://codecov.io/bash)
