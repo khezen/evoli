@@ -59,7 +59,7 @@ func TestGeneration(t *testing.T) {
 	cpy, _ := population.New(pop.Cap())
 	cpy.AppendAll(&pop)
 	lifecycle, _ := New(selecter.NewTruncationSelecter(), crosserMock{}, mutaterMock{}, evaluaterMock{})
-	newPop, _ := lifecycle.Generation(&pop, 5, 0.5)
+	newPop, _ := lifecycle.Generation(&pop, 5, 1)
 	isNewPopDifferent := false
 	for i := 0; i < newPop.Len(); i++ {
 		indiv, _ := newPop.Get(i)
