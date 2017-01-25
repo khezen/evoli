@@ -167,6 +167,11 @@ func TestAppendAll(t *testing.T) {
 	if err == nil {
 		t.Errorf("expected != nil")
 	}
+	toBeAppended := &Population{i2, i1, nil}
+	err = pop.AppendAll(toBeAppended)
+	if err == nil {
+		t.Errorf("expected != nil")
+	}
 }
 
 func TestGet(t *testing.T) {
@@ -383,6 +388,12 @@ func TestIndexOf(t *testing.T) {
 			t.Errorf("%v.Contains(%v) returned %v instead of %v", c.in, c.indiv, index, c.expected)
 		}
 	}
+	pop := Population{i2, i1, i3}
+	_, err := pop.IndexOf(nil)
+	if err == nil {
+		t.Errorf("expected err != nil")
+	}
+
 }
 
 func TestCheckPopNil(t *testing.T) {

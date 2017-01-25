@@ -21,7 +21,7 @@ func (s tournamentSelecter) Select(pop population.Interface, survivorsSize int) 
 		switch {
 		case pop.Len() == 1:
 			indiv, _ := pop.Remove(0)
-			pop.Append(indiv)
+			newPop.Append(indiv)
 		default:
 			var i, _, j, _, _ = pop.PickCouple()
 			survivorIndex := s.fightForYourLives(pop, i, j)
