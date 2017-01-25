@@ -17,10 +17,5 @@ parsers:
     branch_detection:
       conditional: yes
       loop: yes
-      method: yes
-      macro: yes
-
-comment:
-  layout: "header, diff"
-  behavior: default
-  require_changes: no
+      method: no
+      macro: no
