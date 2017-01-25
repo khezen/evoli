@@ -1,15 +1,12 @@
 machine:
   environment:
     IMPORT_PATH: "github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME"
-# dependencies:
-#   pre:
-#     - go get github.com/tools/godep
-#   override: #if already vendored, build can fly
-#     - mkdir -p "$GOPATH/src/$IMPORT_PATH"
-#     - rsync -azC --delete ./ "$GOPATH/src/$IMPORT_PATH/"
+ dependencies:
+   override:
+     - go get -t -d -v ./...
+     - go build -v
 test:
   pre:
-    - go build
     - go vet ./...
   override:
     - echo "" > coverage.txt
