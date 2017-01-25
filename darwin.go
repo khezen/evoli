@@ -1,9 +1,8 @@
 package darwin
 
 import (
-	"math/rand"
-
 	"fmt"
+	"math/rand"
 
 	"github.com/khezen/darwin/population"
 	"github.com/khezen/darwin/population/individual"
@@ -50,7 +49,11 @@ func (l Lifecycle) Generation(pop population.Interface, survivorSizeForSelection
 	if err != nil {
 		return pop, err
 	}
-	newPop, err = l.crossovers(newPop, mutationProbability)
+	newPop, err = l.crossovers(newPop)
+	if err != nil {
+		return pop, err
+	}
+	newPop, err = l.mutations(newPop, mutationProbability)
 	if err != nil {
 		return pop, err
 	}
@@ -70,20 +73,28 @@ func (l Lifecycle) evaluation(pop population.Interface) (population.Interface, e
 	return pop, nil
 }
 
-func (l Lifecycle) crossovers(pop population.Interface, mutationProbability float32) (population.Interface, error) {
-	if mutationProbability < 0 || mutationProbability > 1 {
-		return pop, fmt.Errorf("mutation probability = %v. Expected: 0 <= probability <= 1", mutationProbability)
-	}
+func (l Lifecycle) crossovers(pop population.Interface) (population.Interface, error) {
 	newBorns, _ := population.New(pop.Cap() - pop.Len())
 	capacity := newBorns.Cap()
 	for newBorns.Len() < capacity {
 		var _, indiv1, _, indiv2, _ = pop.PickCouple()
 		newBorn := l.Crosser.Cross(indiv1, indiv2)
-		if rand.Float32() <= mutationProbability {
-			newBorn = l.Mutater.Mutate(newBorn)
-		}
 		newBorns.Append(newBorn)
 	}
 	pop.AppendAll(newBorns)
+	return pop, nil
+}
+
+func (l Lifecycle) mutations(pop population.Interface, mutationProbability float32) (population.Interface, error) {
+	if mutationProbability < 0 || mutationProbability > 1 {
+		return pop, fmt.Errorf("mutation probability = %v. Expected: 0 <= probability <= 1", mutationProbability)
+	}
+	for i := 0; i < pop.Len(); i++ {
+		if rand.Float32() <= mutationProbability {
+			indiv, _ := pop.Get(i)
+			mutant := l.Mutater.Mutate(indiv)
+			pop.Replace(i, mutant)
+		}
+	}
 	return pop, nil
 }

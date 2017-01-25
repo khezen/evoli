@@ -207,6 +207,41 @@ func TestRemove(t *testing.T) {
 	}
 }
 
+func TestReplace(t *testing.T) {
+	i1, i2, i3, i4 := individual.New(0.2), individual.New(0.7), individual.New(1), individual.New(10)
+	pop := Population{i2, i1, i3}
+	cases := []struct {
+		index int
+		indiv *individual.Individual
+		isErr bool
+	}{
+		{1, i4, false},
+		{-1000, i4, true},
+		{pop.Len(), i4, true},
+		{1, nil, true},
+		{-42, nil, true},
+		{pop.Len(), nil, true},
+	}
+	for _, c := range cases {
+		switch c.isErr {
+		case true:
+			_, err := pop.Replace(c.index, c.indiv)
+			if err == nil {
+				t.Errorf("expected != nil")
+			}
+		case false:
+			expectedIndiv, _ := pop.Get(c.index)
+			indiv, _ := pop.Replace(c.index, c.indiv)
+			if indiv != expectedIndiv {
+				t.Errorf(".Repalce(%v, %v) => %v; expected = %v", c.index, c.indiv, indiv, expectedIndiv)
+			}
+			if pop.Len() != 3 {
+				t.Errorf(".Replace(%v, %v); pop.Len() => %v; expected = %v", c.index, c.indiv, pop.Len(), 3)
+			}
+		}
+	}
+}
+
 func TestMax(t *testing.T) {
 	i1, i2, i3 := individual.New(0.2), individual.New(0.7), individual.New(1)
 	pop := Population{i2, i1, i3}

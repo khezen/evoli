@@ -21,6 +21,7 @@ type Interface interface {
 	AppendAll(Interface) error
 	Get(int) (individual.Interface, error)
 	Remove(int) (individual.Interface, error)
+	Replace(int, individual.Interface) (individual.Interface, error)
 	Max() individual.Interface
 	Min() individual.Interface
 	Extremums() (individual.Interface, individual.Interface)
@@ -162,6 +163,21 @@ func (pop *Population) Remove(i int) (individual.Interface, error) {
 	removed, _ := pop.Get(i)
 	new := (*pop)[0:i]
 	*pop = append(new, (*pop)[i+1:pop.Len()]...)
+	return removed, nil
+}
+
+// Replace replaces and returns the individual at index i by the substitute
+func (pop *Population) Replace(i int, substitute individual.Interface) (individual.Interface, error) {
+	err := checkIndex(i, pop.Len())
+	if err != nil {
+		return nil, err
+	}
+	err = individual.CheckIndivNotNil(substitute)
+	if err != nil {
+		return nil, err
+	}
+	removed, _ := pop.Get(i)
+	(*pop)[i] = substitute
 	return removed, nil
 }
 
