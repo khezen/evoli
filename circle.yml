@@ -5,8 +5,8 @@ machine:
 dependencies:
   override:
     - go get -t -d -v ./...
-    - go build -v
-    
+    - go install -v
+
 test:
   pre:
     - go vet ./...
