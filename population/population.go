@@ -254,12 +254,10 @@ func (pop *Population) IndexOf(indiv individual.Interface) (int, error) {
 
 // CheckSuperior check that an int is positive
 func CheckSuperior(value int, threshold int, label string) error {
-	switch {
-	case value < threshold:
+	if value < threshold {
 		return fmt.Errorf("%v must be >= %v", label, threshold)
-	default:
-		return nil
 	}
+	return nil
 }
 
 func checkCap(cap int) error {
@@ -272,15 +270,10 @@ func checkLength(length int) error {
 
 func checkIndex(index, length int) error {
 	err := CheckSuperior(index, 0, "index")
-	switch {
-	case err != nil:
-		return err
-	default:
-		if index >= length {
-			return fmt.Errorf("index must be < length")
-		}
-		return nil
+	if index >= length {
+		return fmt.Errorf("index must be < length")
 	}
+	return err
 }
 
 //CheckPopNotNil checks that population is not nil

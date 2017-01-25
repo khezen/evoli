@@ -28,7 +28,7 @@ func TestProportionalToResilience(t *testing.T) {
 }
 
 func testSelecter(t *testing.T, s Interface) {
-	i1, i2, i3, i4, i5, i6 := individual.New(1), individual.New(2), individual.New(3), individual.New(4), individual.New(5), individual.New(6)
+	i1, i2, i3, i4, i5, i6 := individual.New(1), individual.New(2), individual.New(-3), individual.New(4), individual.New(5), individual.New(-6)
 	cases := []struct {
 		in           population.Population
 		survivalSize int
@@ -36,7 +36,9 @@ func testSelecter(t *testing.T, s Interface) {
 		expectedCap  int
 	}{
 		{population.Population{i1, i2, i3, i4, i5, i6}, 3, 3, 6},
+		{population.Population{i1, i2, i4, i5}, 2, 2, 4},
 		{population.Population{i1}, 3, 1, 3},
+		{population.Population{i3, i6}, 1, 1, 2},
 		{population.Population{}, 3, 0, 3},
 	}
 	for _, c := range cases {

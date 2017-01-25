@@ -18,16 +18,11 @@ func (s tournamentSelecter) Select(pop population.Interface, survivorsSize int) 
 	}
 	newPop, _ := population.New(pop.Cap())
 	for newPop.Len() < survivorsSize {
-		switch {
-		case pop.Len() == 1:
-			indiv, _ := pop.Remove(0)
-			pop.Append(indiv)
-		default:
-			var i, _, j, _, _ = pop.PickCouple()
-			survivorIndex := s.fightForYourLives(pop, i, j)
-			indiv, _ := pop.Remove(survivorIndex)
-			newPop.Append(indiv)
-		}
+		var i, _, j, _, _ = pop.PickCouple()
+		survivorIndex := s.fightForYourLives(pop, i, j)
+		indiv, _ := pop.Remove(survivorIndex)
+		newPop.Append(indiv)
+
 	}
 	return newPop, nil
 }

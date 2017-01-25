@@ -12,7 +12,7 @@ func checkParams(pop population.Interface, survivorsSize int) error {
 	if err != nil {
 		return err
 	}
-	err = population.CheckSuperior(survivorsSize, 2, "survivorSize")
+	err = population.CheckSuperior(survivorsSize, 1, "survivorSize")
 	if err != nil {
 		return err
 	}
