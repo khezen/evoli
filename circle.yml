@@ -12,7 +12,9 @@ test:
     - go build
     - go vet ./...
   override:
-    - go test -race -coverprofile=coverage.txt -covermode=atomic -coverpkg "github.com/Khezen/darwin","github.com/khezen/darwin/population","github.com/khezen/darwin/population/individual","github.com/khezen/darwin/population/selecter"
+    - echo "" > coverage.txt
+    - for d in $(go list ./... | grep -v vendor); do     go test -race -coverprofile=profile.out -covermode=atomic $d;     if [ -f profile.out ]; then         cat profile.out >> coverage.txt;         rm profile.out;     fi; done
+  #  - go test -race -coverprofile=coverage.txt -covermode=atomic -coverpkg "github.com/Khezen/darwin","github.com/khezen/darwin/population","github.com/khezen/darwin/population/individual","github.com/khezen/darwin/population/selecter"
   #   - godep go test ./...
   post:
     - bash <(curl -s https://codecov.io/bash)
