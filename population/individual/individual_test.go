@@ -12,14 +12,14 @@ func TestNew(t *testing.T) {
 	}
 	for _, c := range cases {
 		indiv := New(c.in)
-		got := indiv.Resilience()
+		got := indiv.Fitness()
 		if got != c.expected {
-			t.Errorf("individual.New(%f); indiv.Resilience() == %f, expected %f", c.in, got, c.expected)
+			t.Errorf("individual.New(%f); indiv.Fitness() == %f, expected %f", c.in, got, c.expected)
 		}
 	}
 }
 
-func TestResilience(t *testing.T) {
+func TestFitness(t *testing.T) {
 	cases := []struct {
 		in, expected float32
 	}{
@@ -29,10 +29,10 @@ func TestResilience(t *testing.T) {
 	}
 	indiv := New(0)
 	for _, c := range cases {
-		indiv.SetResilience(c.in)
-		got := indiv.Resilience()
+		indiv.SetFitness(c.in)
+		got := indiv.Fitness()
 		if got != c.expected {
-			t.Errorf("indiv.SetResilience(%f); indiv.Resilience() == %f, expected %f", c.in, got, c.expected)
+			t.Errorf("indiv.SetFitness(%f); indiv.Fitness() == %f, expected %f", c.in, got, c.expected)
 		}
 	}
 }

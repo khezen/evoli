@@ -374,17 +374,39 @@ func TestSwap(t *testing.T) {
 func TestPickCouple(t *testing.T) {
 	i1, i2, i3, i4, i5, i6 := individual.New(1), individual.New(2), individual.New(3), individual.New(4), individual.New(5), individual.New(6)
 	pop := Population{i1, i2, i3, i4, i5, i6}
-	index1, _, index2, _, _ := pop.PickCouple()
+	index1, indiv1, index2, indiv2, err := pop.PickCouple()
 	if index1 < 0 || index1 >= pop.Len() || index2 < 0 || index2 >= pop.Len() {
 		t.Errorf("%v.PickCouple() returned indexes %v, %v which are out of bounds", pop, index1, index2)
 	}
 	if index1 == index2 {
 		t.Errorf("%v.PickCouple() returned indexes %v, %v which are equals", pop, index1, index2)
 	}
+	if indiv1 == nil || indiv2 == nil || indiv1 == indiv2 {
+		t.Errorf("%v.PickCouple() returned individuals %v, %v which are nils", pop, indiv1, indiv2)
+	}
+	if err != nil {
+		t.Errorf("expected err == nil")
+	}
 	pop = Population{i1}
-	_, _, _, _, err := pop.PickCouple()
+	_, _, _, _, err = pop.PickCouple()
 	if err == nil {
 		t.Errorf("expected err != nil")
+	}
+	pop = Population{i1, i2}
+	for i := 0; i < pop.Len(); i++ {
+		index1, indiv1, index2, indiv2, err = pop.PickCouple()
+		if index1 < 0 || index1 >= pop.Len() || index2 < 0 || index2 >= pop.Len() {
+			t.Errorf("%v.PickCouple() returned indexes %v, %v which are out of bounds", pop, index1, index2)
+		}
+		if index1 == index2 {
+			t.Errorf("%v.PickCouple() returned indexes %v, %v which are equals", pop, index1, index2)
+		}
+		if indiv1 == nil || indiv2 == nil || indiv1 == indiv2 {
+			t.Errorf("%v.PickCouple() returned individuals %v, %v which are nils", pop, indiv1, indiv2)
+		}
+		if err != nil {
+			t.Errorf("expected err == nil")
+		}
 	}
 }
 

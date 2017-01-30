@@ -62,7 +62,7 @@ func (l Lifecycle) evaluation(pop population.Interface) population.Interface {
 	length := pop.Len()
 	for i := 0; i < length; i++ {
 		individual, _ := pop.Get(i)
-		individual.SetResilience(l.Evaluater.Evaluate(individual))
+		individual.SetFitness(l.Evaluater.Evaluate(individual))
 	}
 	return pop
 }

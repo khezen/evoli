@@ -12,14 +12,14 @@ type crosserMock struct {
 }
 
 func (c crosserMock) Cross(individual1, individual2 individual.Interface) individual.Interface {
-	return individual.New(individual1.Resilience() + individual2.Resilience()/2)
+	return individual.New(individual1.Fitness() + individual2.Fitness()/2)
 }
 
 type evaluaterMock struct {
 }
 
-func (e evaluaterMock) Evaluate(individual individual.Interface) (resilience float32) {
-	return individual.Resilience()
+func (e evaluaterMock) Evaluate(individual individual.Interface) (Fitness float32) {
+	return individual.Fitness()
 }
 
 type mutaterMock struct {

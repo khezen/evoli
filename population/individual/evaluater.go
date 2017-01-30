@@ -1,6 +1,6 @@
 package individual
 
-// Evaluater computes and set individual resilience
+// Evaluater computes and set individual Fitness
 type Evaluater interface {
-	Evaluate(Interface) (resilience float32)
+	Evaluate(Interface) (Fitness float32)
 }

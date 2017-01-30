@@ -7,9 +7,9 @@ import (
 	"github.com/khezen/darwin/population/individual"
 )
 
-type proportionalToResilienceSelecter struct{}
+type proportionalToFitnessSelecter struct{}
 
-func (s proportionalToResilienceSelecter) Select(pop population.Interface, survivorsSize int) (population.Interface, error) {
+func (s proportionalToFitnessSelecter) Select(pop population.Interface, survivorsSize int) (population.Interface, error) {
 	err := checkParams(pop, survivorsSize)
 	if err != nil {
 		return nil, err
@@ -34,11 +34,11 @@ func (s proportionalToResilienceSelecter) Select(pop population.Interface, survi
 	return newPop, nil
 }
 
-func (s proportionalToResilienceSelecter) computeScore(indiv individual.Interface, offset float32) float32 {
-	return indiv.Resilience() + offset
+func (s proportionalToFitnessSelecter) computeScore(indiv individual.Interface, offset float32) float32 {
+	return indiv.Fitness() + offset
 }
 
-func (s proportionalToResilienceSelecter) computeTotalScore(pop population.Interface, offset float32) float32 {
+func (s proportionalToFitnessSelecter) computeTotalScore(pop population.Interface, offset float32) float32 {
 	var length, totalScore = pop.Len(), float32(0)
 	for i := 0; i < length; i++ {
 		indiv, _ := pop.Get(i)
@@ -47,9 +47,9 @@ func (s proportionalToResilienceSelecter) computeTotalScore(pop population.Inter
 	return totalScore
 }
 
-func (s proportionalToResilienceSelecter) computeOffset(pop population.Interface) float32 {
+func (s proportionalToFitnessSelecter) computeOffset(pop population.Interface) float32 {
 	minIndiv, maxIndiv := pop.Extremums()
-	min, max := minIndiv.Resilience(), maxIndiv.Resilience()
+	min, max := minIndiv.Fitness(), maxIndiv.Fitness()
 	var offset float32
 	switch {
 	case min < 0:
@@ -66,7 +66,7 @@ func (s proportionalToResilienceSelecter) computeOffset(pop population.Interface
 	return offset
 }
 
-// NewProportionalToResilienceSelecter is the constrctor for truncation selecter
-func NewProportionalToResilienceSelecter() Interface {
-	return proportionalToResilienceSelecter{}
+// NewProportionalToFitnessSelecter is the constrctor for truncation selecter
+func NewProportionalToFitnessSelecter() Interface {
+	return proportionalToFitnessSelecter{}
 }

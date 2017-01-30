@@ -56,7 +56,7 @@ func (pop *Population) Less(i, j int) bool {
 	if erri != nil || errj != nil {
 		return false
 	}
-	return indivi.Resilience() >= indivj.Resilience()
+	return indivi.Fitness() >= indivj.Fitness()
 }
 
 // Swap swaps the elements with indexes i and j.
@@ -196,7 +196,7 @@ func (pop *Population) extremum(greaterThan bool) individual.Interface {
 	length := pop.Len()
 	for i := 1; i < length; i++ {
 		indiv, _ := pop.Get(i)
-		if (greaterThan && indiv.Resilience() > extremum.Resilience()) || (!greaterThan && indiv.Resilience() < extremum.Resilience()) {
+		if (greaterThan && indiv.Fitness() > extremum.Fitness()) || (!greaterThan && indiv.Fitness() < extremum.Fitness()) {
 			extremum = indiv
 		}
 	}
