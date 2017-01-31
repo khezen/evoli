@@ -1,6 +1,6 @@
 dependencies:
   post:
-    - rm -r ~/.gradle # remove cache
+    - rm -r .gradle # remove cache
 
   override:
     - go get -t -d -v ./...
