@@ -1,7 +1,12 @@
+machine:
+  environment:
+    GOROOT: ""
+    PATH: "/usr/local/go/bin:/usr/local/go_workspace/bin:~/.go_workspace/bin:${PATH}"
+    GOPATH: "${HOME}/.go_workspace:/usr/local/go_workspace:${HOME}/.go_project"
+
 dependencies:
   override:
-    # './...' is a relative pattern which means all subdirectories
-    - go get -t -d -v -u ./...
+    - go get -t -d -u -v ./...
     - go build -v
 
 test:
