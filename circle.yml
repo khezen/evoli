@@ -6,7 +6,7 @@ machine:
 
 dependencies:
   override:
-    - go get -t -d -u -v ./...
+    - go get -t -d -v ./...
     - go build -v
 
 test:
