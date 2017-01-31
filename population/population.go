@@ -213,7 +213,7 @@ func (pop *Population) PickCouple() (int, individual.Interface, int, individual.
 	if pop.Len() < 2 {
 		return -1, nil, -1, nil, fmt.Errorf("pop must contains at least 2 individuals to pick a couple")
 	}
-	var i, j = rand.Intn(pop.Len() - 1), rand.Intn(pop.Len() - 1)
+	var i, j = rand.Intn(pop.Len()), rand.Intn(pop.Len())
 	if i == j {
 		switch i {
 		case pop.Len() - 1:

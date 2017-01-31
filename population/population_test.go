@@ -393,7 +393,7 @@ func TestPickCouple(t *testing.T) {
 		t.Errorf("expected err != nil")
 	}
 	pop = Population{i1, i2}
-	for i := 0; i < 50; i++ {
+	for i := 0; i < 32; i++ {
 		index1, indiv1, index2, indiv2, err = pop.PickCouple()
 		if index1 < 0 || index1 >= pop.Len() || index2 < 0 || index2 >= pop.Len() {
 			t.Errorf("%v.PickCouple() returned indexes %v, %v which are out of bounds", pop, index1, index2)
