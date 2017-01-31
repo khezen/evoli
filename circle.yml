@@ -10,6 +10,7 @@ dependencies:
     - go get -t -d -u github.com/khezen/darwin/population/selecter
     - go get -t -d -u github.com/khezen/darwin/population
     - go get -t -d -u github.com/khezen/darwin
+    - go get -t -d -v ./...
     - go build -v
 
 test:
