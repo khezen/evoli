@@ -1,6 +1,13 @@
+dependencies:
+  override:
+    # './...' is a relative pattern which means all subdirectories
+    - go get -t -d -v -u ./...
+    - go build -v
+
 test:
   pre:
     - go vet ./...
+    - go build -v
   override:
     - echo "" > coverage.txt
     - "for d in $(go list ./... | grep -v vendor); do \n
