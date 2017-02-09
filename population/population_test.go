@@ -73,14 +73,14 @@ func TestSetCap(t *testing.T) {
 		{1, 1},
 		{7, 7},
 	}
-	pop, err := New(0)
+	pop, _ := New(0)
 	for _, c := range cases {
 		pop.SetCap(c.in)
 		if pop.Cap() != c.expected {
 			t.Errorf("expected  %v", c.expected)
 		}
 	}
-	err = pop.SetCap(-1)
+	err := pop.SetCap(-1)
 	if err == nil {
 		t.Errorf("expected != nil")
 	}
