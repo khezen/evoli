@@ -9,7 +9,9 @@ script:
   - echo "" > coverage.txt
   - "for d in $(go list ./... | grep -v vendor); do \n
         go test -race -coverprofile=profile.out -covermode=atomic $d \n
-        if [ -f profile.out ]; then \n
+        if [ $? -gt 0 ]; then \n
+          exit 1 \n
+        elif [ -f profile.out ]; then \n
           cat profile.out >> coverage.txt \n
           rm profile.out \n
       fi \n
