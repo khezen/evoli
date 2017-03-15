@@ -21,7 +21,7 @@ func (s randomSelecter) Select(pop population.Interface, survivorsSize int) (pop
 	return pop, nil
 }
 
-// NewRandomSelecter is the constrctor for truncation selecter
+// NewRandomSelecter is the constructor for random selecter
 func NewRandomSelecter() Interface {
 	return randomSelecter{}
 }

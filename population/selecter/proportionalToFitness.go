@@ -66,7 +66,7 @@ func (s proportionalToFitnessSelecter) computeOffset(pop population.Interface) f
 	return offset
 }
 
-// NewProportionalToFitnessSelecter is the constrctor for truncation selecter
+// NewProportionalToFitnessSelecter is the constructor for selecter based on fitness value
 func NewProportionalToFitnessSelecter() Interface {
 	return proportionalToFitnessSelecter{}
 }

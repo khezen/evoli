@@ -62,7 +62,7 @@ func (s tournamentSelecter) computeOffset(r1, r2 float32) float32 {
 	return offset
 }
 
-// NewTournamentSelecter is the constrctor for truncation selecter
+// NewTournamentSelecter is the constructor for tournament selecter. High Fitness increase chances to come out vitorious from a duel
 func NewTournamentSelecter() Interface {
 	return tournamentSelecter{}
 }

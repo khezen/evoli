@@ -37,7 +37,7 @@ func (s proportionalToRankSelecter) computeTotalScore(pop population.Interface) 
 	return n * (n + 1) / 2 // 1+2+3+...+n
 }
 
-// NewProportionalToRankSelecter is the constrctor for truncation selecter
+// NewProportionalToFitnessSelecter is the constructor for selecter based on ranking inside accross the population
 func NewProportionalToRankSelecter() Interface {
 	return proportionalToRankSelecter{}
 }

@@ -14,7 +14,7 @@ func (s truncationSelecter) Select(pop population.Interface, survivorsSize int) 
 	return pop, nil
 }
 
-// NewTruncationSelecter is the constrctor for truncation selecter
+// NewTruncationSelecter is the constructor for truncation selecter
 func NewTruncationSelecter() Interface {
 	return truncationSelecter{}
 }
