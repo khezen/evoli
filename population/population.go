@@ -5,7 +5,7 @@ import (
 	"sort"
 
 	"fmt"
-	"github.com/khezen/cop"
+	"github.com/khezen/check"
 	"github.com/khezen/darwin/population/individual"
 )
 
@@ -34,7 +34,7 @@ type Population []individual.Interface
 
 // New is population constructor
 func New(capacity int) (*Population, error) {
-	err := cop.CheckCap(capacity)
+	err := check.Cap(capacity)
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +79,7 @@ func (pop *Population) Cap() int {
 
 // SetCap set the resize the population capacity
 func (pop *Population) SetCap(newCap int) error {
-	err := cop.CheckCap(newCap)
+	err := check.Cap(newCap)
 	if err != nil {
 		return err
 	}
@@ -100,7 +100,7 @@ func (pop *Population) SetCap(newCap int) error {
 
 // Truncate reduce population size to the given length
 func (pop *Population) Truncate(length int) error {
-	err := cop.CheckLength(length)
+	err := check.Length(length)
 	if err != nil {
 		return err
 	}
@@ -120,7 +120,7 @@ func (pop *Population) Truncate(length int) error {
 
 // Append adds an individual to a population. If the populagtion has already reached its capacity, capacity is incremented.
 func (pop *Population) Append(indiv individual.Interface) error {
-	err := cop.CheckNotNil(indiv)
+	err := check.NotNil(indiv)
 	if err != nil {
 		return err
 	}
@@ -130,7 +130,7 @@ func (pop *Population) Append(indiv individual.Interface) error {
 
 // AppendAll adds all individuals from a population to a population. If the populagtion has already reached its capacity, capacity is incremented. Nil individuals are not appended
 func (pop *Population) AppendAll(externalPop Interface) error {
-	err := cop.CheckNotNil(externalPop)
+	err := check.NotNil(externalPop)
 	if err != nil {
 		return err
 	}
@@ -146,7 +146,7 @@ func (pop *Population) AppendAll(externalPop Interface) error {
 
 // Get returns the individual at index i
 func (pop *Population) Get(i int) (individual.Interface, error) {
-	err := cop.CheckIndex(i, pop.Len())
+	err := check.Index(i, pop.Len())
 	if err != nil {
 		return nil, err
 	}
@@ -155,7 +155,7 @@ func (pop *Population) Get(i int) (individual.Interface, error) {
 
 // Remove removes and returns the individual at index i
 func (pop *Population) Remove(i int) (individual.Interface, error) {
-	err := cop.CheckIndex(i, pop.Len())
+	err := check.Index(i, pop.Len())
 	if err != nil {
 		return nil, err
 	}
@@ -167,11 +167,11 @@ func (pop *Population) Remove(i int) (individual.Interface, error) {
 
 // Replace replaces and returns the individual at index i by the substitute
 func (pop *Population) Replace(i int, substitute individual.Interface) (individual.Interface, error) {
-	err := cop.CheckIndex(i, pop.Len())
+	err := check.Index(i, pop.Len())
 	if err != nil {
 		return nil, err
 	}
-	err = cop.CheckNotNil(substitute)
+	err = check.NotNil(substitute)
 	if err != nil {
 		return nil, err
 	}
@@ -239,7 +239,7 @@ func (pop *Population) Contains(indiv individual.Interface) bool {
 
 // IndexOf returns the inde of the specified individual if it exists
 func (pop *Population) IndexOf(indiv individual.Interface) (int, error) {
-	err := cop.CheckNotNil(indiv)
+	err := check.NotNil(indiv)
 	if err != nil {
 		return -1, err
 	}

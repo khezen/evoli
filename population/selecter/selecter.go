@@ -1,7 +1,7 @@
 package selecter
 
 import (
-	"github.com/khezen/cop"
+	"github.com/khezen/check"
 	"github.com/khezen/darwin/population"
 )
 
@@ -11,11 +11,11 @@ type Interface interface {
 }
 
 func checkParams(pop population.Interface, survivorsSize int) error {
-	err := cop.CheckNotNil(pop)
+	err := check.NotNil(pop)
 	if err != nil {
 		return err
 	}
-	err = cop.CheckSuperior(survivorsSize, 1, "survivorSize")
+	err = check.Superior(survivorsSize, 1, "survivorSize")
 	if err != nil {
 		return err
 	}

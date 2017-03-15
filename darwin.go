@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 
-	"github.com/khezen/cop"
+	"github.com/khezen/check"
 	"github.com/khezen/darwin/population"
 	"github.com/khezen/darwin/population/individual"
 	"github.com/khezen/darwin/population/selecter"
@@ -42,7 +42,7 @@ func New(s selecter.Interface, c individual.Crosser, m individual.Mutater, e ind
 
 // Generation takes a Population and produce a the new generation of this population
 func (l Lifecycle) Generation(pop population.Interface, survivorSizeForSelection int, mutationProbability float32) (population.Interface, error) {
-	err := cop.CheckNotNil(pop)
+	err := check.NotNil(pop)
 	if err != nil {
 		return pop, err
 	}
