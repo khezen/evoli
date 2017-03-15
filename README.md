@@ -4,3 +4,10 @@
 
 # Darwin
 Genetic algorithm go package
+
+# Documentation
+
+* [darwin](https://godoc.org/github.com/Khezen/darwin)
+  * [population](https://godoc.org/github.com/Khezen/darwin/population)
+    * [individual](https://godoc.org/github.com/Khezen/darwin/population/individual)
+    * [selecter](https://godoc.org/github.com/Khezen/darwin/population/selecter)
