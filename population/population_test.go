@@ -452,35 +452,3 @@ func TestIndexOf(t *testing.T) {
 	}
 
 }
-
-func TestCheckPopNil(t *testing.T) {
-	i1, i2, i3 := individual.New(0.2), individual.New(0.7), individual.New(1)
-	err := CheckPopNotNil(&Population{i1, i2, i3})
-	if err != nil {
-		t.Errorf("expected err == nil")
-	}
-	var pop Interface
-	err = CheckPopNotNil(pop)
-	if err == nil {
-		t.Error("expected err != nil")
-	}
-}
-
-func TestCheckSuperior(t *testing.T) {
-	cases := []struct {
-		in         int
-		shouldFail bool
-	}{
-		{1000, false},
-		{-1000, true},
-	}
-	for _, c := range cases {
-		err := CheckSuperior(c.in, 0, "")
-		if c.shouldFail && err == nil {
-			t.Errorf("expected err != nil")
-		}
-		if !c.shouldFail && err != nil {
-			t.Error("expected err == nil")
-		}
-	}
-}

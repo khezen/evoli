@@ -36,15 +36,3 @@ func TestFitness(t *testing.T) {
 		}
 	}
 }
-
-func TestCheckNotNil(t *testing.T) {
-	err := CheckIndivNotNil(New(0))
-	if err != nil {
-		t.Errorf("expected err == nil")
-	}
-	var indiv Interface
-	err = CheckIndivNotNil(indiv)
-	if err == nil {
-		t.Error("expected err != nil")
-	}
-}

@@ -1,10 +1,5 @@
 package individual
 
-import (
-	"fmt"
-	"reflect"
-)
-
 // Interface is an interface for an individual
 type Interface interface {
 	Fitness() float32
@@ -28,12 +23,4 @@ func (indiv *Individual) Fitness() float32 {
 // SetFitness set the strength of a individual regarding to its environement. Higher is stronger.
 func (indiv *Individual) SetFitness(Fitness float32) {
 	*indiv = Individual(Fitness)
-}
-
-//CheckIndivNotNil chck if an indivudal is nil
-func CheckIndivNotNil(indiv Interface) error {
-	if indiv == nil || reflect.ValueOf(indiv).IsNil() {
-		return fmt.Errorf("Nil pointer on individual")
-	}
-	return nil
 }
