@@ -207,7 +207,7 @@ func (pop *Population) Extremums() (min, max individual.Interface) {
 	return pop.Min(), pop.Max()
 }
 
-// PickCouple returns the index of two randomly chosen individuals
+// PickCouple returns two randomly chosen individuals with their index
 func (pop *Population) PickCouple() (int, individual.Interface, int, individual.Interface, error) {
 	if pop.Len() < 2 {
 		return -1, nil, -1, nil, fmt.Errorf("pop must contains at least 2 individuals to pick a couple")
