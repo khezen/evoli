@@ -9,7 +9,7 @@ import (
 
 // ILifecycle for genetic algorithm step
 type ILifecycle interface {
-	Generation(pop IPopulation, survivorSizeForSelection int, mutationProbability float32) (*IPopulation, error)
+	Generation(pop IPopulation, survivorSizeForSelection int, mutationProbability float32) (IPopulation, error)
 }
 
 // Lifecycle is a genetic algorithm implementation
