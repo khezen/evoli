@@ -7,8 +7,8 @@ import (
 	"github.com/khezen/check"
 )
 
-// Interface for genetic algorithm step
-type Interface interface {
+// ILifecycle for genetic algorithm step
+type ILifecycle interface {
 	Generation(pop IPopulation, survivorSizeForSelection int, mutationProbability float32) (*IPopulation, error)
 }
 
