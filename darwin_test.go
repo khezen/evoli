@@ -2,44 +2,40 @@ package darwin
 
 import (
 	"testing"
-
-	"github.com/khezen/darwin/population"
-	"github.com/khezen/darwin/population/individual"
-	"github.com/khezen/darwin/population/selecter"
 )
 
 type crosserMock struct {
 }
 
-func (c crosserMock) Cross(individual1, individual2 individual.Interface) individual.Interface {
-	return individual.New(individual1.Fitness() + individual2.Fitness()/2)
+func (c crosserMock) Cross(individual1, individual2 IIndividual) IIndividual {
+	return NewIndividual(individual1.Fitness() + individual2.Fitness()/2)
 }
 
 type evaluaterMock struct {
 }
 
-func (e evaluaterMock) Evaluate(individual individual.Interface) (Fitness float32) {
+func (e evaluaterMock) Evaluate(individual IIndividual) (Fitness float32) {
 	return individual.Fitness()
 }
 
 type mutaterMock struct {
 }
 
-func (m mutaterMock) Mutate(individual individual.Interface) individual.Interface {
+func (m mutaterMock) Mutate(individual IIndividual) IIndividual {
 	return individual
 }
 
 func TestNew(t *testing.T) {
 	errorCases := []struct {
-		s selecter.Interface
-		c individual.Crosser
-		m individual.Mutater
-		e individual.Evaluater
+		s ISelecter
+		c ICrosser
+		m IMutater
+		e IEvaluater
 	}{
 		{nil, crosserMock{}, mutaterMock{}, evaluaterMock{}},
-		{selecter.NewTruncationSelecter(), nil, mutaterMock{}, evaluaterMock{}},
-		{selecter.NewTruncationSelecter(), crosserMock{}, nil, evaluaterMock{}},
-		{selecter.NewTruncationSelecter(), crosserMock{}, mutaterMock{}, nil},
+		{NewTruncationSelecter(), nil, mutaterMock{}, evaluaterMock{}},
+		{NewTruncationSelecter(), crosserMock{}, nil, evaluaterMock{}},
+		{NewTruncationSelecter(), crosserMock{}, mutaterMock{}, nil},
 	}
 	for _, c := range errorCases {
 		_, err := New(c.s, c.c, c.m, c.e)
@@ -47,18 +43,18 @@ func TestNew(t *testing.T) {
 			t.Errorf("expected != nil")
 		}
 	}
-	_, err := New(selecter.NewTruncationSelecter(), crosserMock{}, mutaterMock{}, evaluaterMock{})
+	_, err := New(NewTruncationSelecter(), crosserMock{}, mutaterMock{}, evaluaterMock{})
 	if err != nil {
 		t.Errorf("expected == nil")
 	}
 }
 
 func TestGeneration(t *testing.T) {
-	i1, i2, i3, i4, i5, i6 := individual.New(1), individual.New(-2), individual.New(3), individual.New(4), individual.New(5), individual.New(6)
-	pop := population.Population{i1, i2, i3, i4, i5, i6}
-	cpy, _ := population.New(pop.Cap())
+	i1, i2, i3, i4, i5, i6 := NewIndividual(1), NewIndividual(-2), NewIndividual(3), NewIndividual(4), NewIndividual(5), NewIndividual(6)
+	pop := Population{i1, i2, i3, i4, i5, i6}
+	cpy, _ := NewPopulation(pop.Cap())
 	cpy.AppendAll(&pop)
-	lifecycle, _ := New(selecter.NewTruncationSelecter(), crosserMock{}, mutaterMock{}, evaluaterMock{})
+	lifecycle, _ := New(NewTruncationSelecter(), crosserMock{}, mutaterMock{}, evaluaterMock{})
 	newPop, _ := lifecycle.Generation(&pop, 5, 1)
 	isNewPopDifferent := false
 	for i := 0; i < newPop.Len(); i++ {
@@ -72,14 +68,14 @@ func TestGeneration(t *testing.T) {
 		t.Errorf("the new Generation should be different from the previous one")
 	}
 	errorCases := []struct {
-		pop          population.Interface
+		pop          IPopulation
 		survivorSize int
 		mutationProb float32
 	}{
 		{nil, 2, 0.2},
-		{&population.Population{i1, i2, i3}, -10, 0.2},
-		{&population.Population{i1, i2, i3}, 2, 1.2},
-		{&population.Population{i1, i2, i3}, 2, -0.2},
+		{&Population{i1, i2, i3}, -10, 0.2},
+		{&Population{i1, i2, i3}, 2, 1.2},
+		{&Population{i1, i2, i3}, 2, -0.2},
 	}
 	for _, c := range errorCases {
 		_, err := lifecycle.Generation(c.pop, c.survivorSize, c.mutationProb)

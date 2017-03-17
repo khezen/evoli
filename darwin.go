@@ -5,26 +5,23 @@ import (
 	"math/rand"
 
 	"github.com/khezen/check"
-	"github.com/khezen/darwin/population"
-	"github.com/khezen/darwin/population/individual"
-	"github.com/khezen/darwin/population/selecter"
 )
 
 // Interface for genetic algorithm step
 type Interface interface {
-	Generation(pop population.Interface, survivorSizeForSelection int, mutationProbability float32) (*population.Interface, error)
+	Generation(pop IPopulation, survivorSizeForSelection int, mutationProbability float32) (*IPopulation, error)
 }
 
 // Lifecycle is a genetic algorithm implementation
 type Lifecycle struct {
-	Selecter  selecter.Interface
-	Crosser   individual.Crosser
-	Mutater   individual.Mutater
-	Evaluater individual.Evaluater
+	Selecter  ISelecter
+	Crosser   ICrosser
+	Mutater   IMutater
+	Evaluater IEvaluater
 }
 
 // New is the constructor for Lifecycle struct
-func New(s selecter.Interface, c individual.Crosser, m individual.Mutater, e individual.Evaluater) (*Lifecycle, error) {
+func New(s ISelecter, c ICrosser, m IMutater, e IEvaluater) (*Lifecycle, error) {
 	if s == nil {
 		return nil, fmt.Errorf("selecter is nil")
 	}
@@ -41,7 +38,7 @@ func New(s selecter.Interface, c individual.Crosser, m individual.Mutater, e ind
 }
 
 // Generation takes a Population and produce a the new generation of this population
-func (l Lifecycle) Generation(pop population.Interface, survivorSizeForSelection int, mutationProbability float32) (population.Interface, error) {
+func (l Lifecycle) Generation(pop IPopulation, survivorSizeForSelection int, mutationProbability float32) (IPopulation, error) {
 	err := check.NotNil(pop)
 	if err != nil {
 		return pop, err
@@ -59,7 +56,7 @@ func (l Lifecycle) Generation(pop population.Interface, survivorSizeForSelection
 	return newPop, nil
 }
 
-func (l Lifecycle) evaluation(pop population.Interface) population.Interface {
+func (l Lifecycle) evaluation(pop IPopulation) IPopulation {
 	length := pop.Len()
 	for i := 0; i < length; i++ {
 		individual, _ := pop.Get(i)
@@ -68,8 +65,8 @@ func (l Lifecycle) evaluation(pop population.Interface) population.Interface {
 	return pop
 }
 
-func (l Lifecycle) crossovers(pop population.Interface) population.Interface {
-	newBorns, _ := population.New(pop.Cap() - pop.Len())
+func (l Lifecycle) crossovers(pop IPopulation) IPopulation {
+	newBorns, _ := NewPopulation(pop.Cap() - pop.Len())
 	capacity := newBorns.Cap()
 	for newBorns.Len() < capacity {
 		var _, indiv1, _, indiv2, _ = pop.PickCouple()
@@ -80,7 +77,7 @@ func (l Lifecycle) crossovers(pop population.Interface) population.Interface {
 	return pop
 }
 
-func (l Lifecycle) mutations(pop population.Interface, mutationProbability float32) (population.Interface, error) {
+func (l Lifecycle) mutations(pop IPopulation, mutationProbability float32) (IPopulation, error) {
 	if mutationProbability < 0 || mutationProbability > 1 {
 		return pop, fmt.Errorf("mutation probability = %v. Expected: 0 <= probability <= 1", mutationProbability)
 	}

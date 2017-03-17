@@ -1,10 +1,8 @@
-package selecter
-
-import "github.com/khezen/darwin/population"
+package darwin
 
 type truncationSelecter struct{}
 
-func (s truncationSelecter) Select(pop population.Interface, survivorsSize int) (population.Interface, error) {
+func (s truncationSelecter) Select(pop IPopulation, survivorsSize int) (IPopulation, error) {
 	err := checkParams(pop, survivorsSize)
 	if err != nil {
 		return nil, err
@@ -15,6 +13,6 @@ func (s truncationSelecter) Select(pop population.Interface, survivorsSize int) 
 }
 
 // NewTruncationSelecter is the constructor for truncation selecter
-func NewTruncationSelecter() Interface {
+func NewTruncationSelecter() ISelecter {
 	return truncationSelecter{}
 }

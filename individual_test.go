@@ -1,8 +1,8 @@
-package individual
+package darwin
 
 import "testing"
 
-func TestNew(t *testing.T) {
+func TestNewIndividual(t *testing.T) {
 	cases := []struct {
 		in, expected float32
 	}{
@@ -11,10 +11,10 @@ func TestNew(t *testing.T) {
 		{0, 0},
 	}
 	for _, c := range cases {
-		indiv := New(c.in)
+		indiv := NewIndividual(c.in)
 		got := indiv.Fitness()
 		if got != c.expected {
-			t.Errorf("individual.New(%f); indiv.Fitness() == %f, expected %f", c.in, got, c.expected)
+			t.Errorf("NewIndividual(%f); indiv.Fitness() == %f, expected %f", c.in, got, c.expected)
 		}
 	}
 }
@@ -27,7 +27,7 @@ func TestFitness(t *testing.T) {
 		{54.0, 54.0},
 		{0, 0},
 	}
-	indiv := New(0)
+	indiv := NewIndividual(0)
 	for _, c := range cases {
 		indiv.SetFitness(c.in)
 		got := indiv.Fitness()

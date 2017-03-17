@@ -1,14 +1,12 @@
-package selecter
+package darwin
 
 import (
 	"math/rand"
-
-	"github.com/khezen/darwin/population"
 )
 
 type randomSelecter struct{}
 
-func (s randomSelecter) Select(pop population.Interface, survivorsSize int) (population.Interface, error) {
+func (s randomSelecter) Select(pop IPopulation, survivorsSize int) (IPopulation, error) {
 	err := checkParams(pop, survivorsSize)
 	if err != nil {
 		return nil, err
@@ -22,6 +20,6 @@ func (s randomSelecter) Select(pop population.Interface, survivorsSize int) (pop
 }
 
 // NewRandomSelecter is the constructor for random selecter
-func NewRandomSelecter() Interface {
+func NewRandomSelecter() ISelecter {
 	return randomSelecter{}
 }

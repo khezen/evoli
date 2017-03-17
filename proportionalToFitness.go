@@ -1,15 +1,12 @@
-package selecter
+package darwin
 
 import (
 	"math/rand"
-
-	"github.com/khezen/darwin/population"
-	"github.com/khezen/darwin/population/individual"
 )
 
 type proportionalToFitnessSelecter struct{}
 
-func (s proportionalToFitnessSelecter) Select(pop population.Interface, survivorsSize int) (population.Interface, error) {
+func (s proportionalToFitnessSelecter) Select(pop IPopulation, survivorsSize int) (IPopulation, error) {
 	err := checkParams(pop, survivorsSize)
 	if err != nil {
 		return nil, err
@@ -17,7 +14,7 @@ func (s proportionalToFitnessSelecter) Select(pop population.Interface, survivor
 	if survivorsSize >= pop.Len() {
 		return pop, nil
 	}
-	newPop, _ := population.New(pop.Cap())
+	newPop, _ := NewPopulation(pop.Cap())
 	offset := s.computeOffset(pop)
 	totalScore := s.computeTotalScore(pop, offset)
 	for newPop.Len() < survivorsSize {
@@ -34,11 +31,11 @@ func (s proportionalToFitnessSelecter) Select(pop population.Interface, survivor
 	return newPop, nil
 }
 
-func (s proportionalToFitnessSelecter) computeScore(indiv individual.Interface, offset float32) float32 {
+func (s proportionalToFitnessSelecter) computeScore(indiv IIndividual, offset float32) float32 {
 	return indiv.Fitness() + offset
 }
 
-func (s proportionalToFitnessSelecter) computeTotalScore(pop population.Interface, offset float32) float32 {
+func (s proportionalToFitnessSelecter) computeTotalScore(pop IPopulation, offset float32) float32 {
 	var length, totalScore = pop.Len(), float32(0)
 	for i := 0; i < length; i++ {
 		indiv, _ := pop.Get(i)
@@ -47,7 +44,7 @@ func (s proportionalToFitnessSelecter) computeTotalScore(pop population.Interfac
 	return totalScore
 }
 
-func (s proportionalToFitnessSelecter) computeOffset(pop population.Interface) float32 {
+func (s proportionalToFitnessSelecter) computeOffset(pop IPopulation) float32 {
 	minIndiv, maxIndiv := pop.Extremums()
 	min, max := minIndiv.Fitness(), maxIndiv.Fitness()
 	var offset float32
@@ -67,6 +64,6 @@ func (s proportionalToFitnessSelecter) computeOffset(pop population.Interface) f
 }
 
 // NewProportionalToFitnessSelecter is the constructor for selecter based on fitness value
-func NewProportionalToFitnessSelecter() Interface {
+func NewProportionalToFitnessSelecter() ISelecter {
 	return proportionalToFitnessSelecter{}
 }

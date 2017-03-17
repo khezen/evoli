@@ -1,14 +1,12 @@
-package selecter
+package darwin
 
 import (
 	"math/rand"
-
-	"github.com/khezen/darwin/population"
 )
 
 type proportionalToRankSelecter struct{}
 
-func (s proportionalToRankSelecter) Select(pop population.Interface, survivorsSize int) (population.Interface, error) {
+func (s proportionalToRankSelecter) Select(pop IPopulation, survivorsSize int) (IPopulation, error) {
 	err := checkParams(pop, survivorsSize)
 	if err != nil {
 		return nil, err
@@ -16,7 +14,7 @@ func (s proportionalToRankSelecter) Select(pop population.Interface, survivorsSi
 	if survivorsSize >= pop.Len() {
 		return pop, nil
 	}
-	newPop, _ := population.New(pop.Cap())
+	newPop, _ := NewPopulation(pop.Cap())
 	totalScore := s.computeTotalScore(pop)
 	pop.Sort()
 	for newPop.Len() < survivorsSize {
@@ -32,12 +30,12 @@ func (s proportionalToRankSelecter) Select(pop population.Interface, survivorsSi
 	return newPop, nil
 }
 
-func (s proportionalToRankSelecter) computeTotalScore(pop population.Interface) float32 {
+func (s proportionalToRankSelecter) computeTotalScore(pop IPopulation) float32 {
 	n := float32(pop.Len())
 	return n * (n + 1) / 2 // 1+2+3+...+n
 }
 
-// NewProportionalToFitnessSelecter is the constructor for selecter based on ranking inside accross the population
-func NewProportionalToRankSelecter() Interface {
+// NewProportionalToRankSelecter is the constructor for selecter based on ranking inside accross the population
+func NewProportionalToRankSelecter() ISelecter {
 	return proportionalToRankSelecter{}
 }

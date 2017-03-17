@@ -1,14 +1,12 @@
-package selecter
+package darwin
 
 import (
 	"math/rand"
-
-	"github.com/khezen/darwin/population"
 )
 
 type tournamentSelecter struct{}
 
-func (s tournamentSelecter) Select(pop population.Interface, survivorsSize int) (population.Interface, error) {
+func (s tournamentSelecter) Select(pop IPopulation, survivorsSize int) (IPopulation, error) {
 	err := checkParams(pop, survivorsSize)
 	if err != nil {
 		return nil, err
@@ -16,7 +14,7 @@ func (s tournamentSelecter) Select(pop population.Interface, survivorsSize int) 
 	if survivorsSize >= pop.Len() {
 		return pop, nil
 	}
-	newPop, _ := population.New(pop.Cap())
+	newPop, _ := NewPopulation(pop.Cap())
 	for newPop.Len() < survivorsSize {
 		var i, _, j, _, _ = pop.PickCouple()
 		survivorIndex := s.fightForYourLives(pop, i, j)
@@ -27,7 +25,7 @@ func (s tournamentSelecter) Select(pop population.Interface, survivorsSize int) 
 	return newPop, nil
 }
 
-func (s tournamentSelecter) fightForYourLives(pop population.Interface, index1 int, index2 int) (survivorIndex int) {
+func (s tournamentSelecter) fightForYourLives(pop IPopulation, index1 int, index2 int) (survivorIndex int) {
 	i1, _ := pop.Get(index1)
 	i2, _ := pop.Get(index2)
 	r1, r2 := i1.Fitness(), i2.Fitness()
@@ -63,6 +61,6 @@ func (s tournamentSelecter) computeOffset(r1, r2 float32) float32 {
 }
 
 // NewTournamentSelecter is the constructor for tournament selecter. High Fitness increase chances to come out vitorious from a duel
-func NewTournamentSelecter() Interface {
+func NewTournamentSelecter() ISelecter {
 	return tournamentSelecter{}
 }

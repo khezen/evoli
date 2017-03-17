@@ -1,7 +1,7 @@
-package individual
+package darwin
 
-// Interface is an interface for an individual
-type Interface interface {
+// IIndividual is an interface for an individual
+type IIndividual interface {
 	Fitness() float32
 	SetFitness(float32)
 }
@@ -9,8 +9,8 @@ type Interface interface {
 // Individual https://en.wikipedia.org/wiki/individual
 type Individual float32
 
-// New is the constructor for individuals
-func New(Fitness float32) *Individual {
+// NewIndividual is the constructor for individuals
+func NewIndividual(Fitness float32) *Individual {
 	indiv := Individual(Fitness)
 	return &indiv
 }

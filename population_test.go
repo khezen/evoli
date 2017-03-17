@@ -1,12 +1,10 @@
-package population
+package darwin
 
 import (
 	"testing"
-
-	"github.com/khezen/darwin/population/individual"
 )
 
-func TestNew(t *testing.T) {
+func TestNewPopulation(t *testing.T) {
 	cases := []struct {
 		in, expected int
 	}{
@@ -15,20 +13,20 @@ func TestNew(t *testing.T) {
 		{7, 7},
 	}
 	for _, c := range cases {
-		var got Interface
-		got, _ = New(c.in)
+		var got IPopulation
+		got, _ = NewPopulation(c.in)
 		if got.Cap() != c.expected {
 			t.Errorf("expected  %v", c.expected)
 		}
 	}
-	_, err := New(-1)
+	_, err := NewPopulation(-1)
 	if err == nil {
 		t.Errorf("expected != nil")
 	}
 }
 
 func TestSort(t *testing.T) {
-	i1, i2, i3 := individual.New(0.2), individual.New(0.7), individual.New(1)
+	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	cases := []struct {
 		in, expected Population
 	}{
@@ -48,8 +46,8 @@ func TestSort(t *testing.T) {
 }
 
 func TestCap(t *testing.T) {
-	p1, _ := New(7)
-	p2, _ := New(0)
+	p1, _ := NewPopulation(7)
+	p2, _ := NewPopulation(0)
 	cases := []struct {
 		in       *Population
 		expected int
@@ -73,7 +71,7 @@ func TestSetCap(t *testing.T) {
 		{1, 1},
 		{7, 7},
 	}
-	pop, _ := New(0)
+	pop, _ := NewPopulation(0)
 	for _, c := range cases {
 		pop.SetCap(c.in)
 		if pop.Cap() != c.expected {
@@ -87,7 +85,7 @@ func TestSetCap(t *testing.T) {
 }
 
 func TestTruncate(t *testing.T) {
-	i1, i2, i3 := individual.New(0.2), individual.New(0.7), individual.New(1)
+	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	cases := []struct {
 		in       Population
 		size     int
@@ -116,10 +114,10 @@ func TestTruncate(t *testing.T) {
 }
 
 func TestAppend(t *testing.T) {
-	i1, i2, i3 := individual.New(0.2), individual.New(0.7), individual.New(1)
+	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	cases := []struct {
 		in       Population
-		indiv    individual.Interface
+		indiv    IIndividual
 		expected Population
 	}{
 		{Population{i1, i2}, i3, Population{i1, i2, i3}},
@@ -143,7 +141,7 @@ func TestAppend(t *testing.T) {
 }
 
 func TestAppendAll(t *testing.T) {
-	i1, i2, i3, i4 := individual.New(0.2), individual.New(0.7), individual.New(1), individual.New(42.42)
+	i1, i2, i3, i4 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1), NewIndividual(42.42)
 	cases := []struct {
 		in, toAp, expected Population
 	}{
@@ -175,7 +173,7 @@ func TestAppendAll(t *testing.T) {
 }
 
 func TestGet(t *testing.T) {
-	i1, i2, i3 := individual.New(0.2), individual.New(0.7), individual.New(1)
+	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	pop := Population{i2, i1, i3}
 
 	indiv, _ := pop.Get(1)
@@ -193,7 +191,7 @@ func TestGet(t *testing.T) {
 }
 
 func TestRemove(t *testing.T) {
-	i1, i2, i3 := individual.New(0.2), individual.New(0.7), individual.New(1)
+	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	pop := Population{i2, i1, i3}
 	_, err := pop.Remove(-1000)
 	if err == nil {
@@ -213,11 +211,11 @@ func TestRemove(t *testing.T) {
 }
 
 func TestReplace(t *testing.T) {
-	i1, i2, i3, i4 := individual.New(0.2), individual.New(0.7), individual.New(1), individual.New(10)
+	i1, i2, i3, i4 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1), NewIndividual(10)
 	pop := Population{i2, i1, i3}
 	cases := []struct {
 		index int
-		indiv *individual.Individual
+		indiv *Individual
 		isErr bool
 	}{
 		{1, i4, false},
@@ -248,7 +246,7 @@ func TestReplace(t *testing.T) {
 }
 
 func TestMax(t *testing.T) {
-	i1, i2, i3 := individual.New(0.2), individual.New(0.7), individual.New(1)
+	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	pop := Population{i2, i1, i3}
 	max := pop.Max()
 	if max != i3 {
@@ -257,7 +255,7 @@ func TestMax(t *testing.T) {
 }
 
 func TestMin(t *testing.T) {
-	i1, i2, i3 := individual.New(0.2), individual.New(0.7), individual.New(1)
+	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	pop := Population{i2, i1, i3}
 	min := pop.Min()
 	if min != i1 {
@@ -266,7 +264,7 @@ func TestMin(t *testing.T) {
 }
 
 func TestExtremums(t *testing.T) {
-	i1, i2, i3 := individual.New(0.2), individual.New(0.7), individual.New(1)
+	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	pop := Population{i2, i1, i3}
 	min, max := pop.Extremums()
 	if min != i1 || max != i3 {
@@ -275,7 +273,7 @@ func TestExtremums(t *testing.T) {
 }
 
 func TestLen(t *testing.T) {
-	i1, i2, i3 := individual.New(0.2), individual.New(0.7), individual.New(1)
+	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	cases := []struct {
 		in       Population
 		cap      int
@@ -297,7 +295,7 @@ func TestLen(t *testing.T) {
 }
 
 func TestLess(t *testing.T) {
-	i1, i2, i3 := individual.New(0.2), individual.New(0.7), individual.New(1)
+	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	cases := []struct {
 		in       Population
 		i        int
@@ -331,7 +329,7 @@ func TestLess(t *testing.T) {
 }
 
 func TestSwap(t *testing.T) {
-	i1, i2, i3 := individual.New(0.2), individual.New(0.7), individual.New(1)
+	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	cases := []struct {
 		in       Population
 		i        int
@@ -357,7 +355,7 @@ func TestSwap(t *testing.T) {
 		{Population{i1, i2, i3}, 1000, -1, Population{i1, i2, i3}},
 	}
 	for _, c := range cases {
-		pop, _ := New(c.in.Cap())
+		pop, _ := NewPopulation(c.in.Cap())
 		pop.AppendAll(&c.in)
 		pop.Swap(c.i, c.j)
 		for i := range *pop {
@@ -372,7 +370,7 @@ func TestSwap(t *testing.T) {
 }
 
 func TestPickCouple(t *testing.T) {
-	i1, i2, i3, i4, i5, i6 := individual.New(1), individual.New(2), individual.New(3), individual.New(4), individual.New(5), individual.New(6)
+	i1, i2, i3, i4, i5, i6 := NewIndividual(1), NewIndividual(2), NewIndividual(3), NewIndividual(4), NewIndividual(5), NewIndividual(6)
 	pop := Population{i1, i2, i3, i4, i5, i6}
 	index1, indiv1, index2, indiv2, err := pop.PickCouple()
 	if index1 < 0 || index1 >= pop.Len() || index2 < 0 || index2 >= pop.Len() {
@@ -411,10 +409,10 @@ func TestPickCouple(t *testing.T) {
 }
 
 func TestContains(t *testing.T) {
-	i1, i2, i3 := individual.New(0.2), individual.New(0.7), individual.New(1)
+	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	cases := []struct {
 		in       Population
-		indiv    individual.Interface
+		indiv    IIndividual
 		expected bool
 	}{
 		{Population{i1, i2}, i1, true},
@@ -429,10 +427,10 @@ func TestContains(t *testing.T) {
 }
 
 func TestIndexOf(t *testing.T) {
-	i1, i2, i3 := individual.New(0.2), individual.New(0.7), individual.New(1)
+	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	cases := []struct {
 		in       Population
-		indiv    individual.Interface
+		indiv    IIndividual
 		expected int
 	}{
 		{Population{i1, i2}, i1, 0},
