@@ -19,7 +19,7 @@ func (s proportionalToFitnessSelecter) Select(pop IPopulation, survivorsSize int
 	totalScore := s.computeTotalScore(pop, offset)
 	for newPop.Len() < survivorsSize {
 		for i := 0; i < pop.Len(); i++ {
-			if newPop.Len() >= survivorsSize{
+			if newPop.Len() >= survivorsSize {
 				break
 			}
 			indiv, _ := pop.Get(i)
