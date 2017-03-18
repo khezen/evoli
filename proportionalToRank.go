@@ -19,7 +19,7 @@ func (s proportionalToRankSelecter) Select(pop IPopulation, survivorsSize int) (
 	pop.Sort()
 	for newPop.Len() < survivorsSize {
 		for i := 0; i < pop.Len(); i++ {
-			if newPop.Len() >= survivorsSize{
+			if newPop.Len() >= survivorsSize {
 				break
 			}
 			score := float32(pop.Len() - i)
@@ -38,7 +38,7 @@ func (s proportionalToRankSelecter) computeTotalScore(pop IPopulation) float32 {
 	return n * (n + 1) / 2 // 1+2+3+...+n
 }
 
-// NewProportionalToRankSelecter is the constructor for selecter based on ranking inside accross the population
+// NewProportionalToRankSelecter is the constructor for selecter based on ranking across the population
 func NewProportionalToRankSelecter() ISelecter {
 	return proportionalToRankSelecter{}
 }
