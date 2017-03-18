@@ -1,6 +1,7 @@
 package darwin
 
 import (
+	"github.com/khezen/check"
 	"testing"
 )
 
@@ -371,39 +372,35 @@ func TestSwap(t *testing.T) {
 
 func TestPickCouple(t *testing.T) {
 	i1, i2, i3, i4, i5, i6 := NewIndividual(1), NewIndividual(2), NewIndividual(3), NewIndividual(4), NewIndividual(5), NewIndividual(6)
-	pop := Population{i1, i2, i3, i4, i5, i6}
-	index1, indiv1, index2, indiv2, err := pop.PickCouple()
-	if index1 < 0 || index1 >= pop.Len() || index2 < 0 || index2 >= pop.Len() {
-		t.Errorf("%v.PickCouple() returned indexes %v, %v which are out of bounds", pop, index1, index2)
+
+	cases := []struct {
+		pop       Population
+		expectErr bool
+	}{
+		{Population{i1, i2, i3, i4, i5, i6}, false},
+		{Population{i1, i2}, false},
+		{Population{i1}, true},
 	}
-	if index1 == index2 {
-		t.Errorf("%v.PickCouple() returned indexes %v, %v which are equals", pop, index1, index2)
-	}
-	if indiv1 == nil || indiv2 == nil || indiv1 == indiv2 {
-		t.Errorf("%v.PickCouple() returned individuals %v, %v which are nils", pop, indiv1, indiv2)
-	}
-	if err != nil {
-		t.Errorf("expected err == nil")
-	}
-	pop = Population{i1}
-	_, _, _, _, err = pop.PickCouple()
-	if err == nil {
-		t.Errorf("expected err != nil")
-	}
-	pop = Population{i1, i2}
-	for i := 0; i < 32; i++ {
-		index1, indiv1, index2, indiv2, err = pop.PickCouple()
-		if index1 < 0 || index1 >= pop.Len() || index2 < 0 || index2 >= pop.Len() {
-			t.Errorf("%v.PickCouple() returned indexes %v, %v which are out of bounds", pop, index1, index2)
-		}
-		if index1 == index2 {
-			t.Errorf("%v.PickCouple() returned indexes %v, %v which are equals", pop, index1, index2)
-		}
-		if indiv1 == nil || indiv2 == nil || indiv1 == indiv2 {
-			t.Errorf("%v.PickCouple() returned individuals %v, %v which are nils", pop, indiv1, indiv2)
-		}
-		if err != nil {
-			t.Errorf("expected err == nil")
+	for _, c := range cases {
+		for i := 0; i < 32; i++ {
+			index1, indiv1, index2, indiv2, err := c.pop.PickCouple()
+			if !check.ErrorExpectation(err, c.expectErr) {
+				t.Errorf("unexpected output %v", err)
+			}
+			if !c.expectErr {
+				if index1 < 0 || index1 >= c.pop.Len() || index2 < 0 || index2 >= c.pop.Len() {
+					t.Errorf("%v.PickCouple() returned indexes %v, %v which are out of bounds", c.pop, index1, index2)
+				}
+				if index1 == index2 {
+					t.Errorf("%v.PickCouple() returned indexes %v, %v which are equals", c.pop, index1, index2)
+				}
+				if indiv1 == nil || indiv2 == nil || indiv1 == indiv2 {
+					t.Errorf("%v.PickCouple() returned individuals %v, %v which are nils", c.pop, indiv1, indiv2)
+				}
+				if err != nil {
+					t.Errorf("expected err == nil")
+				}
+			}
 		}
 	}
 }

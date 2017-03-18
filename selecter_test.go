@@ -33,6 +33,7 @@ func testSelecter(t *testing.T, s ISelecter) {
 		expectedCap  int
 	}{
 		{Population{i1, i2, i3, i4, i5, i6}, 3, 3, 6},
+		{Population{i1, i1, i1, i1, i1, i1, i1, i1, i1, i1, i1, i1, i1}, 1, 1, 13},
 		{Population{i1, i2, i4, i5}, 2, 2, 4},
 		{Population{i1}, 3, 1, 3},
 		{Population{i3, i6}, 1, 1, 2},
