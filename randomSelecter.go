@@ -13,7 +13,7 @@ func (s randomSelecter) Select(pop IPopulation, survivorsSize int) (IPopulation,
 	}
 	size := pop.Len() - survivorsSize
 	for count := 0; count < size; {
-		pop.Remove(rand.Intn(pop.Len() - 1))
+		pop.RemoveAt(rand.Intn(pop.Len() - 1))
 		count++
 	}
 	return pop, nil

@@ -14,11 +14,12 @@ func (s tournamentSelecter) Select(pop IPopulation, survivorsSize int) (IPopulat
 	if survivorsSize >= pop.Len() {
 		return pop, nil
 	}
-	newPop, _ := NewPopulation(pop.Cap())
+	newPop := NewPopulation(pop.Cap())
 	for newPop.Len() < survivorsSize {
 		var i, _, j, _, _ = pop.PickCouple()
 		survivorIndex := s.fightForYourLives(pop, i, j)
-		indiv, _ := pop.Remove(survivorIndex)
+		indiv, _ := pop.Get(survivorIndex)
+		pop.RemoveAt(survivorIndex)
 		newPop.Append(indiv)
 
 	}

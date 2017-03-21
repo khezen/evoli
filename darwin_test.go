@@ -52,14 +52,14 @@ func TestNew(t *testing.T) {
 func TestGeneration(t *testing.T) {
 	i1, i2, i3, i4, i5, i6 := NewIndividual(1), NewIndividual(-2), NewIndividual(3), NewIndividual(4), NewIndividual(5), NewIndividual(6)
 	pop := Population{i1, i2, i3, i4, i5, i6}
-	cpy, _ := NewPopulation(pop.Cap())
-	cpy.AppendAll(&pop)
+	cpy := NewPopulation(pop.Cap())
+	cpy.Append(pop...)
 	lifecycle, _ := New(NewTruncationSelecter(), crosserMock{}, mutaterMock{}, evaluaterMock{})
 	newPop, _ := lifecycle.Generation(&pop, 5, 1)
 	isNewPopDifferent := false
 	for i := 0; i < newPop.Len(); i++ {
 		indiv, _ := newPop.Get(i)
-		if !cpy.Contains(indiv) {
+		if !cpy.Has(indiv) {
 			isNewPopDifferent = true
 			break
 		}

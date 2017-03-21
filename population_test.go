@@ -14,14 +14,14 @@ func TestNewPopulation(t *testing.T) {
 	}
 	for _, c := range cases {
 		var got IPopulation
-		got, _ = NewPopulation(c.in)
+		got = NewPopulation(c.in)
 		if got.Cap() != c.expected {
 			t.Errorf("expected  %v", c.expected)
 		}
 	}
-	_, err := NewPopulation(-1)
-	if err == nil {
-		t.Errorf("expected != nil")
+	fail := NewPopulation(-1)
+	if fail != nil {
+		t.Errorf("Expected nil, got %v", fail)
 	}
 }
 
@@ -46,8 +46,8 @@ func TestSort(t *testing.T) {
 }
 
 func TestCap(t *testing.T) {
-	p1, _ := NewPopulation(7)
-	p2, _ := NewPopulation(0)
+	p1 := NewPopulation(7)
+	p2 := NewPopulation(0)
 	cases := []struct {
 		in       *Population
 		expected int
@@ -71,7 +71,7 @@ func TestSetCap(t *testing.T) {
 		{1, 1},
 		{7, 7},
 	}
-	pop, _ := NewPopulation(0)
+	pop := NewPopulation(0)
 	for _, c := range cases {
 		pop.SetCap(c.in)
 		if pop.Cap() != c.expected {
@@ -100,7 +100,7 @@ func TestTruncate(t *testing.T) {
 	for _, c := range cases {
 		c.in.Truncate(c.size)
 		for i := range c.expected {
-			if !c.expected.Contains(c.in[i]) {
+			if !c.expected.Has(c.in[i]) {
 				t.Errorf(".Truncate(%v) => %v; expected = %v", c.size, c.in, c.expected)
 				break
 			}
@@ -134,10 +134,7 @@ func TestAppend(t *testing.T) {
 		}
 	}
 	pop := Population{i2, i1}
-	err := pop.Append(nil)
-	if err == nil {
-		t.Errorf("expected != nil")
-	}
+	pop.Append(nil)
 }
 
 func TestAppendAll(t *testing.T) {
@@ -152,7 +149,7 @@ func TestAppendAll(t *testing.T) {
 		{Population{}, Population{}, Population{}},
 	}
 	for _, c := range cases {
-		c.in.AppendAll(&c.toAp)
+		c.in.Append(c.toAp...)
 		for i := range c.expected {
 			if c.in[i] != c.expected[i] {
 				t.Errorf(".AppendAll(%v) => %v; expected = %v", c.toAp, c.in, c.expected)
@@ -161,15 +158,8 @@ func TestAppendAll(t *testing.T) {
 		}
 	}
 	pop := &Population{i2, i1}
-	err := pop.AppendAll(nil)
-	if err == nil {
-		t.Errorf("expected != nil")
-	}
-	toBeAppended := &Population{i2, i1, nil}
-	err = pop.AppendAll(toBeAppended)
-	if err == nil {
-		t.Errorf("expected != nil")
-	}
+	toBeAppended := Population{i2, i1, nil}
+	pop.Append(toBeAppended...)
 }
 
 func TestGet(t *testing.T) {
@@ -192,20 +182,38 @@ func TestGet(t *testing.T) {
 
 func TestRemove(t *testing.T) {
 	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
+	cases := []struct {
+		pop         *Population
+		toBeRemoved IIndividual
+		expected    []IIndividual
+	}{
+		{&Population{i1, i2, i3}, i2, []IIndividual{i1, i3}},
+	}
+	for _, c := range cases {
+		c.pop.Remove(c.toBeRemoved)
+		for _, indiv := range c.expected {
+			if !c.pop.Has(indiv) {
+				t.Errorf("unexpected")
+			}
+			if c.pop.Len() != len(c.expected) {
+				t.Errorf("unexpected")
+			}
+		}
+	}
+}
+
+func TestRemoveAt(t *testing.T) {
+	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	pop := Population{i2, i1, i3}
-	_, err := pop.Remove(-1000)
+	err := pop.RemoveAt(-1000)
 	if err == nil {
 		t.Errorf("expected != nil")
 	}
-	_, err = pop.Remove(pop.Len())
+	err = pop.RemoveAt(pop.Len())
 	if err == nil {
 		t.Errorf("expected != nil")
 	}
-	indiv, _ := pop.Remove(1)
-	if indiv != i1 {
-		t.Errorf(".Remove(%v) => %v; expected = %v", 1, indiv, i1)
-	}
-	if pop.Len() != 2 {
+	if pop.Len() != 3 {
 		t.Errorf(".Remove(%v); pop.Len() => %v; expected = %v", 1, pop.Len(), 2)
 	}
 }
@@ -221,23 +229,18 @@ func TestReplace(t *testing.T) {
 		{1, i4, false},
 		{-1000, i4, true},
 		{pop.Len(), i4, true},
-		{1, nil, true},
 		{-42, nil, true},
 		{pop.Len(), nil, true},
 	}
 	for _, c := range cases {
 		switch c.isErr {
 		case true:
-			_, err := pop.Replace(c.index, c.indiv)
+			err := pop.Replace(c.index, c.indiv)
 			if err == nil {
 				t.Errorf("expected != nil")
 			}
 		case false:
-			expectedIndiv, _ := pop.Get(c.index)
-			indiv, _ := pop.Replace(c.index, c.indiv)
-			if indiv != expectedIndiv {
-				t.Errorf(".Repalce(%v, %v) => %v; expected = %v", c.index, c.indiv, indiv, expectedIndiv)
-			}
+			pop.Replace(c.index, c.indiv)
 			if pop.Len() != 3 {
 				t.Errorf(".Replace(%v, %v); pop.Len() => %v; expected = %v", c.index, c.indiv, pop.Len(), 3)
 			}
@@ -355,8 +358,8 @@ func TestSwap(t *testing.T) {
 		{Population{i1, i2, i3}, 1000, -1, Population{i1, i2, i3}},
 	}
 	for _, c := range cases {
-		pop, _ := NewPopulation(c.in.Cap())
-		pop.AppendAll(&c.in)
+		pop := NewPopulation(c.in.Cap())
+		pop.Append(c.in...)
 		pop.Swap(c.i, c.j)
 		for i := range *pop {
 			indiv, _ := pop.Get(i)
@@ -419,7 +422,7 @@ func TestContains(t *testing.T) {
 		{Population{i1, i2}, i3, false},
 	}
 	for _, c := range cases {
-		contains := c.in.Contains(c.indiv)
+		contains := c.in.Has(c.indiv)
 		if contains != c.expected {
 			t.Errorf("%v.Contains(%v) returned %v instead of %v", c.in, c.indiv, contains, c.expected)
 		}

@@ -14,7 +14,7 @@ func (s proportionalToFitnessSelecter) Select(pop IPopulation, survivorsSize int
 	if survivorsSize >= pop.Len() {
 		return pop, nil
 	}
-	newPop, _ := NewPopulation(pop.Cap())
+	newPop := NewPopulation(pop.Cap())
 	offset := s.computeOffset(pop)
 	totalScore := s.computeTotalScore(pop, offset)
 	for newPop.Len() < survivorsSize {
@@ -22,7 +22,7 @@ func (s proportionalToFitnessSelecter) Select(pop IPopulation, survivorsSize int
 			indiv, _ := pop.Get(i)
 			score := s.computeScore(indiv, offset)
 			if totalScore == 0 || rand.Float32() <= score/totalScore {
-				pop.Remove(i)
+				pop.RemoveAt(i)
 				newPop.Append(indiv)
 				totalScore -= score
 			}

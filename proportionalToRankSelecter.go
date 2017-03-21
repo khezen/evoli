@@ -14,14 +14,15 @@ func (s proportionalToRankSelecter) Select(pop IPopulation, survivorsSize int) (
 	if survivorsSize >= pop.Len() {
 		return pop, nil
 	}
-	newPop, _ := NewPopulation(pop.Cap())
+	newPop := NewPopulation(pop.Cap())
 	totalScore := s.computeTotalScore(pop)
 	pop.Sort()
 	for newPop.Len() < survivorsSize {
 		for i := 0; i < pop.Len(); i++ {
 			score := float32(pop.Len() - i)
 			if rand.Float32() <= score/totalScore {
-				indiv, _ := pop.Remove(i)
+				indiv, _ := pop.Get(i)
+				pop.RemoveAt(i)
 				newPop.Append(indiv)
 				totalScore -= score
 			}

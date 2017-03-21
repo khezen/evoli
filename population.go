@@ -15,16 +15,16 @@ type IPopulation interface {
 	Cap() int
 	SetCap(int) error
 	Truncate(int) error
-	Append(IIndividual) error
-	AppendAll(IPopulation) error
+	Append(...IIndividual)
 	Get(int) (IIndividual, error)
-	Remove(int) (IIndividual, error)
-	Replace(int, IIndividual) (IIndividual, error)
+	RemoveAt(int) error
+	Remove(...IIndividual)
+	Replace(int, IIndividual) error
 	Max() IIndividual
 	Min() IIndividual
 	Extremums() (IIndividual, IIndividual)
 	PickCouple() (index1 int, indiv1 IIndividual, index2 int, indiv2 IIndividual, err error)
-	Contains(IIndividual) bool
+	Has(...IIndividual) bool
 	IndexOf(IIndividual) (int, error)
 }
 
@@ -32,13 +32,13 @@ type IPopulation interface {
 type Population []IIndividual
 
 // NewPopulation is population constructor
-func NewPopulation(capacity int) (*Population, error) {
+func NewPopulation(capacity int) *Population {
 	err := check.Cap(capacity)
 	if err != nil {
-		return nil, err
+		return nil
 	}
 	pop := Population(make([]IIndividual, 0, capacity))
-	return &pop, nil
+	return &pop
 }
 
 // Len returns the current livings count of a population
@@ -49,9 +49,12 @@ func (pop *Population) Len() int {
 // Less reports whether the element with
 // index i should sort before the element with index j.
 func (pop *Population) Less(i, j int) bool {
-	indivi, erri := pop.Get(i)
-	indivj, errj := pop.Get(j)
-	if erri != nil || errj != nil {
+	indivi, err := pop.Get(i)
+	if err != nil {
+		return false
+	}
+	indivj, err := pop.Get(j)
+	if err != nil {
 		return false
 	}
 	return indivi.Fitness() >= indivj.Fitness()
@@ -90,7 +93,7 @@ func (pop *Population) SetCap(newCap int) error {
 			tmp = (*pop)[0:newCap]
 			*pop = make([]IIndividual, newCap, newCap)
 		case newCap > currentCap:
-			*pop = make([]IIndividual, currentCap, newCap)
+			*pop = make([]IIndividual, pop.Len(), newCap)
 		}
 		copy(tmp, *pop)
 	}
@@ -105,42 +108,21 @@ func (pop *Population) Truncate(length int) error {
 	}
 	switch {
 	case length == 0:
-		newPop, _ := NewPopulation(0)
+		newPop := NewPopulation(0)
 		*pop = *newPop
 	case length < pop.Len():
 		*pop = (*pop)[0:length]
 	case length > pop.Cap():
-		newPop, _ := NewPopulation(length)
-		newPop.AppendAll(pop)
+		newPop := NewPopulation(length)
+		newPop.Append((*pop)...)
 		*pop = *newPop
 	}
 	return nil
 }
 
 // Append adds an individual to a population. If the populagtion has already reached its capacity, capacity is incremented.
-func (pop *Population) Append(indiv IIndividual) error {
-	err := check.NotNil(indiv)
-	if err != nil {
-		return err
-	}
-	*pop = append(*pop, indiv)
-	return nil
-}
-
-// AppendAll adds all individuals from a population to a population. If the populagtion has already reached its capacity, capacity is incremented. Nil individuals are not appended
-func (pop *Population) AppendAll(externalPop IPopulation) error {
-	err := check.NotNil(externalPop)
-	if err != nil {
-		return err
-	}
-	for i := 0; i < externalPop.Len(); i++ {
-		indiv, _ := externalPop.Get(i)
-		appendErr := pop.Append(indiv)
-		if appendErr != nil { // indiv has not been appended
-			err = appendErr
-		}
-	}
-	return err
+func (pop *Population) Append(indiv ...IIndividual) {
+	*pop = append(*pop, indiv...)
 }
 
 // Get returns the individual at index i
@@ -152,31 +134,35 @@ func (pop *Population) Get(i int) (IIndividual, error) {
 	return (*pop)[i], nil
 }
 
-// Remove removes and returns the individual at index i
-func (pop *Population) Remove(i int) (IIndividual, error) {
+// RemoveAt removes and returns the individual at index i
+func (pop *Population) RemoveAt(i int) error {
 	err := check.Index(i, pop.Len())
 	if err != nil {
-		return nil, err
+		return err
 	}
-	removed, _ := pop.Get(i)
 	new := (*pop)[0:i]
 	*pop = append(new, (*pop)[i+1:pop.Len()]...)
-	return removed, nil
+	return nil
+}
+
+// Remove removes all given individuals
+func (pop *Population) Remove(individuals ...IIndividual) {
+	for _, indiv := range individuals {
+		i, err := pop.IndexOf(indiv)
+		if err == nil {
+			pop.RemoveAt(i)
+		}
+	}
 }
 
 // Replace replaces and returns the individual at index i by the substitute
-func (pop *Population) Replace(i int, substitute IIndividual) (IIndividual, error) {
+func (pop *Population) Replace(i int, substitute IIndividual) error {
 	err := check.Index(i, pop.Len())
 	if err != nil {
-		return nil, err
+		return err
 	}
-	err = check.NotNil(substitute)
-	if err != nil {
-		return nil, err
-	}
-	removed, _ := pop.Get(i)
 	(*pop)[i] = substitute
-	return removed, nil
+	return nil
 }
 
 // Min returns the least Resilent individual
@@ -225,23 +211,18 @@ func (pop *Population) PickCouple() (int, IIndividual, int, IIndividual, error) 
 	return i, indivi, j, indivj, nil
 }
 
-// Contains return true if the specified individual is in the population
-func (pop *Population) Contains(indiv IIndividual) bool {
-	_, err := pop.IndexOf(indiv)
-	switch {
-	case err != nil:
-		return false
-	default:
-		return true
+// Has return true if the specified individual is in the population
+func (pop *Population) Has(individuals ...IIndividual) bool {
+	has := true
+	for _, indiv := range individuals {
+		_, err := pop.IndexOf(indiv)
+		has = has && err == nil
 	}
+	return has
 }
 
 // IndexOf returns the inde of the specified individual if it exists
 func (pop *Population) IndexOf(indiv IIndividual) (int, error) {
-	err := check.NotNil(indiv)
-	if err != nil {
-		return -1, err
-	}
 	for i, current := range *pop {
 		if current == indiv {
 			return i, nil
