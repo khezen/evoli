@@ -34,7 +34,7 @@ func (s proportionalToFitnessSelecter) Select(pop Population, survivorsSize int)
 	return newPop, nil
 }
 
-func (s proportionalToFitnessSelecter) computeScore(indiv IIndividual, offset float32) float32 {
+func (s proportionalToFitnessSelecter) computeScore(indiv Individual, offset float32) float32 {
 	return indiv.Fitness() + offset
 }
 
@@ -67,6 +67,6 @@ func (s proportionalToFitnessSelecter) computeOffset(pop Population) float32 {
 }
 
 // NewProportionalToFitnessSelecter is the constructor for selecter based on fitness value
-func NewProportionalToFitnessSelecter() ISelecter {
+func NewProportionalToFitnessSelecter() Selecter {
 	return proportionalToFitnessSelecter{}
 }

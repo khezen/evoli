@@ -7,30 +7,30 @@ import (
 type crosserMock struct {
 }
 
-func (c crosserMock) Cross(individual1, individual2 IIndividual) IIndividual {
+func (c crosserMock) Cross(individual1, individual2 Individual) Individual {
 	return NewIndividual(individual1.Fitness() + individual2.Fitness()/2)
 }
 
 type evaluaterMock struct {
 }
 
-func (e evaluaterMock) Evaluate(individual IIndividual) (Fitness float32) {
+func (e evaluaterMock) Evaluate(individual Individual) (Fitness float32) {
 	return individual.Fitness()
 }
 
 type mutaterMock struct {
 }
 
-func (m mutaterMock) Mutate(individual IIndividual) IIndividual {
+func (m mutaterMock) Mutate(individual Individual) Individual {
 	return individual
 }
 
 func TestNew(t *testing.T) {
 	errorCases := []struct {
-		s ISelecter
-		c ICrosser
-		m IMutater
-		e IEvaluater
+		s Selecter
+		c Crosser
+		m Mutater
+		e Evaluater
 	}{
 		{nil, crosserMock{}, mutaterMock{}, evaluaterMock{}},
 		{NewTruncationSelecter(), nil, mutaterMock{}, evaluaterMock{}},

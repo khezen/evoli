@@ -14,14 +14,14 @@ type Lifecycle interface {
 
 // lifecycle is a genetic algorithm implementation
 type lifecycle struct {
-	Selecter  ISelecter
-	Crosser   ICrosser
-	Mutater   IMutater
-	Evaluater IEvaluater
+	Selecter  Selecter
+	Crosser   Crosser
+	Mutater   Mutater
+	Evaluater Evaluater
 }
 
 // New is the constructor for Lifecycle
-func New(s ISelecter, c ICrosser, m IMutater, e IEvaluater) (Lifecycle, error) {
+func New(s Selecter, c Crosser, m Mutater, e Evaluater) (Lifecycle, error) {
 	if s == nil {
 		return nil, fmt.Errorf("selecter is nil")
 	}

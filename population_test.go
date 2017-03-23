@@ -118,7 +118,7 @@ func TestAppend(t *testing.T) {
 	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	cases := []struct {
 		in       population
-		indiv    IIndividual
+		indiv    Individual
 		expected population
 	}{
 		{population{i1, i2}, i3, population{i1, i2, i3}},
@@ -185,10 +185,10 @@ func TestRemove(t *testing.T) {
 	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	cases := []struct {
 		pop         *population
-		toBeRemoved IIndividual
-		expected    []IIndividual
+		toBeRemoved Individual
+		expected    []Individual
 	}{
-		{&population{i1, i2, i3}, i2, []IIndividual{i1, i3}},
+		{&population{i1, i2, i3}, i2, []Individual{i1, i3}},
 	}
 	for _, c := range cases {
 		c.pop.Remove(c.toBeRemoved)
@@ -224,7 +224,7 @@ func TestReplace(t *testing.T) {
 	pop := population{i2, i1, i3}
 	cases := []struct {
 		index int
-		indiv *Individual
+		indiv Individual
 		isErr bool
 	}{
 		{1, i4, false},
@@ -412,7 +412,7 @@ func TestContains(t *testing.T) {
 	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	cases := []struct {
 		in       population
-		indiv    IIndividual
+		indiv    Individual
 		expected bool
 	}{
 		{population{i1, i2}, i1, true},
@@ -430,7 +430,7 @@ func TestIndexOf(t *testing.T) {
 	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	cases := []struct {
 		in       population
-		indiv    IIndividual
+		indiv    Individual
 		expected int
 	}{
 		{population{i1, i2}, i1, 0},

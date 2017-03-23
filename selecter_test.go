@@ -24,7 +24,7 @@ func TestProportionalToFitness(t *testing.T) {
 	testSelecter(t, NewProportionalToFitnessSelecter())
 }
 
-func testSelecter(t *testing.T, s ISelecter) {
+func testSelecter(t *testing.T, s Selecter) {
 	i1, i2, i3, i4, i5, i6 := NewIndividual(1), NewIndividual(2), NewIndividual(-3), NewIndividual(4), NewIndividual(5), NewIndividual(-6)
 	cases := []struct {
 		in           population

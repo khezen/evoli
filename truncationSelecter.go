@@ -13,6 +13,6 @@ func (s truncationSelecter) Select(pop Population, survivorsSize int) (Populatio
 }
 
 // NewTruncationSelecter is the constructor for truncation selecter
-func NewTruncationSelecter() ISelecter {
+func NewTruncationSelecter() Selecter {
 	return truncationSelecter{}
 }

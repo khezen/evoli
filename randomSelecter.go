@@ -20,6 +20,6 @@ func (s randomSelecter) Select(pop Population, survivorsSize int) (Population, e
 }
 
 // NewRandomSelecter is the constructor for random selecter
-func NewRandomSelecter() ISelecter {
+func NewRandomSelecter() Selecter {
 	return randomSelecter{}
 }

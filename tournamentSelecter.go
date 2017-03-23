@@ -62,6 +62,6 @@ func (s tournamentSelecter) computeOffset(r1, r2 float32) float32 {
 }
 
 // NewTournamentSelecter is the constructor for tournament selecter. High Fitness increase chances to come out vitorious from a duel
-func NewTournamentSelecter() ISelecter {
+func NewTournamentSelecter() Selecter {
 	return tournamentSelecter{}
 }

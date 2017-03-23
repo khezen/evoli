@@ -4,8 +4,8 @@ import (
 	"github.com/khezen/check"
 )
 
-// ISelecter is the selecter operator interface
-type ISelecter interface {
+// Selecter is the selecter operator interface
+type Selecter interface {
 	Select(pop Population, survivorsSize int) (Population, error)
 }
 

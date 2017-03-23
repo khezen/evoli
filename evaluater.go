@@ -1,6 +1,6 @@
 package darwin
 
-// IEvaluater computes and set individual Fitness
-type IEvaluater interface {
-	Evaluate(IIndividual) (Fitness float32)
+// Evaluater computes and set individual Fitness
+type Evaluater interface {
+	Evaluate(Individual) (Fitness float32)
 }

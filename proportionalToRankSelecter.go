@@ -40,6 +40,6 @@ func (s proportionalToRankSelecter) computeTotalScore(pop Population) float32 {
 }
 
 // NewProportionalToRankSelecter is the constructor for selecter based on ranking across the population
-func NewProportionalToRankSelecter() ISelecter {
+func NewProportionalToRankSelecter() Selecter {
 	return proportionalToRankSelecter{}
 }

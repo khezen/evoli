@@ -1,6 +1,6 @@
 package darwin
 
-// IMutater randomly modify a individual. This operator maintain diversity in a population.
-type IMutater interface {
-	Mutate(IIndividual) IIndividual
+// Mutater randomly modify a individual. This operator maintain diversity in a population.
+type Mutater interface {
+	Mutate(Individual) Individual
 }

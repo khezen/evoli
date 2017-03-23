@@ -6,10 +6,10 @@
 Go implementation of Genetic Algorithm
 
 
-## IIndividual
+## Individual
 
 ```golang
-type IIndividual interface {
+type Individual interface {
 	Fitness() float32
 	SetFitness(float32)
 }
@@ -20,18 +20,18 @@ type IIndividual interface {
 type Population interface {
 	sort.Interface
 	Sort()
-    	Max() IIndividual
-	Min() IIndividual
-	Extremums() (IIndividual, IIndividual)
+    	Max() Individual
+	Min() Individual
+	Extremums() (Individual, Individual)
 
-    	Append(...IIndividual)
+    	Append(...Individual)
    	RemoveAt(int) error
-	Remove(...IIndividual)
-	Replace(int, IIndividual) error
-    	Get(int) (IIndividual, error)
-    	PickCouple() (index1 int, indiv1 IIndividual, index2 int, indiv2 IIndividual, err error)
-	Has(...IIndividual) bool
-	IndexOf(IIndividual) (int, error)
+	Remove(...Individual)
+	Replace(int, Individual) error
+    	Get(int) (Individual, error)
+    	PickCouple() (index1 int, indiv1 Individual, index2 int, indiv2 Individual, err error)
+	Has(...Individual) bool
+	IndexOf(Individual) (int, error)
 
 	Cap() int
 	SetCap(int) error
@@ -43,26 +43,26 @@ type Population interface {
 ## Operators
 
 ```golang
-type IEvaluater interface {
-	Evaluate(IIndividual) (Fitness float32)
+type Evaluater interface {
+	Evaluate(Individual) (Fitness float32)
 }
 ```
 
 ```golang
-type ISelecter interface {
+type Selecter interface {
 	Select(pop Population, survivorsSize int) (Population, error)
 }
 ```
 
 ```golang
-type ICrosser interface {
-	Cross(individual1, individual2 IIndividual) IIndividual
+type Crosser interface {
+	Cross(individual1, individual2 Individual) Individual
 }
 ```
 
 ```golang
-type IMutater interface {
-	Mutate(IIndividual) IIndividual
+type Mutater interface {
+	Mutate(Individual) Individual
 }
 ```
 
@@ -74,6 +74,6 @@ type Lifecycle interface {
 	Generation(pop Population, survivorSizeForSelection int, mutationProbability float32) (Population, error)
 }
 
-func New(s ISelecter, c ICrosser, m IMutater, e IEvaluater) (Lifecycle, error)
+func New(s Selecter, c Crosser, m Mutater, e Evaluater) (Lifecycle, error)
 
 ```
