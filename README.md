@@ -74,7 +74,7 @@ type ILifecycle interface {
 	Generation(pop IPopulation, survivorSizeForSelection int, mutationProbability float32) (IPopulation, error)
 }
 
-func New(s ISelecter, c ICrosser, m IMutater, e IEvaluater) (*Lifecycle, error)
+func New(s ISelecter, c ICrosser, m IMutater, e IEvaluater) (ILifecycle, error)
 
 
 ```
