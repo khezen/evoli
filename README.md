@@ -15,7 +15,7 @@ type Individual interface {
 }
 ```
 
-## population
+## Population
 ```golang
 type Population interface {
 	sort.Interface
