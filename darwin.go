@@ -7,21 +7,21 @@ import (
 	"github.com/khezen/check"
 )
 
-// ILifecycle for genetic algorithm step
-type ILifecycle interface {
+// Lifecycle for genetic algorithm step
+type Lifecycle interface {
 	Generation(pop IPopulation, survivorSizeForSelection int, mutationProbability float32) (IPopulation, error)
 }
 
-// Lifecycle is a genetic algorithm implementation
-type Lifecycle struct {
+// lifecycle is a genetic algorithm implementation
+type lifecycle struct {
 	Selecter  ISelecter
 	Crosser   ICrosser
 	Mutater   IMutater
 	Evaluater IEvaluater
 }
 
-// New is the constructor for Lifecycle struct
-func New(s ISelecter, c ICrosser, m IMutater, e IEvaluater) (*Lifecycle, error) {
+// New is the constructor for Lifecycle
+func New(s ISelecter, c ICrosser, m IMutater, e IEvaluater) (Lifecycle, error) {
 	if s == nil {
 		return nil, fmt.Errorf("selecter is nil")
 	}
@@ -34,11 +34,11 @@ func New(s ISelecter, c ICrosser, m IMutater, e IEvaluater) (*Lifecycle, error) 
 	if e == nil {
 		return nil, fmt.Errorf("evaluater is nil")
 	}
-	return &Lifecycle{s, c, m, e}, nil
+	return &lifecycle{s, c, m, e}, nil
 }
 
 // Generation takes a Population and produce a the new generation of this population
-func (l Lifecycle) Generation(pop IPopulation, survivorSizeForSelection int, mutationProbability float32) (IPopulation, error) {
+func (l lifecycle) Generation(pop IPopulation, survivorSizeForSelection int, mutationProbability float32) (IPopulation, error) {
 	err := check.NotNil(pop)
 	if err != nil {
 		return pop, err
@@ -56,7 +56,7 @@ func (l Lifecycle) Generation(pop IPopulation, survivorSizeForSelection int, mut
 	return newPop, nil
 }
 
-func (l Lifecycle) evaluation(pop IPopulation) IPopulation {
+func (l lifecycle) evaluation(pop IPopulation) IPopulation {
 	length := pop.Len()
 	for i := 0; i < length; i++ {
 		individual, _ := pop.Get(i)
@@ -65,7 +65,7 @@ func (l Lifecycle) evaluation(pop IPopulation) IPopulation {
 	return pop
 }
 
-func (l Lifecycle) crossovers(pop IPopulation) IPopulation {
+func (l lifecycle) crossovers(pop IPopulation) IPopulation {
 	newBorns := NewPopulation(pop.Cap() - pop.Len())
 	capacity := newBorns.Cap()
 	for newBorns.Len() < capacity {
@@ -77,7 +77,7 @@ func (l Lifecycle) crossovers(pop IPopulation) IPopulation {
 	return pop
 }
 
-func (l Lifecycle) mutations(pop IPopulation, mutationProbability float32) (IPopulation, error) {
+func (l lifecycle) mutations(pop IPopulation, mutationProbability float32) (IPopulation, error) {
 	if mutationProbability < 0 || mutationProbability > 1 {
 		return pop, fmt.Errorf("mutation probability = %v. Expected: 0 <= probability <= 1", mutationProbability)
 	}
