@@ -20,16 +20,16 @@ type IIndividual interface {
 type IPopulation interface {
 	sort.Interface
 	Sort()
-    Max() IIndividual
+    	Max() IIndividual
 	Min() IIndividual
 	Extremums() (IIndividual, IIndividual)
 
-    Append(...IIndividual)
-    RemoveAt(int) error
+    	Append(...IIndividual)
+   	RemoveAt(int) error
 	Remove(...IIndividual)
 	Replace(int, IIndividual) error
-    Get(int) (IIndividual, error)
-    PickCouple() (index1 int, indiv1 IIndividual, index2 int, indiv2 IIndividual, err error)
+    	Get(int) (IIndividual, error)
+    	PickCouple() (index1 int, indiv1 IIndividual, index2 int, indiv2 IIndividual, err error)
 	Has(...IIndividual) bool
 	IndexOf(IIndividual) (int, error)
 
