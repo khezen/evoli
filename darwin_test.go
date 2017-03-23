@@ -51,7 +51,7 @@ func TestNew(t *testing.T) {
 
 func TestGeneration(t *testing.T) {
 	i1, i2, i3, i4, i5, i6 := NewIndividual(1), NewIndividual(-2), NewIndividual(3), NewIndividual(4), NewIndividual(5), NewIndividual(6)
-	pop := Population{i1, i2, i3, i4, i5, i6}
+	pop := population{i1, i2, i3, i4, i5, i6}
 	cpy := NewPopulation(pop.Cap())
 	cpy.Append(pop...)
 	lifecycle, _ := New(NewTruncationSelecter(), crosserMock{}, mutaterMock{}, evaluaterMock{})
@@ -68,14 +68,14 @@ func TestGeneration(t *testing.T) {
 		t.Errorf("the new Generation should be different from the previous one")
 	}
 	errorCases := []struct {
-		pop          IPopulation
+		pop          Population
 		survivorSize int
 		mutationProb float32
 	}{
 		{nil, 2, 0.2},
-		{&Population{i1, i2, i3}, -10, 0.2},
-		{&Population{i1, i2, i3}, 2, 1.2},
-		{&Population{i1, i2, i3}, 2, -0.2},
+		{&population{i1, i2, i3}, -10, 0.2},
+		{&population{i1, i2, i3}, 2, 1.2},
+		{&population{i1, i2, i3}, 2, -0.2},
 	}
 	for _, c := range errorCases {
 		_, err := lifecycle.Generation(c.pop, c.survivorSize, c.mutationProb)

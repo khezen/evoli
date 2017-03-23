@@ -6,7 +6,7 @@ import (
 
 type proportionalToFitnessSelecter struct{}
 
-func (s proportionalToFitnessSelecter) Select(pop IPopulation, survivorsSize int) (IPopulation, error) {
+func (s proportionalToFitnessSelecter) Select(pop Population, survivorsSize int) (Population, error) {
 	err := checkParams(pop, survivorsSize)
 	if err != nil {
 		return nil, err
@@ -38,7 +38,7 @@ func (s proportionalToFitnessSelecter) computeScore(indiv IIndividual, offset fl
 	return indiv.Fitness() + offset
 }
 
-func (s proportionalToFitnessSelecter) computeTotalScore(pop IPopulation, offset float32) float32 {
+func (s proportionalToFitnessSelecter) computeTotalScore(pop Population, offset float32) float32 {
 	var length, totalScore = pop.Len(), float32(0)
 	for i := 0; i < length; i++ {
 		indiv, _ := pop.Get(i)
@@ -47,7 +47,7 @@ func (s proportionalToFitnessSelecter) computeTotalScore(pop IPopulation, offset
 	return totalScore
 }
 
-func (s proportionalToFitnessSelecter) computeOffset(pop IPopulation) float32 {
+func (s proportionalToFitnessSelecter) computeOffset(pop Population) float32 {
 	minIndiv, maxIndiv := pop.Extremums()
 	min, max := minIndiv.Fitness(), maxIndiv.Fitness()
 	var offset float32

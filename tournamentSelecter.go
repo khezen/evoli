@@ -6,7 +6,7 @@ import (
 
 type tournamentSelecter struct{}
 
-func (s tournamentSelecter) Select(pop IPopulation, survivorsSize int) (IPopulation, error) {
+func (s tournamentSelecter) Select(pop Population, survivorsSize int) (Population, error) {
 	err := checkParams(pop, survivorsSize)
 	if err != nil {
 		return nil, err
@@ -26,7 +26,7 @@ func (s tournamentSelecter) Select(pop IPopulation, survivorsSize int) (IPopulat
 	return newPop, nil
 }
 
-func (s tournamentSelecter) fightForYourLives(pop IPopulation, index1 int, index2 int) (survivorIndex int) {
+func (s tournamentSelecter) fightForYourLives(pop Population, index1 int, index2 int) (survivorIndex int) {
 	i1, _ := pop.Get(index1)
 	i2, _ := pop.Get(index2)
 	r1, r2 := i1.Fitness(), i2.Fitness()

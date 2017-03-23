@@ -2,7 +2,7 @@ package darwin
 
 type truncationSelecter struct{}
 
-func (s truncationSelecter) Select(pop IPopulation, survivorsSize int) (IPopulation, error) {
+func (s truncationSelecter) Select(pop Population, survivorsSize int) (Population, error) {
 	err := checkParams(pop, survivorsSize)
 	if err != nil {
 		return nil, err

@@ -6,7 +6,7 @@ import (
 
 type randomSelecter struct{}
 
-func (s randomSelecter) Select(pop IPopulation, survivorsSize int) (IPopulation, error) {
+func (s randomSelecter) Select(pop Population, survivorsSize int) (Population, error) {
 	err := checkParams(pop, survivorsSize)
 	if err != nil {
 		return nil, err

@@ -9,7 +9,7 @@ import (
 
 // Lifecycle for genetic algorithm step
 type Lifecycle interface {
-	Generation(pop IPopulation, survivorSizeForSelection int, mutationProbability float32) (IPopulation, error)
+	Generation(pop Population, survivorSizeForSelection int, mutationProbability float32) (Population, error)
 }
 
 // lifecycle is a genetic algorithm implementation
@@ -37,8 +37,8 @@ func New(s ISelecter, c ICrosser, m IMutater, e IEvaluater) (Lifecycle, error) {
 	return &lifecycle{s, c, m, e}, nil
 }
 
-// Generation takes a Population and produce a the new generation of this population
-func (l lifecycle) Generation(pop IPopulation, survivorSizeForSelection int, mutationProbability float32) (IPopulation, error) {
+// Generation takes a population and produce a the new generation of this population
+func (l lifecycle) Generation(pop Population, survivorSizeForSelection int, mutationProbability float32) (Population, error) {
 	err := check.NotNil(pop)
 	if err != nil {
 		return pop, err
@@ -56,7 +56,7 @@ func (l lifecycle) Generation(pop IPopulation, survivorSizeForSelection int, mut
 	return newPop, nil
 }
 
-func (l lifecycle) evaluation(pop IPopulation) IPopulation {
+func (l lifecycle) evaluation(pop Population) Population {
 	length := pop.Len()
 	for i := 0; i < length; i++ {
 		individual, _ := pop.Get(i)
@@ -65,7 +65,7 @@ func (l lifecycle) evaluation(pop IPopulation) IPopulation {
 	return pop
 }
 
-func (l lifecycle) crossovers(pop IPopulation) IPopulation {
+func (l lifecycle) crossovers(pop Population) Population {
 	newBorns := NewPopulation(pop.Cap() - pop.Len())
 	capacity := newBorns.Cap()
 	for newBorns.Len() < capacity {
@@ -73,11 +73,11 @@ func (l lifecycle) crossovers(pop IPopulation) IPopulation {
 		newBorn := l.Crosser.Cross(indiv1, indiv2)
 		newBorns.Append(newBorn)
 	}
-	pop.Append(*newBorns...)
+	pop.Append(*newBorns.(*population)...)
 	return pop
 }
 
-func (l lifecycle) mutations(pop IPopulation, mutationProbability float32) (IPopulation, error) {
+func (l lifecycle) mutations(pop Population, mutationProbability float32) (Population, error) {
 	if mutationProbability < 0 || mutationProbability > 1 {
 		return pop, fmt.Errorf("mutation probability = %v. Expected: 0 <= probability <= 1", mutationProbability)
 	}

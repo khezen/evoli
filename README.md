@@ -15,9 +15,9 @@ type IIndividual interface {
 }
 ```
 
-## Population
+## population
 ```golang
-type IPopulation interface {
+type Population interface {
 	sort.Interface
 	Sort()
     	Max() IIndividual
@@ -50,7 +50,7 @@ type IEvaluater interface {
 
 ```golang
 type ISelecter interface {
-	Select(pop IPopulation, survivorsSize int) (IPopulation, error)
+	Select(pop Population, survivorsSize int) (Population, error)
 }
 ```
 
@@ -71,7 +71,7 @@ type IMutater interface {
 ```golang
 
 type Lifecycle interface {
-	Generation(pop IPopulation, survivorSizeForSelection int, mutationProbability float32) (IPopulation, error)
+	Generation(pop Population, survivorSizeForSelection int, mutationProbability float32) (Population, error)
 }
 
 func New(s ISelecter, c ICrosser, m IMutater, e IEvaluater) (Lifecycle, error)

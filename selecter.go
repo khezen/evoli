@@ -6,10 +6,10 @@ import (
 
 // ISelecter is the selecter operator interface
 type ISelecter interface {
-	Select(pop IPopulation, survivorsSize int) (IPopulation, error)
+	Select(pop Population, survivorsSize int) (Population, error)
 }
 
-func checkParams(pop IPopulation, survivorsSize int) error {
+func checkParams(pop Population, survivorsSize int) error {
 	err := check.NotNil(pop)
 	if err != nil {
 		return err
