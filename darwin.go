@@ -21,20 +21,8 @@ type lifecycle struct {
 }
 
 // New is the constructor for Lifecycle
-func New(s Selecter, c Crosser, m Mutater, e Evaluater) (Lifecycle, error) {
-	if s == nil {
-		return nil, fmt.Errorf("selecter is nil")
-	}
-	if c == nil {
-		return nil, fmt.Errorf("crosser is nil")
-	}
-	if m == nil {
-		return nil, fmt.Errorf("mutater is nil")
-	}
-	if e == nil {
-		return nil, fmt.Errorf("evaluater is nil")
-	}
-	return &lifecycle{s, c, m, e}, nil
+func New(s Selecter, c Crosser, m Mutater, e Evaluater) Lifecycle {
+	return &lifecycle{s, c, m, e}
 }
 
 // Generation takes a population and produce a the new generation of this population

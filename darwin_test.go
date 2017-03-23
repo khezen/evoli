@@ -32,20 +32,10 @@ func TestNew(t *testing.T) {
 		m Mutater
 		e Evaluater
 	}{
-		{nil, crosserMock{}, mutaterMock{}, evaluaterMock{}},
-		{NewTruncationSelecter(), nil, mutaterMock{}, evaluaterMock{}},
-		{NewTruncationSelecter(), crosserMock{}, nil, evaluaterMock{}},
-		{NewTruncationSelecter(), crosserMock{}, mutaterMock{}, nil},
+		{NewTruncationSelecter(), crosserMock{}, mutaterMock{}, evaluaterMock{}},
 	}
 	for _, c := range errorCases {
-		_, err := New(c.s, c.c, c.m, c.e)
-		if err == nil {
-			t.Errorf("expected != nil")
-		}
-	}
-	_, err := New(NewTruncationSelecter(), crosserMock{}, mutaterMock{}, evaluaterMock{})
-	if err != nil {
-		t.Errorf("expected == nil")
+		_ = New(c.s, c.c, c.m, c.e)
 	}
 }
 
@@ -54,7 +44,7 @@ func TestGeneration(t *testing.T) {
 	pop := population{i1, i2, i3, i4, i5, i6}
 	cpy := NewPopulation(pop.Cap())
 	cpy.Append(pop...)
-	lifecycle, _ := New(NewTruncationSelecter(), crosserMock{}, mutaterMock{}, evaluaterMock{})
+	lifecycle := New(NewTruncationSelecter(), crosserMock{}, mutaterMock{}, evaluaterMock{})
 	newPop, _ := lifecycle.Generation(&pop, 5, 1)
 	isNewPopDifferent := false
 	for i := 0; i < newPop.Len(); i++ {
