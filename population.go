@@ -15,7 +15,7 @@ type Population interface {
 	Cap() int
 	SetCap(int) error
 	Truncate(int) error
-	Append(...Individual)
+	Add(...Individual)
 	Get(int) (Individual, error)
 	RemoveAt(int) error
 	Remove(...Individual)
@@ -113,14 +113,14 @@ func (pop *population) Truncate(length int) error {
 		*pop = (*pop)[0:length]
 	case length > pop.Cap():
 		newPop := NewPopulation(length)
-		newPop.Append((*pop)...)
+		newPop.Add((*pop)...)
 		*pop = *(NewPopulation(0).(*population))
 	}
 	return nil
 }
 
-// Append adds an individual to a population. If the populagtion has already reached its capacity, capacity is incremented.
-func (pop *population) Append(indiv ...Individual) {
+// Add adds an individual to a population. If the populagtion has already reached its capacity, capacity is incremented.
+func (pop *population) Add(indiv ...Individual) {
 	*pop = append(*pop, indiv...)
 }
 

@@ -43,7 +43,7 @@ func TestGeneration(t *testing.T) {
 	i1, i2, i3, i4, i5, i6 := NewIndividual(1), NewIndividual(-2), NewIndividual(3), NewIndividual(4), NewIndividual(5), NewIndividual(6)
 	pop := population{i1, i2, i3, i4, i5, i6}
 	cpy := NewPopulation(pop.Cap())
-	cpy.Append(pop...)
+	cpy.Add(pop...)
 	lifecycle := New(NewTruncationSelecter(), crosserMock{}, mutaterMock{}, evaluaterMock{})
 	newPop, _ := lifecycle.Generation(&pop, 5, 1)
 	isNewPopDifferent := false

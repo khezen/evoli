@@ -114,7 +114,7 @@ func TestTruncate(t *testing.T) {
 	}
 }
 
-func TestAppend(t *testing.T) {
+func TestAdd(t *testing.T) {
 	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	cases := []struct {
 		in       population
@@ -126,19 +126,19 @@ func TestAppend(t *testing.T) {
 		{population{i3, i2}, i1, population{i3, i2, i1}},
 	}
 	for _, c := range cases {
-		c.in.Append(c.indiv)
+		c.in.Add(c.indiv)
 		for i := range c.expected {
 			if c.in[i] != c.expected[i] {
-				t.Errorf(".Append(%v) => %v; expected = %v", c.indiv, c.in, c.expected)
+				t.Errorf(".Add(%v) => %v; expected = %v", c.indiv, c.in, c.expected)
 				break
 			}
 		}
 	}
 	pop := population{i2, i1}
-	pop.Append(nil)
+	pop.Add(nil)
 }
 
-func TestAppendAll(t *testing.T) {
+func TestAddAll(t *testing.T) {
 	i1, i2, i3, i4 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1), NewIndividual(42.42)
 	cases := []struct {
 		in, toAp, expected population
@@ -150,17 +150,17 @@ func TestAppendAll(t *testing.T) {
 		{population{}, population{}, population{}},
 	}
 	for _, c := range cases {
-		c.in.Append(c.toAp...)
+		c.in.Add(c.toAp...)
 		for i := range c.expected {
 			if c.in[i] != c.expected[i] {
-				t.Errorf(".AppendAll(%v) => %v; expected = %v", c.toAp, c.in, c.expected)
+				t.Errorf(".AddAll(%v) => %v; expected = %v", c.toAp, c.in, c.expected)
 				break
 			}
 		}
 	}
 	pop := &population{i2, i1}
-	toBeAppended := population{i2, i1, nil}
-	pop.Append(toBeAppended...)
+	toBeAdded := population{i2, i1, nil}
+	pop.Add(toBeAdded...)
 }
 
 func TestGet(t *testing.T) {
@@ -360,7 +360,7 @@ func TestSwap(t *testing.T) {
 	}
 	for _, c := range cases {
 		pop := NewPopulation(c.in.Cap())
-		pop.Append(c.in...)
+		pop.Add(c.in...)
 		pop.Swap(c.i, c.j)
 		for i := range *pop.(*population) {
 			indiv, _ := pop.Get(i)

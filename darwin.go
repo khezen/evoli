@@ -59,9 +59,9 @@ func (l lifecycle) crossovers(pop Population) Population {
 	for newBorns.Len() < capacity {
 		var _, indiv1, _, indiv2, _ = pop.PickCouple()
 		newBorn := l.Crosser.Cross(indiv1, indiv2)
-		newBorns.Append(newBorn)
+		newBorns.Add(newBorn)
 	}
-	pop.Append(*newBorns.(*population)...)
+	pop.Add(*newBorns.(*population)...)
 	return pop
 }
 

@@ -24,7 +24,7 @@ type Population interface {
 	Min() Individual
 	Extremums() (Individual, Individual)
 
-    	Append(...Individual)
+    	Add(...Individual)
    	RemoveAt(int) error
 	Remove(...Individual)
 	Replace(int, Individual) error

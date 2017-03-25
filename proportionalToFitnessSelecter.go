@@ -26,7 +26,7 @@ func (s proportionalToFitnessSelecter) Select(pop Population, survivorsSize int)
 			score := s.computeScore(indiv, offset)
 			if totalScore == 0 || rand.Float32() <= score/totalScore {
 				pop.RemoveAt(i)
-				newPop.Append(indiv)
+				newPop.Add(indiv)
 				totalScore -= score
 			}
 		}

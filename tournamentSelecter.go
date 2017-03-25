@@ -20,7 +20,7 @@ func (s tournamentSelecter) Select(pop Population, survivorsSize int) (Populatio
 		survivorIndex := s.fightForYourLives(pop, i, j)
 		indiv, _ := pop.Get(survivorIndex)
 		pop.RemoveAt(survivorIndex)
-		newPop.Append(indiv)
+		newPop.Add(indiv)
 
 	}
 	return newPop, nil
