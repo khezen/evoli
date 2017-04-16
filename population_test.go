@@ -448,5 +448,8 @@ func TestIndexOf(t *testing.T) {
 	if err == nil {
 		t.Errorf("expected err != nil")
 	}
+}
+
+func TestEach(t *testing.T) {
 
 }
