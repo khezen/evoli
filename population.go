@@ -231,7 +231,7 @@ func (pop *population) IndexOf(indiv Individual) (int, error) {
 	return -1, fmt.Errorf("individual %v not found in population %v", indiv, pop)
 }
 
-func (pop *population) Each(f func(item Individual) bool) {
+func (pop *population) Each(f func(indiv Individual) bool) {
 	for _, individual := range *pop {
 		resume := f(individual)
 		if !resume {

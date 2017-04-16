@@ -451,5 +451,31 @@ func TestIndexOf(t *testing.T) {
 }
 
 func TestEach(t *testing.T) {
-
+	i1, i2, i3, i4, i5, i6 := NewIndividual(1), NewIndividual(2), NewIndividual(3), NewIndividual(4), NewIndividual(5), NewIndividual(6)
+	cases := []struct {
+		individuals []Individual
+	}{
+		{[]Individual{i1, i5, i6, i4}},
+		{[]Individual{i1, i3, i5, i2, i6}},
+	}
+	for _, c := range cases {
+		pop := NewPopulation(len(c.individuals))
+		pop.Add(c.individuals...)
+		pop.Each(func(indiv Individual) bool {
+			has := false
+			for _, current := range c.individuals {
+				if current == indiv {
+					has = true
+					break
+				}
+			}
+			if !has {
+				t.Errorf("Each traversal %v which is not found in %v", indiv, c.individuals)
+			}
+			return true
+		})
+		pop.Each(func(indiv Individual) bool {
+			return false
+		})
+	}
 }
