@@ -26,6 +26,7 @@ type Population interface {
 	PickCouple() (index1 int, indiv1 Individual, index2 int, indiv2 Individual, err error)
 	Has(...Individual) bool
 	IndexOf(Individual) (int, error)
+	Each(func(item Individual) bool)
 }
 
 // population is a set of individuals in population genetics.
@@ -228,4 +229,13 @@ func (pop *population) IndexOf(indiv Individual) (int, error) {
 		}
 	}
 	return -1, fmt.Errorf("individual %v not found in population %v", indiv, pop)
+}
+
+func (pop *population) Each(f func(item Individual) bool) {
+	for _, individual := range *pop {
+		resume := f(individual)
+		if !resume {
+			break
+		}
+	}
 }
