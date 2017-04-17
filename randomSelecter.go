@@ -11,12 +11,14 @@ func (s randomSelecter) Select(pop Population, survivorsSize int) (Population, e
 	if err != nil {
 		return nil, err
 	}
-	size := pop.Len() - survivorsSize
+	newPop := NewPopulation(pop.Cap())
+	newPop.Add(pop.Slice()...)
+	size := newPop.Len() - survivorsSize
 	for count := 0; count < size; {
-		pop.RemoveAt(rand.Intn(pop.Len() - 1))
+		newPop.RemoveAt(rand.Intn(newPop.Len() - 1))
 		count++
 	}
-	return pop, nil
+	return newPop, nil
 }
 
 // NewRandomSelecter is the constructor for random selecter

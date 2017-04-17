@@ -27,6 +27,7 @@ type Population interface {
 	Has(...Individual) bool
 	IndexOf(Individual) (int, error)
 	Each(func(item Individual) bool)
+	Slice() []Individual
 }
 
 // population is a set of individuals in population genetics.
@@ -238,4 +239,8 @@ func (pop *population) Each(f func(indiv Individual) bool) {
 			break
 		}
 	}
+}
+
+func (pop *population) Slice() []Individual {
+	return *pop
 }
