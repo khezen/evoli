@@ -7,9 +7,11 @@ func (s truncationSelecter) Select(pop Population, survivorsSize int) (Populatio
 	if err != nil {
 		return nil, err
 	}
-	pop.Sort()
-	pop.Truncate(survivorsSize)
-	return pop, nil
+	newPop := NewPopulation(pop.Cap())
+	newPop.Add(pop.Slice()...)
+	newPop.Sort()
+	newPop.Truncate(survivorsSize)
+	return newPop, nil
 }
 
 // NewTruncationSelecter is the constructor for truncation selecter
