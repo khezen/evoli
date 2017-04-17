@@ -479,3 +479,23 @@ func TestEach(t *testing.T) {
 		})
 	}
 }
+
+func TestSlice(t *testing.T) {
+	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
+	cases := []struct {
+		pop   population
+		slice []Individual
+	}{
+		{population{i1, i2, i3}, []Individual{i1, i2, i3}},
+		{population{i1, i3, i2}, []Individual{i1, i3, i2}},
+		{population{i3, i2, i1}, []Individual{i3, i2, i1}},
+	}
+	for _, c := range cases {
+		for i := range c.slice {
+			if c.pop.Slice()[i] != c.slice[i] {
+				t.Errorf(".Sort() => %v; expected = %v", c.pop.Slice(), c.slice)
+				break
+			}
+		}
+	}
+}
