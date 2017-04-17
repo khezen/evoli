@@ -14,9 +14,8 @@ func (s randomSelecter) Select(pop Population, survivorsSize int) (Population, e
 	newPop := NewPopulation(pop.Cap())
 	newPop.Add(pop.Slice()...)
 	size := newPop.Len() - survivorsSize
-	for count := 0; count < size; {
+	for count := 0; count < size; count++ {
 		newPop.RemoveAt(rand.Intn(newPop.Len() - 1))
-		count++
 	}
 	return newPop, nil
 }
