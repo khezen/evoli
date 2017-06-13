@@ -3,7 +3,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/khezen/darwin?style=flat-square)](https://goreportcard.com/report/github.com/khezen/darwin)
 
 # Darwin
-Go implementation of Genetic Algorithm
+Genetic Algorithm Go implementation
 
 
 ## Individual
