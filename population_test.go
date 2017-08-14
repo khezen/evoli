@@ -610,3 +610,24 @@ func TestEach(t *testing.T) {
 		})
 	}
 }
+
+func TestSlice(t *testing.T) {
+	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
+	cases := []struct {
+		pop   Population
+		slice []Individual
+	}{
+		{NewPopulation(3), []Individual{i1, i2, i3}},
+		{NewPopulationTS(3), []Individual{i1, i2, i3}},
+	}
+	for _, c := range cases {
+		c.pop.Add(c.slice...)
+		slice := c.pop.Slice()
+		for i := range c.slice {
+			indiv := slice[i]
+			if indiv != c.slice[i] {
+				t.Errorf("expected %v, got %v", c.slice[i], indiv)
+			}
+		}
+	}
+}
