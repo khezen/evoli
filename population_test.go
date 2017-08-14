@@ -1,6 +1,7 @@
 package darwin
 
 import (
+	"sync"
 	"testing"
 
 	"github.com/khezen/check"
@@ -51,16 +52,27 @@ func TestNewPopulationTS(t *testing.T) {
 func TestSort(t *testing.T) {
 	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	cases := []struct {
-		in, expected population
+		in, expected Population
 	}{
-		{population{i1, i2, i3}, population{i3, i2, i1}},
-		{population{i1, i3, i2}, population{i3, i2, i1}},
-		{population{i3, i2, i1}, population{i3, i2, i1}},
+		{&population{i1, i2, i3}, &population{i3, i2, i1}},
+		{&population{i1, i3, i2}, &population{i3, i2, i1}},
+		{&population{i3, i2, i1}, &population{i3, i2, i1}},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, &populationTS{population{i3, i2, i1}, sync.RWMutex{}}},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, &populationTS{population{i3, i2, i1}, sync.RWMutex{}}},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, &populationTS{population{i3, i2, i1}, sync.RWMutex{}}},
 	}
 	for _, c := range cases {
 		c.in.Sort()
-		for i := range c.expected {
-			if c.in[i] != c.expected[i] {
+		for i := 0; i < c.in.Len(); i++ {
+			exp, err := c.expected.Get(i)
+			if err != nil {
+				panic(err)
+			}
+			in, err := c.in.Get(i)
+			if err != nil {
+				panic(err)
+			}
+			if in != exp {
 				t.Errorf(".Sort() => %v; expected = %v", c.in, c.expected)
 				break
 			}
@@ -69,14 +81,14 @@ func TestSort(t *testing.T) {
 }
 
 func TestCap(t *testing.T) {
-	p1 := NewPopulation(7)
-	p2 := NewPopulation(0)
 	cases := []struct {
 		in       Population
 		expected int
 	}{
-		{p1, 7},
-		{p2, 0},
+		{NewPopulation(7), 7},
+		{NewPopulation(0), 0},
+		{NewPopulationTS(7), 7},
+		{NewPopulationTS(0), 0},
 	}
 	for _, c := range cases {
 		got := c.in.Cap()
@@ -88,42 +100,54 @@ func TestCap(t *testing.T) {
 
 func TestSetCap(t *testing.T) {
 	cases := []struct {
+		pop          Population
 		in, expected int
+		expectErr    bool
 	}{
-		{0, 0},
-		{1, 1},
-		{7, 7},
+		{NewPopulation(0), 0, 0, false},
+		{NewPopulation(0), 1, 1, false},
+		{NewPopulation(0), 7, 7, false},
+		{NewPopulation(0), -1, 0, true},
+		{NewPopulationTS(0), 0, 0, false},
+		{NewPopulationTS(0), 1, 1, false},
+		{NewPopulationTS(0), 7, 7, false},
+		{NewPopulationTS(0), -1, 0, true},
 	}
-	pop := NewPopulation(0)
 	for _, c := range cases {
-		pop.SetCap(c.in)
-		if pop.Cap() != c.expected {
+		err := c.pop.SetCap(c.in)
+		if c.expectErr && err == nil {
+			t.Error("expected error got nil")
+		}
+		if !c.expectErr && err != nil {
+			panic(err)
+		}
+		if c.pop.Cap() != c.expected {
 			t.Errorf("expected  %v", c.expected)
 		}
-	}
-	err := pop.SetCap(-1)
-	if err == nil {
-		t.Errorf("expected != nil")
 	}
 }
 
 func TestTruncate(t *testing.T) {
 	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	cases := []struct {
-		in       population
+		in       Population
 		size     int
-		expected population
+		expected Population
 	}{
-		{population{i1, i2, i3}, 3, population{i1, i2, i3}},
-		{population{i1, i3, i2}, 4, population{i3, i2, i1}},
-		{population{i3, i2, i1}, 2, population{i3, i2}},
-		{population{i3, i2, i1}, 0, population{}},
-		{population{i1}, 3, population{i1}},
+		{&population{i1, i2, i3}, 3, &population{i1, i2, i3}},
+		{&population{i1, i3, i2}, 4, &population{i3, i2, i1}},
+		{&population{i3, i2, i1}, 2, &population{i3, i2}},
+		{&population{i3, i2, i1}, 0, &population{}},
+		{&population{i1}, 3, &population{i1}},
 	}
 	for _, c := range cases {
 		c.in.Truncate(c.size)
-		for i := range c.in {
-			if !c.expected.Has(c.in[i]) {
+		for i := 0; i < c.in.Len(); i++ {
+			indiv, err := c.in.Get(i)
+			if err != nil {
+				panic(err)
+			}
+			if !c.expected.Has(indiv) {
 				t.Errorf(".Truncate(%v) => %v; expected = %v", c.size, c.in, c.expected)
 				break
 			}
@@ -132,7 +156,7 @@ func TestTruncate(t *testing.T) {
 	pop := population{i1, i2, i3}
 	err := pop.Truncate(-15)
 	if err == nil {
-		t.Errorf("expected != nil")
+		panic(err)
 	}
 }
 
