@@ -172,25 +172,36 @@ func TestTruncate(t *testing.T) {
 func TestAdd(t *testing.T) {
 	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	cases := []struct {
-		in       population
+		in       Population
 		indiv    Individual
-		expected population
+		expected Population
 	}{
-		{population{i1, i2}, i3, population{i1, i2, i3}},
-		{population{}, i2, population{i2}},
-		{population{i3, i2}, i1, population{i3, i2, i1}},
+		{&population{i1, i2}, i3, &population{i1, i2, i3}},
+		{&population{}, i2, &population{i2}},
+		{&population{i3, i2}, i1, &population{i3, i2, i1}},
+		{&population{i3, i2}, nil, &population{i3, i2, nil}},
+		{&populationTS{population{i1, i2}, sync.RWMutex{}}, i3, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}},
+		{&populationTS{population{}, sync.RWMutex{}}, i2, &populationTS{population{i2}, sync.RWMutex{}}},
+		{&populationTS{population{i3, i2}, sync.RWMutex{}}, i1, &populationTS{population{i3, i2, i1}, sync.RWMutex{}}},
+		{&populationTS{population{i1, i2}, sync.RWMutex{}}, nil, &populationTS{population{i1, i2, nil}, sync.RWMutex{}}},
 	}
 	for _, c := range cases {
 		c.in.Add(c.indiv)
-		for i := range c.in {
-			if c.in[i] != c.expected[i] {
+		for i := 0; i < c.in.Len(); i++ {
+			in, err := c.in.Get(i)
+			if err != nil {
+				panic(err)
+			}
+			exp, err := c.expected.Get(i)
+			if err != nil {
+				panic(err)
+			}
+			if in != exp {
 				t.Errorf(".Add(%v) => %v; expected = %v", c.indiv, c.in, c.expected)
 				break
 			}
 		}
 	}
-	pop := population{i2, i1}
-	pop.Add(nil)
 }
 
 func TestGet(t *testing.T) {
