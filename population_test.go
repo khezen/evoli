@@ -206,30 +206,37 @@ func TestAdd(t *testing.T) {
 
 func TestGet(t *testing.T) {
 	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
-	pop := population{i2, i1, i3}
-
-	indiv, _ := pop.Get(1)
-	if indiv != i1 {
-		t.Errorf(".Get(%v) => %v; expected = %v", 1, indiv, i1)
+	cases := []struct {
+		pop Population
+	}{
+		{&population{i2, i1, i3}},
+		{&populationTS{population{i2, i1, i3}, sync.RWMutex{}}},
 	}
-	_, err := pop.Get(-1000)
-	if err == nil {
-		t.Errorf("expected != nil")
-	}
-	_, err = pop.Get(pop.Len())
-	if err == nil {
-		t.Errorf("expected != nil")
+	for _, c := range cases {
+		indiv, _ := c.pop.Get(1)
+		if indiv != i1 {
+			t.Errorf(".Get(%v) => %v; expected = %v", 1, indiv, i1)
+		}
+		_, err := c.pop.Get(-1000)
+		if err == nil {
+			t.Errorf("expected != nil")
+		}
+		_, err = c.pop.Get(c.pop.Len())
+		if err == nil {
+			t.Errorf("expected != nil")
+		}
 	}
 }
 
 func TestRemove(t *testing.T) {
 	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	cases := []struct {
-		pop         *population
+		pop         Population
 		toBeRemoved Individual
 		expected    []Individual
 	}{
 		{&population{i1, i2, i3}, i2, []Individual{i1, i3}},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, i2, []Individual{i1, i3}},
 	}
 	for _, c := range cases {
 		c.pop.Remove(c.toBeRemoved)
@@ -246,45 +253,57 @@ func TestRemove(t *testing.T) {
 
 func TestRemoveAt(t *testing.T) {
 	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
-	pop := population{i2, i1, i3}
-	err := pop.RemoveAt(-1000)
-	if err == nil {
-		t.Errorf("expected != nil")
+	cases := []struct {
+		pop Population
+	}{
+		{&population{i1, i2, i3}},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}},
 	}
-	err = pop.RemoveAt(pop.Len())
-	if err == nil {
-		t.Errorf("expected != nil")
-	}
-	if pop.Len() != 3 {
-		t.Errorf(".Remove(%v); pop.Len() => %v; expected = %v", 1, pop.Len(), 2)
+	for _, c := range cases {
+		err := c.pop.RemoveAt(-1000)
+		if err == nil {
+			t.Errorf("expected != nil")
+		}
+		err = c.pop.RemoveAt(c.pop.Len())
+		if err == nil {
+			t.Errorf("expected != nil")
+		}
+		if c.pop.Len() != 3 {
+			t.Errorf(".Remove(%v); pop.Len() => %v; expected = %v", 1, c.pop.Len(), 2)
+		}
 	}
 }
 
 func TestReplace(t *testing.T) {
 	i1, i2, i3, i4 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1), NewIndividual(10)
-	pop := population{i2, i1, i3}
 	cases := []struct {
+		pop   Population
 		index int
 		indiv Individual
 		isErr bool
 	}{
-		{1, i4, false},
-		{-1000, i4, true},
-		{pop.Len(), i4, true},
-		{-42, nil, true},
-		{pop.Len(), nil, true},
+		{&population{i2, i1, i3}, 1, i4, false},
+		{&population{i2, i1, i3}, -1000, i4, true},
+		{&population{i2, i1, i3}, 3, i4, true},
+		{&population{i2, i1, i3}, -42, nil, true},
+		{&population{i2, i1, i3}, 3, nil, true},
+		{&populationTS{population{i2, i1, i3}, sync.RWMutex{}}, 1, i4, false},
+		{&populationTS{population{i2, i1, i3}, sync.RWMutex{}}, -1000, i4, true},
+		{&populationTS{population{i2, i1, i3}, sync.RWMutex{}}, 3, i4, true},
+		{&populationTS{population{i2, i1, i3}, sync.RWMutex{}}, -42, nil, true},
+		{&populationTS{population{i2, i1, i3}, sync.RWMutex{}}, 3, nil, true},
 	}
 	for _, c := range cases {
 		switch c.isErr {
 		case true:
-			err := pop.Replace(c.index, c.indiv)
+			err := c.pop.Replace(c.index, c.indiv)
 			if err == nil {
 				t.Errorf("expected != nil")
 			}
 		case false:
-			pop.Replace(c.index, c.indiv)
-			if pop.Len() != 3 {
-				t.Errorf(".Replace(%v, %v); pop.Len() => %v; expected = %v", c.index, c.indiv, pop.Len(), 3)
+			c.pop.Replace(c.index, c.indiv)
+			if c.pop.Len() != 3 {
+				t.Errorf(".Replace(%v, %v); pop.Len() => %v; expected = %v", c.index, c.indiv, c.pop.Len(), 3)
 			}
 		}
 	}
@@ -292,8 +311,14 @@ func TestReplace(t *testing.T) {
 
 func TestMax(t *testing.T) {
 	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
-	pop := population{i2, i1, i3}
+	var pop Population
+	pop = &population{i2, i1, i3}
 	max := pop.Max()
+	if max != i3 {
+		t.Errorf("%v.Max() returned %v instead of %v", pop, max, i3)
+	}
+	pop = &populationTS{population{i2, i1, i3}, sync.RWMutex{}}
+	max = pop.Max()
 	if max != i3 {
 		t.Errorf("%v.Max() returned %v instead of %v", pop, max, i3)
 	}
@@ -301,8 +326,14 @@ func TestMax(t *testing.T) {
 
 func TestMin(t *testing.T) {
 	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
-	pop := population{i2, i1, i3}
+	var pop Population
+	pop = &population{i2, i1, i3}
 	min := pop.Min()
+	if min != i1 {
+		t.Errorf("%v.Min() returned %v instead of %v", pop, min, i1)
+	}
+	pop = &populationTS{population{i2, i1, i3}, sync.RWMutex{}}
+	min = pop.Min()
 	if min != i1 {
 		t.Errorf("%v.Min() returned %v instead of %v", pop, min, i1)
 	}
@@ -310,8 +341,14 @@ func TestMin(t *testing.T) {
 
 func TestExtremums(t *testing.T) {
 	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
-	pop := population{i2, i1, i3}
+	var pop Population
+	pop = &population{i2, i1, i3}
 	min, max := pop.Extremums()
+	if min != i1 || max != i3 {
+		t.Errorf("%v.Extremums() returned (%v, %v) instead of (%v, %v)", pop, min, max, i1, i3)
+	}
+	pop = &populationTS{population{i2, i1, i3}, sync.RWMutex{}}
+	min, max = pop.Extremums()
 	if min != i1 || max != i3 {
 		t.Errorf("%v.Extremums() returned (%v, %v) instead of (%v, %v)", pop, min, max, i1, i3)
 	}
@@ -320,15 +357,20 @@ func TestExtremums(t *testing.T) {
 func TestLen(t *testing.T) {
 	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	cases := []struct {
-		in       population
+		in       Population
 		cap      int
 		expected int
 	}{
-		{population{i1, i2, i3}, 3, 3},
-		{population{i1, i3, i2}, 4, 3},
-		{population{i3, i1}, 12, 2},
-		{population{i3, i2, i1}, 2, 2},
-		{population{}, 2, 0},
+		{&population{i1, i2, i3}, 3, 3},
+		{&population{i1, i3, i2}, 4, 3},
+		{&population{i3, i1}, 12, 2},
+		{&population{i3, i2, i1}, 2, 2},
+		{&population{}, 2, 0},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 3, 3},
+		{&populationTS{population{i1, i3, i2}, sync.RWMutex{}}, 4, 3},
+		{&populationTS{population{i3, i1}, sync.RWMutex{}}, 12, 2},
+		{&populationTS{population{i3, i2, i1}, sync.RWMutex{}}, 2, 2},
+		{&populationTS{population{}, sync.RWMutex{}}, 2, 0},
 	}
 	for _, c := range cases {
 		c.in.SetCap(c.cap)
@@ -342,28 +384,45 @@ func TestLen(t *testing.T) {
 func TestLess(t *testing.T) {
 	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	cases := []struct {
-		in       population
+		in       Population
 		i        int
 		j        int
 		expected bool
 	}{
-		{population{i1, i2, i3}, 0, 0, true},
-		{population{i1, i2, i3}, 0, 1, false},
-		{population{i1, i2, i3}, 0, 2, false},
-		{population{i1, i2, i3}, 1, 0, true},
-		{population{i1, i2, i3}, 1, 1, true},
-		{population{i1, i2, i3}, 1, 2, false},
-		{population{i1, i2, i3}, 2, 0, true},
-		{population{i1, i2, i3}, 2, 1, true},
-		{population{i1, i2, i3}, 2, 2, true},
-		{population{i1, i2, i3}, -1, 0, false},
-		{population{i1, i2, i3}, 0, -1, false},
-		{population{i1, i2, i3}, -1, -1, false},
-		{population{i1, i2, i3}, 1000, 0, false},
-		{population{i1, i2, i3}, 0, 1000, false},
-		{population{i1, i2, i3}, 1000, 1000, false},
-		{population{i1, i2, i3}, -1, 1000, false},
-		{population{i1, i2, i3}, 1000, -1, false},
+		{&population{i1, i2, i3}, 0, 0, true},
+		{&population{i1, i2, i3}, 0, 1, false},
+		{&population{i1, i2, i3}, 0, 2, false},
+		{&population{i1, i2, i3}, 1, 0, true},
+		{&population{i1, i2, i3}, 1, 1, true},
+		{&population{i1, i2, i3}, 1, 2, false},
+		{&population{i1, i2, i3}, 2, 0, true},
+		{&population{i1, i2, i3}, 2, 1, true},
+		{&population{i1, i2, i3}, 2, 2, true},
+		{&population{i1, i2, i3}, -1, 0, false},
+		{&population{i1, i2, i3}, 0, -1, false},
+		{&population{i1, i2, i3}, -1, -1, false},
+		{&population{i1, i2, i3}, 1000, 0, false},
+		{&population{i1, i2, i3}, 0, 1000, false},
+		{&population{i1, i2, i3}, 1000, 1000, false},
+		{&population{i1, i2, i3}, -1, 1000, false},
+		{&population{i1, i2, i3}, 1000, -1, false},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 0, 0, true},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 0, 1, false},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 0, 2, false},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 1, 0, true},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 1, 1, true},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 1, 2, false},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 2, 0, true},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 2, 1, true},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 2, 2, true},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, -1, 0, false},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 0, -1, false},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, -1, -1, false},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 1000, 0, false},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 0, 1000, false},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 1000, 1000, false},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, -1, 1000, false},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 1000, -1, false},
 	}
 	for _, c := range cases {
 		less := c.in.Less(c.i, c.j)
@@ -376,38 +435,59 @@ func TestLess(t *testing.T) {
 func TestSwap(t *testing.T) {
 	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	cases := []struct {
-		in       population
+		in       Population
 		i        int
 		j        int
-		expected population
+		expected Population
 	}{
-		{population{i1, i2, i3}, 0, 0, population{i1, i2, i3}},
-		{population{i1, i2, i3}, 0, 1, population{i2, i1, i3}},
-		{population{i1, i2, i3}, 0, 2, population{i3, i2, i1}},
-		{population{i1, i2, i3}, 1, 0, population{i2, i1, i3}},
-		{population{i1, i2, i3}, 1, 1, population{i1, i2, i3}},
-		{population{i1, i2, i3}, 1, 2, population{i1, i3, i2}},
-		{population{i1, i2, i3}, 2, 0, population{i3, i2, i1}},
-		{population{i1, i2, i3}, 2, 1, population{i1, i3, i2}},
-		{population{i1, i2, i3}, 2, 2, population{i1, i2, i3}},
-		{population{i1, i2, i3}, -1, 0, population{i1, i2, i3}},
-		{population{i1, i2, i3}, 0, -1, population{i1, i2, i3}},
-		{population{i1, i2, i3}, -1, -1, population{i1, i2, i3}},
-		{population{i1, i2, i3}, 1000, 0, population{i1, i2, i3}},
-		{population{i1, i2, i3}, 0, 1000, population{i1, i2, i3}},
-		{population{i1, i2, i3}, 1000, 1000, population{i1, i2, i3}},
-		{population{i1, i2, i3}, -1, 1000, population{i1, i2, i3}},
-		{population{i1, i2, i3}, 1000, -1, population{i1, i2, i3}},
+		{&population{i1, i2, i3}, 0, 0, &population{i1, i2, i3}},
+		{&population{i1, i2, i3}, 0, 1, &population{i2, i1, i3}},
+		{&population{i1, i2, i3}, 0, 2, &population{i3, i2, i1}},
+		{&population{i1, i2, i3}, 1, 0, &population{i2, i1, i3}},
+		{&population{i1, i2, i3}, 1, 1, &population{i1, i2, i3}},
+		{&population{i1, i2, i3}, 1, 2, &population{i1, i3, i2}},
+		{&population{i1, i2, i3}, 2, 0, &population{i3, i2, i1}},
+		{&population{i1, i2, i3}, 2, 1, &population{i1, i3, i2}},
+		{&population{i1, i2, i3}, 2, 2, &population{i1, i2, i3}},
+		{&population{i1, i2, i3}, -1, 0, &population{i1, i2, i3}},
+		{&population{i1, i2, i3}, 0, -1, &population{i1, i2, i3}},
+		{&population{i1, i2, i3}, -1, -1, &population{i1, i2, i3}},
+		{&population{i1, i2, i3}, 1000, 0, &population{i1, i2, i3}},
+		{&population{i1, i2, i3}, 0, 1000, &population{i1, i2, i3}},
+		{&population{i1, i2, i3}, 1000, 1000, &population{i1, i2, i3}},
+		{&population{i1, i2, i3}, -1, 1000, &population{i1, i2, i3}},
+		{&population{i1, i2, i3}, 1000, -1, &population{i1, i2, i3}},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 0, 0, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 0, 1, &populationTS{population{i2, i1, i3}, sync.RWMutex{}}},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 0, 2, &populationTS{population{i3, i2, i1}, sync.RWMutex{}}},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 1, 0, &populationTS{population{i2, i1, i3}, sync.RWMutex{}}},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 1, 1, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 1, 2, &populationTS{population{i1, i3, i2}, sync.RWMutex{}}},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 2, 0, &populationTS{population{i3, i2, i1}, sync.RWMutex{}}},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 2, 1, &populationTS{population{i1, i3, i2}, sync.RWMutex{}}},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 2, 2, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, -1, 0, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 0, -1, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, -1, -1, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 1000, 0, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 0, 1000, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 1000, 1000, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, -1, 1000, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}},
+		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 1000, -1, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}},
 	}
 	for _, c := range cases {
-		pop := NewPopulation(c.in.Cap())
-		pop.Add(c.in...)
-		pop.Swap(c.i, c.j)
-		for i := range *pop.(*population) {
-			indiv, _ := pop.Get(i)
-			expected, _ := c.expected.Get(i)
+		c.in.Swap(c.i, c.j)
+		for i := 0; i < c.in.Len(); i++ {
+			indiv, err := c.in.Get(i)
+			if err != nil {
+				panic(err)
+			}
+			expected, err := c.expected.Get(i)
+			if err != nil {
+				panic(err)
+			}
 			if indiv != expected {
-				t.Errorf("%v.Swap(%v, %v) resulted in %v instead of %v", c.in, c.i, c.j, pop, c.expected)
+				t.Errorf("%v.Swap(%v, %v) resulted in %v instead of %v", c.in, c.i, c.j, c.in, c.expected)
 				break
 			}
 		}
