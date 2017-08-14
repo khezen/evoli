@@ -1,8 +1,9 @@
 package darwin
 
 import (
-	"github.com/khezen/check"
 	"testing"
+
+	"github.com/khezen/check"
 )
 
 func TestNewPopulation(t *testing.T) {
@@ -16,6 +17,27 @@ func TestNewPopulation(t *testing.T) {
 	for _, c := range cases {
 		var got Population
 		got = NewPopulation(c.in)
+		if got.Cap() != c.expected {
+			t.Errorf("expected  %v", c.expected)
+		}
+	}
+	fail := NewPopulation(-1)
+	if fail != nil {
+		t.Errorf("Expected nil, got %v", fail)
+	}
+}
+
+func TestNewPopulationTS(t *testing.T) {
+	cases := []struct {
+		in, expected int
+	}{
+		{0, 0},
+		{1, 1},
+		{7, 7},
+	}
+	for _, c := range cases {
+		var got Population
+		got = NewPopulationTS(c.in)
 		if got.Cap() != c.expected {
 			t.Errorf("expected  %v", c.expected)
 		}
@@ -477,25 +499,5 @@ func TestEach(t *testing.T) {
 		pop.Each(func(indiv Individual) bool {
 			return false
 		})
-	}
-}
-
-func TestSlice(t *testing.T) {
-	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
-	cases := []struct {
-		pop   population
-		slice []Individual
-	}{
-		{population{i1, i2, i3}, []Individual{i1, i2, i3}},
-		{population{i1, i3, i2}, []Individual{i1, i3, i2}},
-		{population{i3, i2, i1}, []Individual{i3, i2, i1}},
-	}
-	for _, c := range cases {
-		for i := range c.slice {
-			if c.pop.Slice()[i] != c.slice[i] {
-				t.Errorf(".Sort() => %v; expected = %v", c.pop.Slice(), c.slice)
-				break
-			}
-		}
 	}
 }
