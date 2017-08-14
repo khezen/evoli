@@ -7,7 +7,7 @@ type populationTS struct {
 	mutex sync.RWMutex
 }
 
-// NewPopulationTS create q threadsafe population
+// NewPopulationTS creates a threadsafe population
 func NewPopulationTS(capacity int) Population {
 	pop := NewPopulation(capacity)
 	return &populationTS{
