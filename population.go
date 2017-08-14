@@ -5,6 +5,7 @@ import (
 	"sort"
 
 	"fmt"
+
 	"github.com/khezen/check"
 )
 
@@ -232,6 +233,7 @@ func (pop *population) IndexOf(indiv Individual) (int, error) {
 	return -1, fmt.Errorf("individual %v not found in population %v", indiv, pop)
 }
 
+// Each traverse the population and execute given callback on each individual. Stops if the callbak return false.
 func (pop *population) Each(f func(indiv Individual) bool) {
 	for _, individual := range *pop {
 		resume := f(individual)
@@ -241,6 +243,7 @@ func (pop *population) Each(f func(indiv Individual) bool) {
 	}
 }
 
+// Slice returns the population as []Individual
 func (pop *population) Slice() []Individual {
 	return *pop
 }
