@@ -418,12 +418,15 @@ func TestPickCouple(t *testing.T) {
 	i1, i2, i3, i4, i5, i6 := NewIndividual(1), NewIndividual(2), NewIndividual(3), NewIndividual(4), NewIndividual(5), NewIndividual(6)
 
 	cases := []struct {
-		pop       population
+		pop       Population
 		expectErr bool
 	}{
-		{population{i1, i2, i3, i4, i5, i6}, false},
-		{population{i1, i2}, false},
-		{population{i1}, true},
+		{&population{i1, i2, i3, i4, i5, i6}, false},
+		{&population{i1, i2}, false},
+		{&population{i1}, true},
+		{&populationTS{population{i1, i2, i3, i4, i5, i6}, sync.RWMutex{}}, false},
+		{&populationTS{population{i1, i2}, sync.RWMutex{}}, false},
+		{&populationTS{population{i1}, sync.RWMutex{}}, true},
 	}
 	for _, c := range cases {
 		for i := 0; i < 32; i++ {
@@ -452,12 +455,14 @@ func TestPickCouple(t *testing.T) {
 func TestContains(t *testing.T) {
 	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	cases := []struct {
-		in       population
+		in       Population
 		indiv    Individual
 		expected bool
 	}{
-		{population{i1, i2}, i1, true},
-		{population{i1, i2}, i3, false},
+		{&population{i1, i2}, i1, true},
+		{&population{i1, i2}, i3, false},
+		{&populationTS{population{i1, i2}, sync.RWMutex{}}, i1, true},
+		{&populationTS{population{i1, i2}, sync.RWMutex{}}, i3, false},
 	}
 	for _, c := range cases {
 		contains := c.in.Has(c.indiv)
@@ -470,13 +475,16 @@ func TestContains(t *testing.T) {
 func TestIndexOf(t *testing.T) {
 	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	cases := []struct {
-		in       population
+		in       Population
 		indiv    Individual
 		expected int
 	}{
-		{population{i1, i2}, i1, 0},
-		{population{i1, i2}, i2, 1},
-		{population{i1, i2}, i3, -1},
+		{&population{i1, i2}, i1, 0},
+		{&population{i1, i2}, i2, 1},
+		{&population{i1, i2}, i3, -1},
+		{&populationTS{population{i1, i2}, sync.RWMutex{}}, i1, 0},
+		{&populationTS{population{i1, i2}, sync.RWMutex{}}, i2, 1},
+		{&populationTS{population{i1, i2}, sync.RWMutex{}}, i3, -1},
 	}
 	for _, c := range cases {
 		index, _ := c.in.IndexOf(c.indiv)
@@ -487,22 +495,24 @@ func TestIndexOf(t *testing.T) {
 	pop := population{i2, i1, i3}
 	_, err := pop.IndexOf(nil)
 	if err == nil {
-		t.Errorf("expected err != nil")
+		panic(err)
 	}
 }
 
 func TestEach(t *testing.T) {
 	i1, i2, i3, i4, i5, i6 := NewIndividual(1), NewIndividual(2), NewIndividual(3), NewIndividual(4), NewIndividual(5), NewIndividual(6)
 	cases := []struct {
+		pop         Population
 		individuals []Individual
 	}{
-		{[]Individual{i1, i5, i6, i4}},
-		{[]Individual{i1, i3, i5, i2, i6}},
+		{NewPopulation(4), []Individual{i1, i5, i6, i4}},
+		{NewPopulation(5), []Individual{i1, i3, i5, i2, i6}},
+		{NewPopulationTS(4), []Individual{i1, i5, i6, i4}},
+		{NewPopulationTS(5), []Individual{i1, i3, i5, i2, i6}},
 	}
 	for _, c := range cases {
-		pop := NewPopulation(len(c.individuals))
-		pop.Add(c.individuals...)
-		pop.Each(func(indiv Individual) bool {
+		c.pop.Add(c.individuals...)
+		c.pop.Each(func(indiv Individual) bool {
 			has := false
 			for _, current := range c.individuals {
 				if current == indiv {
@@ -515,7 +525,7 @@ func TestEach(t *testing.T) {
 			}
 			return true
 		})
-		pop.Each(func(indiv Individual) bool {
+		c.pop.Each(func(indiv Individual) bool {
 			return false
 		})
 	}
