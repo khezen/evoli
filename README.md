@@ -5,9 +5,6 @@
 # Darwin
 Genetic Algorithm Go implementation
 
-
-## Individual
-
 ```golang
 type Individual interface {
 	Fitness() float32
@@ -15,7 +12,6 @@ type Individual interface {
 }
 ```
 
-## Population
 ```golang
 type Population interface {
 	sort.Interface
@@ -40,8 +36,6 @@ type Population interface {
 
 ```
 
-## Operators
-
 ```golang
 type Evaluater interface {
 	Evaluate(Individual) (Fitness float32)
@@ -65,8 +59,6 @@ type Mutater interface {
 	Mutate(Individual) Individual
 }
 ```
-
-## Lifecycle
 
 ```golang
 
