@@ -3,7 +3,10 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/khezen/darwin?style=flat-square)](https://goreportcard.com/report/github.com/khezen/darwin)
 
 # Darwin
-Genetic Algorithm Go implementation
+Genetic Algorithm written in Go
+```golang
+import "github.com/khezen/darwin"
+```
 
 ```golang
 type Individual interface {
