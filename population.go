@@ -117,7 +117,7 @@ func (pop *population) Truncate(length int) error {
 	case length > pop.Cap():
 		newPop := NewPopulation(length)
 		newPop.Add((*pop)...)
-		*pop = *(NewPopulation(0).(*population))
+		*pop = *(newPop.(*population))
 	}
 	return nil
 }
