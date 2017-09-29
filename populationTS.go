@@ -132,14 +132,14 @@ func (p *populationTS) Has(individuals ...Individual) bool {
 // IndexOf returns the inde of the specified individual if it exists
 func (p *populationTS) IndexOf(indiv Individual) (int, error) {
 	p.mutex.RLock()
-	p.mutex.RUnlock()
+	defer p.mutex.RUnlock()
 	return p.population.IndexOf(indiv)
 }
 
 // Each traverse the population and execute given callback on each individual. Stops if the callbak return false.
 func (p *populationTS) Each(f func(indiv Individual) bool) {
 	p.mutex.RLock()
-	p.mutex.RUnlock()
+	defer p.mutex.RUnlock()
 	p.population.Each(f)
 }
 
