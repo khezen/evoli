@@ -14,7 +14,7 @@ func (s proportionalToFitnessSelecter) Select(pop Population, survivorsSize int)
 	if survivorsSize >= pop.Len() {
 		return pop, nil
 	}
-	newPop := NewPopulation(pop.Cap())
+	newPop := pop.New(pop.Cap())
 	offset := s.computeOffset(pop)
 	totalScore := s.computeTotalScore(pop, offset)
 	for newPop.Len() < survivorsSize {

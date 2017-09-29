@@ -14,7 +14,7 @@ func (s proportionalToRankSelecter) Select(pop Population, survivorsSize int) (P
 	if survivorsSize >= pop.Len() {
 		return pop, nil
 	}
-	newPop := NewPopulation(pop.Cap())
+	newPop := pop.New(pop.Cap())
 	totalScore := s.computeTotalScore(pop)
 	pop.Sort()
 	for newPop.Len() < survivorsSize {

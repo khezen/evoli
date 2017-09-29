@@ -11,7 +11,7 @@ func (s randomSelecter) Select(pop Population, survivorsSize int) (Population, e
 	if err != nil {
 		return nil, err
 	}
-	newPop := NewPopulation(pop.Cap())
+	newPop := pop.New(pop.Cap())
 	newPop.Add(pop.Slice()...)
 	size := newPop.Len() - survivorsSize
 	for count := 0; count < size; count++ {

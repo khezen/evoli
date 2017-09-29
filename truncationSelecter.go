@@ -15,7 +15,7 @@ func (s truncationSelecter) Select(pop Population, survivorsSize int) (Populatio
 	} else {
 		survivors = individuals[:survivorsSize]
 	}
-	newPop := NewPopulation(pop.Cap())
+	newPop := pop.New(pop.Cap())
 	newPop.Add(survivors...)
 	return newPop, nil
 }

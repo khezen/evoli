@@ -14,7 +14,7 @@ func (s tournamentSelecter) Select(pop Population, survivorsSize int) (Populatio
 	if survivorsSize >= pop.Len() {
 		return pop, nil
 	}
-	newPop := NewPopulation(pop.Cap())
+	newPop := pop.New(pop.Cap())
 	for newPop.Len() < survivorsSize {
 		var i, _, j, _, _ = pop.PickCouple()
 		survivorIndex := s.fightForYourLives(pop, i, j)
