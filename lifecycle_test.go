@@ -36,6 +36,7 @@ func TestNew(t *testing.T) {
 	}
 	for _, c := range errorCases {
 		_ = New(c.s, c.c, c.m, c.e)
+		_ = NewAsync(c.s, c.c, c.m, c.e)
 	}
 }
 
@@ -44,33 +45,40 @@ func TestGeneration(t *testing.T) {
 	pop := population{i1, i2, i3, i4, i5, i6}
 	cpy := NewPopulation(pop.Cap())
 	cpy.Add(pop...)
-	lifecycle := New(NewTruncationSelecter(), crosserMock{}, mutaterMock{}, evaluaterMock{})
-	newPop, _ := lifecycle.Generation(&pop, 5, 1)
-	isNewPopDifferent := false
-	for i := 0; i < newPop.Len(); i++ {
-		indiv, _ := newPop.Get(i)
-		if !cpy.Has(indiv) {
-			isNewPopDifferent = true
-			break
-		}
-	}
-	if !isNewPopDifferent {
-		t.Errorf("the new Generation should be different from the previous one")
-	}
-	errorCases := []struct {
-		pop          Population
-		survivorSize int
-		mutationProb float32
+	cases := []struct {
+		lifecycle Lifecycle
 	}{
-		{nil, 2, 0.2},
-		{&population{i1, i2, i3}, -10, 0.2},
-		{&population{i1, i2, i3}, 2, 1.2},
-		{&population{i1, i2, i3}, 2, -0.2},
+		{New(NewTruncationSelecter(), crosserMock{}, mutaterMock{}, evaluaterMock{})},
+		{NewAsync(NewTruncationSelecter(), crosserMock{}, mutaterMock{}, evaluaterMock{})},
 	}
-	for _, c := range errorCases {
-		_, err := lifecycle.Generation(c.pop, c.survivorSize, c.mutationProb)
-		if err == nil {
-			t.Errorf("expected != nil")
+	for _, c := range cases {
+		newPop, _ := c.lifecycle.Generation(&pop, 5, 1)
+		isNewPopDifferent := false
+		for i := 0; i < newPop.Len(); i++ {
+			indiv, _ := newPop.Get(i)
+			if !cpy.Has(indiv) {
+				isNewPopDifferent = true
+				break
+			}
+		}
+		if !isNewPopDifferent {
+			t.Errorf("the new Generation should be different from the previous one")
+		}
+		errorCases := []struct {
+			pop          Population
+			survivorSize int
+			mutationProb float32
+		}{
+			{nil, 2, 0.2},
+			{&population{i1, i2, i3}, -10, 0.2},
+			{&population{i1, i2, i3}, 2, 1.2},
+			{&population{i1, i2, i3}, 2, -0.2},
+		}
+		for _, edgeCase := range errorCases {
+			_, err := c.lifecycle.Generation(edgeCase.pop, edgeCase.survivorSize, edgeCase.mutationProb)
+			if err == nil {
+				t.Errorf("expected != nil")
+			}
 		}
 	}
 }
