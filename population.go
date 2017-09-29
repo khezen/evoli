@@ -15,7 +15,6 @@ type Population interface {
 	Sort()
 	Cap() int
 	SetCap(int) error
-	Truncate(int) error
 	Add(...Individual)
 	Get(int) (Individual, error)
 	RemoveAt(int) error
@@ -99,25 +98,6 @@ func (pop *population) SetCap(newCap int) error {
 			*pop = make([]Individual, pop.Len(), newCap)
 		}
 		copy(tmp, *pop)
-	}
-	return nil
-}
-
-// Truncate reduce population size to the given length
-func (pop *population) Truncate(length int) error {
-	err := check.Length(length)
-	if err != nil {
-		return err
-	}
-	switch {
-	case length == 0:
-		*pop = *(NewPopulation(0).(*population))
-	case length < pop.Len():
-		*pop = (*pop)[0:length]
-	case length > pop.Cap():
-		newPop := NewPopulation(length)
-		newPop.Add((*pop)...)
-		*pop = *(newPop.(*population))
 	}
 	return nil
 }

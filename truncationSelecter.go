@@ -7,10 +7,16 @@ func (s truncationSelecter) Select(pop Population, survivorsSize int) (Populatio
 	if err != nil {
 		return nil, err
 	}
+	pop.Sort()
+	individuals := pop.Slice()
+	var survivors []Individual
+	if len(individuals) < survivorsSize {
+		survivors = individuals
+	} else {
+		survivors = individuals[:survivorsSize]
+	}
 	newPop := NewPopulation(pop.Cap())
-	newPop.Add(pop.Slice()...)
-	newPop.Sort()
-	newPop.Truncate(survivorsSize)
+	newPop.Add(survivors...)
 	return newPop, nil
 }
 

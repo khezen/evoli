@@ -52,13 +52,6 @@ func (p *populationTS) SetCap(newCap int) error {
 	return p.population.SetCap(newCap)
 }
 
-// Truncate reduce population size to the given length
-func (p *populationTS) Truncate(length int) error {
-	p.mutex.Lock()
-	defer p.mutex.Unlock()
-	return p.population.Truncate(length)
-}
-
 // Add adds an individual to a population. If the populagtion has already reached its capacity, capacity is incremented.
 func (p *populationTS) Add(indiv ...Individual) {
 	p.mutex.Lock()

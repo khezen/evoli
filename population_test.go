@@ -127,48 +127,6 @@ func TestSetCap(t *testing.T) {
 	}
 }
 
-func TestTruncate(t *testing.T) {
-	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
-	cases := []struct {
-		in        Population
-		size      int
-		expected  Population
-		expectErr bool
-	}{
-		{&population{i1, i2, i3}, 3, &population{i1, i2, i3}, false},
-		{&population{i1, i3, i2}, 4, &population{i3, i2, i1}, false},
-		{&population{i3, i2, i1}, 2, &population{i3, i2}, false},
-		{&population{i3, i2, i1}, 0, &population{}, false},
-		{&population{i1}, 3, &population{i1}, false},
-		{&population{i1, i2, i3}, -15, &population{i1, i2, i3}, true},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 3, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}, false},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 4, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}, false},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 2, &populationTS{population{i1, i2}, sync.RWMutex{}}, false},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 0, &populationTS{population{}, sync.RWMutex{}}, false},
-		{&populationTS{population{i1}, sync.RWMutex{}}, 3, &populationTS{population{i1}, sync.RWMutex{}}, false},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, -15, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}, true},
-	}
-	for _, c := range cases {
-		err := c.in.Truncate(c.size)
-		if c.expectErr && err == nil {
-			t.Error("expected err got nil")
-		}
-		if !c.expectErr && err != nil {
-			panic(err)
-		}
-		for i := 0; i < c.in.Len(); i++ {
-			indiv, err := c.in.Get(i)
-			if err != nil {
-				panic(err)
-			}
-			if !c.expected.Has(indiv) {
-				t.Errorf(".Truncate(%v) => %v; expected = %v", c.size, c.in, c.expected)
-				break
-			}
-		}
-	}
-}
-
 func TestAdd(t *testing.T) {
 	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	cases := []struct {
