@@ -142,3 +142,7 @@ func (p *populationTS) Slice() []Individual {
 	defer p.mutex.RUnlock()
 	return p.population.Slice()
 }
+
+func (p *populationTS) New(cap int) Population {
+	return NewPopulationTS(cap)
+}
