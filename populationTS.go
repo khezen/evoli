@@ -117,9 +117,12 @@ func (p *populationTS) PickCouple() (int, Individual, int, Individual, error) {
 
 // Has return true if the specified individual is in the population
 func (p *populationTS) Has(individuals ...Individual) bool {
-	p.mutex.RLock()
-	defer p.mutex.RUnlock()
-	return p.population.Has(individuals...)
+	has := true
+	for _, indiv := range individuals {
+		_, err := p.IndexOf(indiv)
+		has = has && err == nil
+	}
+	return has
 }
 
 // IndexOf returns the inde of the specified individual if it exists

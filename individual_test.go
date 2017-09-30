@@ -4,33 +4,36 @@ import "testing"
 
 func TestNewIndividual(t *testing.T) {
 	cases := []struct {
-		in, expected float32
+		indiv    Individual
+		expected float32
 	}{
-		{0.7, 0.7},
-		{54.0, 54.0},
-		{0, 0},
+		{NewIndividual(0.7), 0.7},
+		{NewIndividual(54.0), 54.0},
+		{NewIndividual(0), 0},
+		{NewIndividualTS(0.7), 0.7},
+		{NewIndividualTS(54.0), 54.0},
+		{NewIndividualTS(0), 0},
 	}
 	for _, c := range cases {
-		indiv := NewIndividual(c.in)
-		got := indiv.Fitness()
+		got := c.indiv.Fitness()
 		if got != c.expected {
-			t.Errorf("NewIndividual(%f); indiv.Fitness() == %f, expected %f", c.in, got, c.expected)
+			t.Errorf("expected %f got %f", c.expected, got)
 		}
 	}
 }
 
 func TestFitness(t *testing.T) {
 	cases := []struct {
+		indiv        Individual
 		in, expected float32
 	}{
-		{0.7, 0.7},
-		{54.0, 54.0},
-		{0, 0},
+		{NewIndividual(0), 0.7, 0.7},
+		{NewIndividual(0), 54.0, 54.0},
+		{NewIndividual(10), 0, 0},
 	}
-	indiv := NewIndividual(0)
 	for _, c := range cases {
-		indiv.SetFitness(c.in)
-		got := indiv.Fitness()
+		c.indiv.SetFitness(c.in)
+		got := c.indiv.Fitness()
 		if got != c.expected {
 			t.Errorf("indiv.SetFitness(%f); indiv.Fitness() == %f, expected %f", c.in, got, c.expected)
 		}
