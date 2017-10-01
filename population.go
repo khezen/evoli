@@ -207,7 +207,7 @@ func (pop *population) Has(individuals ...Individual) bool {
 // IndexOf returns the inde of the specified individual if it exists
 func (pop *population) IndexOf(indiv Individual) (int, error) {
 	for i, current := range *pop {
-		if current == indiv {
+		if current.Equal(indiv) {
 			return i, nil
 		}
 	}
