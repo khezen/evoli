@@ -30,6 +30,9 @@ func TestFitness(t *testing.T) {
 		{NewIndividual(0), 0.7, 0.7},
 		{NewIndividual(0), 54.0, 54.0},
 		{NewIndividual(10), 0, 0},
+		{NewIndividualTS(0), 0.7, 0.7},
+		{NewIndividualTS(0), 54.0, 54.0},
+		{NewIndividualTS(10), 0, 0},
 	}
 	for _, c := range cases {
 		c.indiv.SetFitness(c.in)
