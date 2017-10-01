@@ -6,6 +6,7 @@ import "sync"
 type Individual interface {
 	Fitness() float32
 	SetFitness(float32)
+	Equal(Individual) bool
 }
 
 // individual https://en.wikipedia.org/wiki/individual
@@ -25,6 +26,11 @@ func (indiv *individual) Fitness() float32 {
 // SetFitness set the strength of a individual regarding to its environement. Higher is stronger.
 func (indiv *individual) SetFitness(Fitness float32) {
 	*indiv = individual(Fitness)
+}
+
+// Equal return true if indiv is equal to toBeCompared
+func (indiv *individual) Equal(toBeCompared Individual) bool {
+	return indiv == toBeCompared
 }
 
 // individual https://en.wikipedia.org/wiki/individual
