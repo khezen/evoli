@@ -4,27 +4,27 @@ import "sync"
 
 // Individual is an interface for an individual
 type Individual interface {
-	Fitness() float32
-	SetFitness(float32)
+	Fitness() float64
+	SetFitness(float64)
 	Equal(Individual) bool
 }
 
 // individual https://en.wikipedia.org/wiki/individual
-type individual float32
+type individual float64
 
 // NewIndividual is the constructor for individuals
-func NewIndividual(Fitness float32) Individual {
+func NewIndividual(Fitness float64) Individual {
 	indiv := individual(Fitness)
 	return &indiv
 }
 
 // Fitness returns the strength of a individual regarding to its environement. Higher is stronger.
-func (indiv *individual) Fitness() float32 {
-	return float32(*indiv)
+func (indiv *individual) Fitness() float64 {
+	return float64(*indiv)
 }
 
 // SetFitness set the strength of a individual regarding to its environement. Higher is stronger.
-func (indiv *individual) SetFitness(Fitness float32) {
+func (indiv *individual) SetFitness(Fitness float64) {
 	*indiv = individual(Fitness)
 }
 
@@ -40,7 +40,7 @@ type individualTS struct {
 }
 
 // NewIndividualTS is the constructor for threadsafe individuals
-func NewIndividualTS(Fitness float32) Individual {
+func NewIndividualTS(Fitness float64) Individual {
 	indiv := individual(Fitness)
 	return &individualTS{
 		indiv,
@@ -49,14 +49,14 @@ func NewIndividualTS(Fitness float32) Individual {
 }
 
 // Fitness returns the strength of a individual regarding to its environement. Higher is stronger.
-func (indiv *individualTS) Fitness() float32 {
+func (indiv *individualTS) Fitness() float64 {
 	indiv.mut.RLock()
 	defer indiv.mut.RUnlock()
 	return indiv.individual.Fitness()
 }
 
 // SetFitness set the strength of a individual regarding to its environement. Higher is stronger.
-func (indiv *individualTS) SetFitness(Fitness float32) {
+func (indiv *individualTS) SetFitness(Fitness float64) {
 	indiv.mut.Lock()
 	defer indiv.mut.Unlock()
 	indiv.individual.SetFitness(Fitness)

@@ -24,7 +24,7 @@ func (s proportionalToFitnessSelecter) Select(pop Population, survivorsSize int)
 			}
 			indiv, _ := pop.Get(i)
 			score := s.computeScore(indiv, offset)
-			if totalScore == 0 || rand.Float32() <= score/totalScore {
+			if totalScore == 0 || rand.Float64() <= score/totalScore {
 				pop.RemoveAt(i)
 				newPop.Add(indiv)
 				totalScore -= score
@@ -34,12 +34,12 @@ func (s proportionalToFitnessSelecter) Select(pop Population, survivorsSize int)
 	return newPop, nil
 }
 
-func (s proportionalToFitnessSelecter) computeScore(indiv Individual, offset float32) float32 {
+func (s proportionalToFitnessSelecter) computeScore(indiv Individual, offset float64) float64 {
 	return indiv.Fitness() + offset
 }
 
-func (s proportionalToFitnessSelecter) computeTotalScore(pop Population, offset float32) float32 {
-	var length, totalScore = pop.Len(), float32(0)
+func (s proportionalToFitnessSelecter) computeTotalScore(pop Population, offset float64) float64 {
+	var length, totalScore = pop.Len(), float64(0)
 	for i := 0; i < length; i++ {
 		indiv, _ := pop.Get(i)
 		totalScore += s.computeScore(indiv, offset)
@@ -47,10 +47,10 @@ func (s proportionalToFitnessSelecter) computeTotalScore(pop Population, offset 
 	return totalScore
 }
 
-func (s proportionalToFitnessSelecter) computeOffset(pop Population) float32 {
+func (s proportionalToFitnessSelecter) computeOffset(pop Population) float64 {
 	minIndiv, maxIndiv := pop.Extremums()
 	min, max := minIndiv.Fitness(), maxIndiv.Fitness()
-	var offset float32
+	var offset float64
 	switch {
 	case min < 0:
 		offset += -min

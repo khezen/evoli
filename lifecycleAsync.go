@@ -18,7 +18,7 @@ func NewAsync(s Selecter, c Crosser, m Mutater, e Evaluater) Lifecycle {
 }
 
 // Generation takes a population and produce a the new generation of this population
-func (l lifecycleAsync) Generation(pop Population, survivorSizeForSelection int, mutationProbability float32) (Population, error) {
+func (l lifecycleAsync) Generation(pop Population, survivorSizeForSelection int, mutationProbability float64) (Population, error) {
 	err := check.NotNil(pop)
 	if err != nil {
 		return pop, err
@@ -76,7 +76,7 @@ func (l lifecycleAsync) crossovers(pop Population) Population {
 	return pop
 }
 
-func (l lifecycleAsync) mutations(pop Population, mutationProbability float32) (Population, error) {
+func (l lifecycleAsync) mutations(pop Population, mutationProbability float64) (Population, error) {
 	if mutationProbability < 0 || mutationProbability > 1 {
 		return pop, fmt.Errorf("mutation probability = %v. Expected: 0 <= probability <= 1", mutationProbability)
 	}
@@ -87,7 +87,7 @@ func (l lifecycleAsync) mutations(pop Population, mutationProbability float32) (
 	}
 	for i := 0; i < length; i++ {
 		go func(done chan bool, index int) {
-			if rand.Float32() <= mutationProbability {
+			if rand.Float64() <= mutationProbability {
 				indiv, _ := pop.Get(index)
 				mutant := l.Mutater.Mutate(indiv)
 				pop.Replace(index, mutant)

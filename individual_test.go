@@ -5,7 +5,7 @@ import "testing"
 func TestNewIndividual(t *testing.T) {
 	cases := []struct {
 		indiv    Individual
-		expected float32
+		expected float64
 	}{
 		{NewIndividual(0.7), 0.7},
 		{NewIndividual(54.0), 54.0},
@@ -25,7 +25,7 @@ func TestNewIndividual(t *testing.T) {
 func TestFitness(t *testing.T) {
 	cases := []struct {
 		indiv        Individual
-		in, expected float32
+		in, expected float64
 	}{
 		{NewIndividual(0), 0.7, 0.7},
 		{NewIndividual(0), 54.0, 54.0},

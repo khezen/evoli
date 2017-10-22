@@ -10,8 +10,8 @@ import "github.com/khezen/darwin"
 
 ```golang
 type Individual interface {
-	Fitness() float32
-	SetFitness(float32)
+	Fitness() float64
+	SetFitness(float64)
 }
 ```
 
@@ -41,7 +41,7 @@ type Population interface {
 
 ```golang
 type Evaluater interface {
-	Evaluate(Individual) (Fitness float32)
+	Evaluate(Individual) (Fitness float64)
 }
 ```
 
@@ -66,7 +66,7 @@ type Mutater interface {
 ```golang
 
 type Lifecycle interface {
-	Generation(pop Population, survivorSizeForSelection int, mutationProbability float32) (Population, error)
+	Generation(pop Population, survivorSizeForSelection int, mutationProbability float64) (Population, error)
 }
 
 func New(s Selecter, c Crosser, m Mutater, e Evaluater) Lifecycle

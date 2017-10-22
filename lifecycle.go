@@ -9,7 +9,7 @@ import (
 
 // Lifecycle for genetic algorithm step
 type Lifecycle interface {
-	Generation(pop Population, survivorSizeForSelection int, mutationProbability float32) (Population, error)
+	Generation(pop Population, survivorSizeForSelection int, mutationProbability float64) (Population, error)
 }
 
 // lifecycle is a genetic algorithm implementation
@@ -26,7 +26,7 @@ func New(s Selecter, c Crosser, m Mutater, e Evaluater) Lifecycle {
 }
 
 // Generation takes a population and produce a the new generation of this population
-func (l lifecycle) Generation(pop Population, survivorSizeForSelection int, mutationProbability float32) (Population, error) {
+func (l lifecycle) Generation(pop Population, survivorSizeForSelection int, mutationProbability float64) (Population, error) {
 	err := check.NotNil(pop)
 	if err != nil {
 		return pop, err
@@ -65,12 +65,12 @@ func (l lifecycle) crossovers(pop Population) Population {
 	return pop
 }
 
-func (l lifecycle) mutations(pop Population, mutationProbability float32) (Population, error) {
+func (l lifecycle) mutations(pop Population, mutationProbability float64) (Population, error) {
 	if mutationProbability < 0 || mutationProbability > 1 {
 		return pop, fmt.Errorf("mutation probability = %v. Expected: 0 <= probability <= 1", mutationProbability)
 	}
 	for i := 0; i < pop.Len(); i++ {
-		if rand.Float32() <= mutationProbability {
+		if rand.Float64() <= mutationProbability {
 			indiv, _ := pop.Get(i)
 			mutant := l.Mutater.Mutate(indiv)
 			pop.Replace(i, mutant)

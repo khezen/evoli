@@ -37,15 +37,15 @@ func (s tournamentSelecter) fightForYourLives(pop Population, index1 int, index2
 	total := r1 + r2
 
 	switch {
-	case total == 0 || rand.Float32() <= r1/total:
+	case total == 0 || rand.Float64() <= r1/total:
 		return index1
 	default:
 		return index2
 	}
 }
 
-func (s tournamentSelecter) computeOffset(r1, r2 float32) float32 {
-	var offset float32
+func (s tournamentSelecter) computeOffset(r1, r2 float64) float64 {
+	var offset float64
 	switch {
 	case r1 < 0:
 		offset += -r1

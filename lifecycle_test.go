@@ -14,7 +14,7 @@ func (c crosserMock) Cross(individual1, individual2 Individual) Individual {
 type evaluaterMock struct {
 }
 
-func (e evaluaterMock) Evaluate(individual Individual) (Fitness float32) {
+func (e evaluaterMock) Evaluate(individual Individual) (Fitness float64) {
 	return individual.Fitness()
 }
 
@@ -67,7 +67,7 @@ func TestGeneration(t *testing.T) {
 		errorCases := []struct {
 			pop          Population
 			survivorSize int
-			mutationProb float32
+			mutationProb float64
 		}{
 			{nil, 2, 0.2},
 			{&population{i1, i2, i3}, -10, 0.2},
