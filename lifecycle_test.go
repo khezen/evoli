@@ -36,7 +36,6 @@ func TestNew(t *testing.T) {
 	}
 	for _, c := range errorCases {
 		_ = New(c.s, c.c, c.m, c.e)
-		_ = NewAsync(c.s, c.c, c.m, c.e)
 	}
 }
 
@@ -49,7 +48,6 @@ func TestGeneration(t *testing.T) {
 		lifecycle Lifecycle
 	}{
 		{New(NewTruncationSelecter(), crosserMock{}, mutaterMock{}, evaluaterMock{})},
-		{NewAsync(NewTruncationSelecter(), crosserMock{}, mutaterMock{}, evaluaterMock{})},
 	}
 	for _, c := range cases {
 		newPop, _ := c.lifecycle.Generation(&pop, 5, 1)
