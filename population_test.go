@@ -21,6 +21,10 @@ func TestNewPopulation(t *testing.T) {
 		if got.Cap() != c.expected {
 			t.Errorf("expected  %v", c.expected)
 		}
+		got = got.New(c.in)
+		if got.Cap() != c.expected {
+			t.Errorf("expected  %v", c.expected)
+		}
 	}
 	fail := NewPopulation(-1)
 	if fail != nil {
