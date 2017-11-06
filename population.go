@@ -211,7 +211,7 @@ func (pop *population) IndexOf(indiv Individual) (int, error) {
 			return i, nil
 		}
 	}
-	return -1, fmt.Errorf("individual %v not found in population %v", indiv, pop)
+	return -1, fmt.Errorf("individual not found in population")
 }
 
 // Each traverse the population and execute given callback on each individual. Stops if the callbak return false.
