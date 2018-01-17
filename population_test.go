@@ -3,8 +3,6 @@ package darwin
 import (
 	"sync"
 	"testing"
-
-	"github.com/khezen/check"
 )
 
 func TestNewPopulation(t *testing.T) {
@@ -473,7 +471,7 @@ func TestPickCouple(t *testing.T) {
 	for _, c := range cases {
 		for i := 0; i < 32; i++ {
 			index1, indiv1, index2, indiv2, err := c.pop.PickCouple()
-			if !check.ErrorExpectation(err, c.expectErr) {
+			if (c.expectErr && err == nil) || (!c.expectErr && err != nil) {
 				t.Errorf("unexpected output %v", err)
 			}
 			if !c.expectErr {

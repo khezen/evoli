@@ -3,8 +3,6 @@ package darwin
 import (
 	"fmt"
 	"math/rand"
-
-	"github.com/khezen/check"
 )
 
 // Lifecycle for genetic algorithm step
@@ -27,12 +25,8 @@ func New(s Selecter, c Crosser, m Mutater, e Evaluater) Lifecycle {
 
 // Generation takes a population and produce a the new generation of this population
 func (l lifecycle) Generation(pop Population, survivorSizeForSelection int, mutationProbability float64) (Population, error) {
-	err := check.NotNil(pop)
-	if err != nil {
-		return pop, err
-	}
 	newPop := l.evaluation(pop)
-	newPop, err = l.Selecter.Select(newPop, survivorSizeForSelection)
+	newPop, err := l.Selecter.Select(newPop, survivorSizeForSelection)
 	if err != nil {
 		return pop, err
 	}

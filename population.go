@@ -5,8 +5,6 @@ import (
 	"sort"
 
 	"fmt"
-
-	"github.com/khezen/check"
 )
 
 // Population is the population interface
@@ -36,8 +34,7 @@ type population []Individual
 
 // NewPopulation is population constructor
 func NewPopulation(capacity int) Population {
-	err := check.Cap(capacity)
-	if err != nil {
+	if capacity < 0 {
 		return nil
 	}
 	pop := population(make([]Individual, 0, capacity))
@@ -84,9 +81,8 @@ func (pop *population) Cap() int {
 
 // SetCap set the resize the population capacity
 func (pop *population) SetCap(newCap int) error {
-	err := check.Cap(newCap)
-	if err != nil {
-		return err
+	if newCap < 0 {
+		return fmt.Errorf("cap has to be must be >= 0")
 	}
 	currentCap := pop.Cap()
 	if newCap != currentCap {
@@ -110,7 +106,7 @@ func (pop *population) Add(indiv ...Individual) {
 
 // Get returns the individual at index i
 func (pop *population) Get(i int) (Individual, error) {
-	err := check.Index(i, pop.Len())
+	err := pop.checkIndex(i)
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +115,7 @@ func (pop *population) Get(i int) (Individual, error) {
 
 // RemoveAt removes and returns the individual at index i
 func (pop *population) RemoveAt(i int) error {
-	err := check.Index(i, pop.Len())
+	err := pop.checkIndex(i)
 	if err != nil {
 		return err
 	}
@@ -140,7 +136,7 @@ func (pop *population) Remove(individuals ...Individual) {
 
 // Replace replaces and returns the individual at index i by the substitute
 func (pop *population) Replace(i int, substitute Individual) error {
-	err := check.Index(i, pop.Len())
+	err := pop.checkIndex(i)
 	if err != nil {
 		return err
 	}
@@ -231,4 +227,11 @@ func (pop *population) Slice() []Individual {
 
 func (pop *population) New(cap int) Population {
 	return NewPopulation(cap)
+}
+
+func (pop *population) checkIndex(i int) error {
+	if i < 0 || i >= pop.Len() {
+		return fmt.Errorf("index out of bound")
+	}
+	return nil
 }

@@ -67,7 +67,6 @@ func TestGeneration(t *testing.T) {
 			survivorSize int
 			mutationProb float64
 		}{
-			{nil, 2, 0.2},
 			{&population{i1, i2, i3}, -10, 0.2},
 			{&population{i1, i2, i3}, 2, 1.2},
 			{&population{i1, i2, i3}, 2, -0.2},

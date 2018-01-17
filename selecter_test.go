@@ -54,12 +54,4 @@ func testSelecter(t *testing.T, s Selecter) {
 	if err == nil {
 		t.Errorf("expected != nil")
 	}
-	_, err = s.Select(nil, 2)
-	if err == nil {
-		t.Errorf("expected != nil")
-	}
-	_, err = s.Select(nil, -1)
-	if err == nil {
-		t.Errorf("expected != nil")
-	}
 }
