@@ -1,4 +1,4 @@
-package darwin
+package evoli
 
 import (
 	"math/rand"

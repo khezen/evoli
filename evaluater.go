@@ -1,4 +1,4 @@
-package darwin
+package evoli
 
 // Evaluater computes and set individual Fitness
 type Evaluater interface {

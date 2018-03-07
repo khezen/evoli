@@ -1,4 +1,4 @@
-package darwin
+package evoli
 
 // Mutater randomly modify a individual. This operator maintain diversity in a population.
 type Mutater interface {

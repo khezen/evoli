@@ -1,11 +1,11 @@
-[![GoDoc](https://img.shields.io/badge/go-documentation-blue.svg?style=flat-square)](https://godoc.org/github.com/khezen/darwin)
-[![Build Status](http://img.shields.io/travis/khezen/darwin.svg?style=flat-square)](https://travis-ci.org/khezen/darwin) [![codecov](https://img.shields.io/codecov/c/github/khezen/darwin/master.svg?style=flat-square)](https://codecov.io/gh/khezen/darwin)
-[![Go Report Card](https://goreportcard.com/badge/github.com/khezen/darwin?style=flat-square)](https://goreportcard.com/report/github.com/khezen/darwin)
+[![GoDoc](https://img.shields.io/badge/go-documentation-blue.svg?style=flat-square)](https://godoc.org/github.com/khezen/evoli)
+[![Build Status](http://img.shields.io/travis/khezen/evoli.svg?style=flat-square)](https://travis-ci.org/khezen/evoli) [![codecov](https://img.shields.io/codecov/c/github/khezen/evoli/master.svg?style=flat-square)](https://codecov.io/gh/khezen/evoli)
+[![Go Report Card](https://goreportcard.com/badge/github.com/khezen/evoli?style=flat-square)](https://goreportcard.com/report/github.com/khezen/evoli)
 
-# *darwin*
+# *evoli*
 Genetic Algorithm written in Go
 ```golang
-import "github.com/khezen/darwin"
+import "github.com/khezen/evoli"
 ```
 
 ```golang

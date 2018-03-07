@@ -1,4 +1,4 @@
-package darwin
+package evoli
 
 // Evolution -
 type Evolution interface {
