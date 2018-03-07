@@ -101,13 +101,6 @@ func (p *populationTS) Max() Individual {
 	return p.population.Max()
 }
 
-// Extremums returns the Min() & the Max() of the poplation
-func (p *populationTS) Extremums() (min, max Individual) {
-	p.mutex.RLock()
-	defer p.mutex.RUnlock()
-	return p.population.Extremums()
-}
-
 // PickCouple returns two randomly chosen individuals with their index
 func (p *populationTS) PickCouple() (int, Individual, int, Individual, error) {
 	p.mutex.RLock()

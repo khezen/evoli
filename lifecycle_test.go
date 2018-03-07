@@ -50,7 +50,7 @@ func TestGeneration(t *testing.T) {
 		{New(NewTruncationSelecter(), crosserMock{}, mutaterMock{}, evaluaterMock{})},
 	}
 	for _, c := range cases {
-		newPop, _ := c.lifecycle.Generation(&pop, 5, 1)
+		newPop, _ := c.lifecycle.Iterate(&pop, 5, 1)
 		isNewPopDifferent := false
 		for i := 0; i < newPop.Len(); i++ {
 			indiv, _ := newPop.Get(i)
@@ -72,7 +72,7 @@ func TestGeneration(t *testing.T) {
 			{&population{i1, i2, i3}, 2, -0.2},
 		}
 		for _, edgeCase := range errorCases {
-			_, err := c.lifecycle.Generation(edgeCase.pop, edgeCase.survivorSize, edgeCase.mutationProb)
+			_, err := c.lifecycle.Iterate(edgeCase.pop, edgeCase.survivorSize, edgeCase.mutationProb)
 			if err == nil {
 				t.Errorf("expected != nil")
 			}

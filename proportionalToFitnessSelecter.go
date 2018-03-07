@@ -48,7 +48,7 @@ func (s proportionalToFitnessSelecter) computeTotalScore(pop Population, offset 
 }
 
 func (s proportionalToFitnessSelecter) computeOffset(pop Population) float64 {
-	minIndiv, maxIndiv := pop.Extremums()
+	minIndiv, maxIndiv := pop.Min(), pop.Max()
 	min, max := minIndiv.Fitness(), maxIndiv.Fitness()
 	var offset float64
 	switch {

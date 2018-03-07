@@ -18,9 +18,8 @@ type Population interface {
 	RemoveAt(int) error
 	Remove(...Individual)
 	Replace(int, Individual) error
-	Max() Individual
 	Min() Individual
-	Extremums() (Individual, Individual)
+	Max() Individual
 	PickCouple() (index1 int, indiv1 Individual, index2 int, indiv2 Individual, err error)
 	Has(...Individual) bool
 	IndexOf(Individual) (int, error)
@@ -164,11 +163,6 @@ func (pop *population) extremum(greaterThan bool) Individual {
 		}
 	}
 	return extremum
-}
-
-// Extremums returns the Min() & the Max() of the poplation
-func (pop *population) Extremums() (min, max Individual) {
-	return pop.Min(), pop.Max()
 }
 
 // PickCouple returns two randomly chosen individuals with their index
