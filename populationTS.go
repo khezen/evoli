@@ -101,13 +101,6 @@ func (p *populationTS) Max() Individual {
 	return p.population.Max()
 }
 
-// PickCouple returns two randomly chosen individuals with their index
-func (p *populationTS) PickCouple() (int, Individual, int, Individual, error) {
-	p.mutex.RLock()
-	defer p.mutex.RUnlock()
-	return p.population.PickCouple()
-}
-
 // Has return true if the specified individual is in the population
 func (p *populationTS) Has(individuals ...Individual) bool {
 	has := true

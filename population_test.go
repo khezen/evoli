@@ -439,44 +439,6 @@ func TestSwap(t *testing.T) {
 	}
 }
 
-func TestPickCouple(t *testing.T) {
-	i1, i2, i3, i4, i5, i6 := NewIndividual(1), NewIndividual(2), NewIndividual(3), NewIndividual(4), NewIndividual(5), NewIndividual(6)
-
-	cases := []struct {
-		pop       Population
-		expectErr bool
-	}{
-		{&population{i1, i2, i3, i4, i5, i6}, false},
-		{&population{i1, i2}, false},
-		{&population{i1}, true},
-		{&populationTS{population{i1, i2, i3, i4, i5, i6}, sync.RWMutex{}}, false},
-		{&populationTS{population{i1, i2}, sync.RWMutex{}}, false},
-		{&populationTS{population{i1}, sync.RWMutex{}}, true},
-	}
-	for _, c := range cases {
-		for i := 0; i < 32; i++ {
-			index1, indiv1, index2, indiv2, err := c.pop.PickCouple()
-			if (c.expectErr && err == nil) || (!c.expectErr && err != nil) {
-				t.Errorf("unexpected output %v", err)
-			}
-			if !c.expectErr {
-				if index1 < 0 || index1 >= c.pop.Len() || index2 < 0 || index2 >= c.pop.Len() {
-					t.Errorf("%v.PickCouple() returned indexes %v, %v which are out of bounds", c.pop, index1, index2)
-				}
-				if index1 == index2 {
-					t.Errorf("%v.PickCouple() returned indexes %v, %v which are equals", c.pop, index1, index2)
-				}
-				if indiv1 == nil || indiv2 == nil || indiv1 == indiv2 {
-					t.Errorf("%v.PickCouple() returned individuals %v, %v which are nils", c.pop, indiv1, indiv2)
-				}
-				if err != nil {
-					t.Errorf("expected err == nil")
-				}
-			}
-		}
-	}
-}
-
 func TestContains(t *testing.T) {
 	i1, i2, i3 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1)
 	cases := []struct {

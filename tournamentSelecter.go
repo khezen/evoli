@@ -16,7 +16,15 @@ func (s tournamentSelecter) Select(pop Population, survivorsSize int) (Populatio
 	}
 	newPop := pop.New(pop.Cap())
 	for newPop.Len() < survivorsSize {
-		var i, _, j, _, _ = pop.PickCouple()
+		var i, j = rand.Intn(pop.Len()), rand.Intn(pop.Len())
+		if i == j {
+			switch i {
+			case pop.Len() - 1:
+				j = i - 1
+			default:
+				j = i + 1
+			}
+		}
 		survivorIndex := s.fightForYourLives(pop, i, j)
 		indiv, _ := pop.Get(survivorIndex)
 		pop.RemoveAt(survivorIndex)

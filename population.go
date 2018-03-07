@@ -1,7 +1,6 @@
 package darwin
 
 import (
-	"math/rand"
 	"sort"
 
 	"fmt"
@@ -20,7 +19,6 @@ type Population interface {
 	Replace(int, Individual) error
 	Min() Individual
 	Max() Individual
-	PickCouple() (index1 int, indiv1 Individual, index2 int, indiv2 Individual, err error)
 	Has(...Individual) bool
 	IndexOf(Individual) (int, error)
 	Each(func(item Individual) bool)
@@ -163,25 +161,6 @@ func (pop *population) extremum(greaterThan bool) Individual {
 		}
 	}
 	return extremum
-}
-
-// PickCouple returns two randomly chosen individuals with their index
-func (pop *population) PickCouple() (int, Individual, int, Individual, error) {
-	if pop.Len() < 2 {
-		return -1, nil, -1, nil, fmt.Errorf("pop must contains at least 2 individuals to pick a couple")
-	}
-	var i, j = rand.Intn(pop.Len()), rand.Intn(pop.Len())
-	if i == j {
-		switch i {
-		case pop.Len() - 1:
-			j = i - 1
-		default:
-			j = i + 1
-		}
-	}
-	indivi, _ := pop.Get(i)
-	indivj, _ := pop.Get(j)
-	return i, indivi, j, indivj, nil
 }
 
 // Has return true if the specified individual is in the population
