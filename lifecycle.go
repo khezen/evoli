@@ -1,32 +1,33 @@
 package darwin
 
 import (
-	"fmt"
 	"math/rand"
 )
 
 // Lifecycle for genetic algorithm step
 type Lifecycle interface {
-	Iterate(pop Population, survivorSizeForSelection int, mutationProbability float64) (Population, error)
+	Iterate(pop Population) (Population, error)
 }
 
 // lifecycle is a genetic algorithm implementation
 type lifecycle struct {
-	Selecter  Selecter
-	Crosser   Crosser
-	Mutater   Mutater
-	Evaluater Evaluater
+	Selecter            Selecter
+	SurvivorSize        int
+	Crosser             Crosser
+	Mutater             Mutater
+	MutationProbability float64
+	Evaluater           Evaluater
 }
 
 // New is the constructor for Lifecycle
-func New(s Selecter, c Crosser, m Mutater, e Evaluater) Lifecycle {
-	return &lifecycle{s, c, m, e}
+func New(s Selecter, survivorSize int, c Crosser, m Mutater, mutationProbability float64, e Evaluater) Lifecycle {
+	return &lifecycle{s, survivorSize, c, m, mutationProbability, e}
 }
 
 // Iterate takes a population and produce a the new generation of this population
-func (l lifecycle) Iterate(pop Population, survivorSizeForSelection int, mutationProbability float64) (Population, error) {
+func (l lifecycle) Iterate(pop Population) (Population, error) {
 	newPop := l.evaluation(pop)
-	newPop, err := l.Selecter.Select(newPop, survivorSizeForSelection)
+	newPop, err := l.Selecter.Select(newPop, l.SurvivorSize)
 	if err != nil {
 		return pop, err
 	}
@@ -34,7 +35,7 @@ func (l lifecycle) Iterate(pop Population, survivorSizeForSelection int, mutatio
 	if err != nil {
 		return pop, err
 	}
-	newPop, err = l.mutations(newPop, mutationProbability)
+	newPop, err = l.mutations(newPop)
 	if err != nil {
 		return pop, err
 	}
@@ -75,12 +76,9 @@ func (l lifecycle) crossovers(pop Population) (Population, error) {
 	return pop, nil
 }
 
-func (l lifecycle) mutations(pop Population, mutationProbability float64) (Population, error) {
-	if mutationProbability < 0 || mutationProbability > 1 {
-		return pop, fmt.Errorf("mutation probability = %v. Expected: 0 <= probability <= 1", mutationProbability)
-	}
+func (l lifecycle) mutations(pop Population) (Population, error) {
 	for i := 0; i < pop.Len(); i++ {
-		if rand.Float64() <= mutationProbability {
+		if rand.Float64() <= l.MutationProbability {
 			indiv, _ := pop.Get(i)
 			mutant, err := l.Mutater.Mutate(indiv)
 			if err != nil {
