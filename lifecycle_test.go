@@ -52,7 +52,7 @@ func TestGeneration(t *testing.T) {
 		{New(NewTruncationSelecter(), 5, crosserMock{}, mutaterMock{}, 1, evaluaterMock{})},
 	}
 	for _, c := range cases {
-		newPop, _ := c.lifecycle.Iterate(&pop)
+		newPop, _ := c.lifecycle.Next(&pop)
 		isNewPopDifferent := false
 		for i := 0; i < newPop.Len(); i++ {
 			indiv, _ := newPop.Get(i)

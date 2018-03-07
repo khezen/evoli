@@ -6,7 +6,7 @@ import (
 
 // Lifecycle for genetic algorithm step
 type Lifecycle interface {
-	Iterate(pop Population) (Population, error)
+	Next(pop Population) (Population, error)
 }
 
 // lifecycle is a genetic algorithm implementation
@@ -24,8 +24,8 @@ func New(s Selecter, survivorSize int, c Crosser, m Mutater, mutationProbability
 	return &lifecycle{s, survivorSize, c, m, mutationProbability, e}
 }
 
-// Iterate takes a population and produce a the new generation of this population
-func (l lifecycle) Iterate(pop Population) (Population, error) {
+// Next takes a population and produce a the new generation of this population
+func (l lifecycle) Next(pop Population) (Population, error) {
 	newPop := l.evaluation(pop)
 	newPop, err := l.Selecter.Select(newPop, l.SurvivorSize)
 	if err != nil {
