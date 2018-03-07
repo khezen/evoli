@@ -21,14 +21,12 @@ type Population interface {
 	Sort()
     	Max() Individual
 	Min() Individual
-	Extremums() (Individual, Individual)
 
     	Add(...Individual)
    	RemoveAt(int) error
 	Remove(...Individual)
 	Replace(int, Individual) error
     	Get(int) (Individual, error)
-    	PickCouple() (index1 int, indiv1 Individual, index2 int, indiv2 Individual, err error)
 	Has(...Individual) bool
 	IndexOf(Individual) (int, error)
 
@@ -41,7 +39,7 @@ type Population interface {
 
 ```golang
 type Evaluater interface {
-	Evaluate(Individual) (Fitness float64)
+	Evaluate(Individual) (Fitness float64, err error)
 }
 ```
 
@@ -53,22 +51,22 @@ type Selecter interface {
 
 ```golang
 type Crosser interface {
-	Cross(individual1, individual2 Individual) Individual
+	Cross(individual1, individual2 Individual) (Individual, error)
 }
 ```
 
 ```golang
 type Mutater interface {
-	Mutate(Individual) Individual
+	Mutate(Individual) (Individual, error)
 }
 ```
 
 ```golang
 
 type Lifecycle interface {
-	Generation(pop Population, survivorSizeForSelection int, mutationProbability float64) (Population, error)
+	Next(pop Population) (Population, error)
 }
 
-func New(s Selecter, c Crosser, m Mutater, e Evaluater) Lifecycle
+func NewLifecycle(s Selecter, survivorSize int, c Crosser, m Mutater, mutationProbability float64, e Evaluater) Lifecycle
 
 ```
