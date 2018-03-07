@@ -37,7 +37,7 @@ func TestNew(t *testing.T) {
 		{NewTruncationSelecter(), 10, crosserMock{}, mutaterMock{}, 0.01, evaluaterMock{}},
 	}
 	for _, c := range errorCases {
-		_ = New(c.s, c.survivorSize, c.c, c.m, c.mutaionProb, c.e)
+		_ = NewLifecycle(c.s, c.survivorSize, c.c, c.m, c.mutaionProb, c.e)
 	}
 }
 
@@ -49,7 +49,7 @@ func TestGeneration(t *testing.T) {
 	cases := []struct {
 		lifecycle Lifecycle
 	}{
-		{New(NewTruncationSelecter(), 5, crosserMock{}, mutaterMock{}, 1, evaluaterMock{})},
+		{NewLifecycle(NewTruncationSelecter(), 5, crosserMock{}, mutaterMock{}, 1, evaluaterMock{})},
 	}
 	for _, c := range cases {
 		newPop, _ := c.lifecycle.Next(&pop)

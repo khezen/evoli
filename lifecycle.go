@@ -19,8 +19,8 @@ type lifecycle struct {
 	Evaluater           Evaluater
 }
 
-// New is the constructor for Lifecycle
-func New(s Selecter, survivorSize int, c Crosser, m Mutater, mutationProbability float64, e Evaluater) Lifecycle {
+// NewLifecycle is the constructor for Lifecycle
+func NewLifecycle(s Selecter, survivorSize int, c Crosser, m Mutater, mutationProbability float64, e Evaluater) Lifecycle {
 	return &lifecycle{s, survivorSize, c, m, mutationProbability, e}
 }
 
