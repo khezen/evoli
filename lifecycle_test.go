@@ -7,8 +7,8 @@ import (
 type crosserMock struct {
 }
 
-func (c crosserMock) Cross(individual1, individual2 Individual) Individual {
-	return NewIndividual(individual1.Fitness() + individual2.Fitness()/2)
+func (c crosserMock) Cross(individual1, individual2 Individual) (Individual, error) {
+	return NewIndividual(individual1.Fitness() + individual2.Fitness()/2), nil
 }
 
 type evaluaterMock struct {
@@ -21,8 +21,8 @@ func (e evaluaterMock) Evaluate(individual Individual) (Fitness float64) {
 type mutaterMock struct {
 }
 
-func (m mutaterMock) Mutate(individual Individual) Individual {
-	return individual
+func (m mutaterMock) Mutate(individual Individual) (Individual, error) {
+	return individual, nil
 }
 
 func TestNew(t *testing.T) {

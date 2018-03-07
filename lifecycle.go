@@ -30,7 +30,10 @@ func (l lifecycle) Iterate(pop Population, survivorSizeForSelection int, mutatio
 	if err != nil {
 		return pop, err
 	}
-	newPop = l.crossovers(newPop)
+	newPop, err = l.crossovers(newPop)
+	if err != nil {
+		return pop, err
+	}
 	newPop, err = l.mutations(newPop, mutationProbability)
 	if err != nil {
 		return pop, err
@@ -47,16 +50,29 @@ func (l lifecycle) evaluation(pop Population) Population {
 	return pop
 }
 
-func (l lifecycle) crossovers(pop Population) Population {
+func (l lifecycle) crossovers(pop Population) (Population, error) {
 	newBorns := NewPopulation(pop.Cap() - pop.Len())
 	capacity := newBorns.Cap()
 	for newBorns.Len() < capacity {
-		var _, indiv1, _, indiv2, _ = pop.PickCouple()
-		newBorn := l.Crosser.Cross(indiv1, indiv2)
+		var i, j = rand.Intn(pop.Len()), rand.Intn(pop.Len())
+		if i == j {
+			switch i {
+			case pop.Len() - 1:
+				j = i - 1
+			default:
+				j = i + 1
+			}
+		}
+		indiv1, _ := pop.Get(i)
+		indiv2, _ := pop.Get(j)
+		newBorn, err := l.Crosser.Cross(indiv1, indiv2)
+		if err != nil {
+			return nil, err
+		}
 		newBorns.Add(newBorn)
 	}
 	pop.Add(*newBorns.(*population)...)
-	return pop
+	return pop, nil
 }
 
 func (l lifecycle) mutations(pop Population, mutationProbability float64) (Population, error) {
@@ -66,7 +82,10 @@ func (l lifecycle) mutations(pop Population, mutationProbability float64) (Popul
 	for i := 0; i < pop.Len(); i++ {
 		if rand.Float64() <= mutationProbability {
 			indiv, _ := pop.Get(i)
-			mutant := l.Mutater.Mutate(indiv)
+			mutant, err := l.Mutater.Mutate(indiv)
+			if err != nil {
+				return nil, err
+			}
 			pop.Replace(i, mutant)
 		}
 	}
