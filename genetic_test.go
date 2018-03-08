@@ -37,7 +37,7 @@ func TestNew(t *testing.T) {
 		{NewTruncationSelecter(), 10, crosserMock{}, mutaterMock{}, 0.01, evaluaterMock{}},
 	}
 	for _, c := range errorCases {
-		_ = NewLifecycle(c.s, c.survivorSize, c.c, c.m, c.mutaionProb, c.e)
+		_ = NewGenetic(c.s, c.survivorSize, c.c, c.m, c.mutaionProb, c.e)
 	}
 }
 
@@ -47,12 +47,12 @@ func TestGeneration(t *testing.T) {
 	cpy := NewPopulation(pop.Cap())
 	cpy.Add(pop...)
 	cases := []struct {
-		lifecycle Lifecycle
+		genetic Genetic
 	}{
-		{NewLifecycle(NewTruncationSelecter(), 5, crosserMock{}, mutaterMock{}, 1, evaluaterMock{})},
+		{NewGenetic(NewTruncationSelecter(), 5, crosserMock{}, mutaterMock{}, 1, evaluaterMock{})},
 	}
 	for _, c := range cases {
-		newPop, _ := c.lifecycle.Next(&pop)
+		newPop, _ := c.genetic.Next(&pop)
 		isNewPopDifferent := false
 		for i := 0; i < newPop.Len(); i++ {
 			indiv, _ := newPop.Get(i)
