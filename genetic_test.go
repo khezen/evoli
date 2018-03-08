@@ -55,7 +55,7 @@ func TestGeneration(t *testing.T) {
 		newPop, _ := c.genetic.Next(&pop)
 		isNewPopDifferent := false
 		for i := 0; i < newPop.Len(); i++ {
-			indiv, _ := newPop.Get(i)
+			indiv := newPop.Get(i)
 			if !cpy.Has(indiv) {
 				isNewPopDifferent = true
 				break

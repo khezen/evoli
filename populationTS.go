@@ -46,10 +46,10 @@ func (p *populationTS) Sort() {
 }
 
 // SetCap set the resize the population capacity
-func (p *populationTS) SetCap(newCap int) error {
+func (p *populationTS) SetCap(newCap int) {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
-	return p.population.SetCap(newCap)
+	p.population.SetCap(newCap)
 }
 
 // Add adds an individual to a population. If the populagtion has already reached its capacity, capacity is incremented.
@@ -60,17 +60,17 @@ func (p *populationTS) Add(indiv ...Individual) {
 }
 
 // Get returns the individual at index i
-func (p *populationTS) Get(i int) (Individual, error) {
+func (p *populationTS) Get(i int) Individual {
 	p.mutex.RLock()
 	defer p.mutex.RUnlock()
 	return p.population.Get(i)
 }
 
 // RemoveAt removes and returns the individual at index i
-func (p *populationTS) RemoveAt(i int) error {
+func (p *populationTS) RemoveAt(i int) {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
-	return p.population.RemoveAt(i)
+	p.population.RemoveAt(i)
 }
 
 // Remove removes all given individuals
@@ -81,10 +81,10 @@ func (p *populationTS) Remove(individuals ...Individual) {
 }
 
 // Replace replaces and returns the individual at index i by the substitute
-func (p *populationTS) Replace(i int, substitute Individual) error {
+func (p *populationTS) Replace(i int, substitute Individual) {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
-	return p.population.Replace(i, substitute)
+	p.population.Replace(i, substitute)
 }
 
 // Min returns the least Resilent individual

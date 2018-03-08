@@ -22,7 +22,7 @@ func (s proportionalToFitnessSelecter) Select(pop Population, survivorsSize int)
 			if newPop.Len() >= survivorsSize {
 				break
 			}
-			indiv, _ := pop.Get(i)
+			indiv := pop.Get(i)
 			score := s.computeScore(indiv, offset)
 			if totalScore == 0 || rand.Float64() <= score/totalScore {
 				pop.RemoveAt(i)
@@ -41,7 +41,7 @@ func (s proportionalToFitnessSelecter) computeScore(indiv Individual, offset flo
 func (s proportionalToFitnessSelecter) computeTotalScore(pop Population, offset float64) float64 {
 	var length, totalScore = pop.Len(), float64(0)
 	for i := 0; i < length; i++ {
-		indiv, _ := pop.Get(i)
+		indiv := pop.Get(i)
 		totalScore += s.computeScore(indiv, offset)
 	}
 	return totalScore

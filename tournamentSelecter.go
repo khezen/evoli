@@ -26,7 +26,7 @@ func (s tournamentSelecter) Select(pop Population, survivorsSize int) (Populatio
 			}
 		}
 		survivorIndex := s.fightForYourLives(pop, i, j)
-		indiv, _ := pop.Get(survivorIndex)
+		indiv := pop.Get(survivorIndex)
 		pop.RemoveAt(survivorIndex)
 		newPop.Add(indiv)
 
@@ -35,8 +35,7 @@ func (s tournamentSelecter) Select(pop Population, survivorsSize int) (Populatio
 }
 
 func (s tournamentSelecter) fightForYourLives(pop Population, index1 int, index2 int) (survivorIndex int) {
-	i1, _ := pop.Get(index1)
-	i2, _ := pop.Get(index2)
+	i1, i2 := pop.Get(index1), pop.Get(index2)
 	r1, r2 := i1.Fitness(), i2.Fitness()
 
 	offset := s.computeOffset(r1, r2)

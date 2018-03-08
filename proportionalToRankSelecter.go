@@ -24,7 +24,7 @@ func (s proportionalToRankSelecter) Select(pop Population, survivorsSize int) (P
 			}
 			score := float64(pop.Len() - i)
 			if rand.Float64() <= score/totalScore {
-				indiv, _ := pop.Get(i)
+				indiv := pop.Get(i)
 				pop.RemoveAt(i)
 				newPop.Add(indiv)
 				totalScore -= score

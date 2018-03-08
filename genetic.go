@@ -48,7 +48,7 @@ func (l genetic) Next(pop Population) (Population, error) {
 func (l genetic) evaluation(pop Population) (Population, error) {
 	length := pop.Len()
 	for i := 0; i < length; i++ {
-		individual, _ := pop.Get(i)
+		individual := pop.Get(i)
 		fitness, err := l.Evaluater.Evaluate(individual)
 		if err != nil {
 			return pop, err
@@ -71,8 +71,8 @@ func (l genetic) crossovers(pop Population) (Population, error) {
 				j = i + 1
 			}
 		}
-		indiv1, _ := pop.Get(i)
-		indiv2, _ := pop.Get(j)
+		indiv1 := pop.Get(i)
+		indiv2 := pop.Get(j)
 		newBorn, err := l.Crosser.Cross(indiv1, indiv2)
 		if err != nil {
 			return nil, err
@@ -86,7 +86,7 @@ func (l genetic) crossovers(pop Population) (Population, error) {
 func (l genetic) mutations(pop Population) (Population, error) {
 	for i := 0; i < pop.Len(); i++ {
 		if rand.Float64() <= l.MutationProbability {
-			indiv, _ := pop.Get(i)
+			indiv := pop.Get(i)
 			mutant, err := l.Mutater.Mutate(indiv)
 			if err != nil {
 				return nil, err

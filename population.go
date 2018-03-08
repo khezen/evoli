@@ -1,6 +1,7 @@
 package evoli
 
 import (
+	"errors"
 	"sort"
 
 	"fmt"
@@ -11,12 +12,12 @@ type Population interface {
 	sort.Interface
 	Sort()
 	Cap() int
-	SetCap(int) error
+	SetCap(int)
 	Add(...Individual)
-	Get(int) (Individual, error)
-	RemoveAt(int) error
+	Get(int) Individual
+	RemoveAt(int)
 	Remove(...Individual)
-	Replace(int, Individual) error
+	Replace(int, Individual)
 	Min() Individual
 	Max() Individual
 	Has(...Individual) bool
@@ -26,13 +27,20 @@ type Population interface {
 	New(cap int) Population
 }
 
+var (
+	// ErrNegativeCapacity -
+	ErrNegativeCapacity = errors.New("ErrNegativeCapacity")
+	// ErrIndexOutOfBounds -
+	ErrIndexOutOfBounds = errors.New("ErrIndexOutOfBounds")
+)
+
 // population is a set of individuals in population genetics.
 type population []Individual
 
 // NewPopulation is population constructor
 func NewPopulation(capacity int) Population {
 	if capacity < 0 {
-		return nil
+		panic(ErrNegativeCapacity)
 	}
 	pop := population(make([]Individual, 0, capacity))
 	return &pop
@@ -46,14 +54,8 @@ func (pop *population) Len() int {
 // Less reports whether the element with
 // index i should sort before the element with index j.
 func (pop *population) Less(i, j int) bool {
-	indivi, err := pop.Get(i)
-	if err != nil {
-		return false
-	}
-	indivj, err := pop.Get(j)
-	if err != nil {
-		return false
-	}
+	indivi := pop.Get(i)
+	indivj := pop.Get(j)
 	return indivi.Fitness() >= indivj.Fitness()
 }
 
@@ -77,9 +79,9 @@ func (pop *population) Cap() int {
 }
 
 // SetCap set the resize the population capacity
-func (pop *population) SetCap(newCap int) error {
+func (pop *population) SetCap(newCap int) {
 	if newCap < 0 {
-		return fmt.Errorf("cap has to be must be >= 0")
+		panic(ErrNegativeCapacity)
 	}
 	currentCap := pop.Cap()
 	if newCap != currentCap {
@@ -93,7 +95,6 @@ func (pop *population) SetCap(newCap int) error {
 		}
 		copy(tmp, *pop)
 	}
-	return nil
 }
 
 // Add adds an individual to a population. If the populagtion has already reached its capacity, capacity is incremented.
@@ -102,23 +103,22 @@ func (pop *population) Add(indiv ...Individual) {
 }
 
 // Get returns the individual at index i
-func (pop *population) Get(i int) (Individual, error) {
+func (pop *population) Get(i int) Individual {
 	err := pop.checkIndex(i)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
-	return (*pop)[i], nil
+	return (*pop)[i]
 }
 
 // RemoveAt removes and returns the individual at index i
-func (pop *population) RemoveAt(i int) error {
+func (pop *population) RemoveAt(i int) {
 	err := pop.checkIndex(i)
 	if err != nil {
-		return err
+		panic(err)
 	}
 	new := (*pop)[0:i]
 	*pop = append(new, (*pop)[i+1:pop.Len()]...)
-	return nil
 }
 
 // Remove removes all given individuals
@@ -132,13 +132,12 @@ func (pop *population) Remove(individuals ...Individual) {
 }
 
 // Replace replaces and returns the individual at index i by the substitute
-func (pop *population) Replace(i int, substitute Individual) error {
+func (pop *population) Replace(i int, substitute Individual) {
 	err := pop.checkIndex(i)
 	if err != nil {
-		return err
+		panic(err)
 	}
 	(*pop)[i] = substitute
-	return nil
 }
 
 // Min returns the least Resilent individual
@@ -152,10 +151,10 @@ func (pop *population) Max() Individual {
 }
 
 func (pop *population) extremum(greaterThan bool) Individual {
-	extremum, _ := pop.Get(0)
+	extremum := pop.Get(0)
 	length := pop.Len()
 	for i := 1; i < length; i++ {
-		indiv, _ := pop.Get(i)
+		indiv := pop.Get(i)
 		if (greaterThan && indiv.Fitness() > extremum.Fitness()) || (!greaterThan && indiv.Fitness() < extremum.Fitness()) {
 			extremum = indiv
 		}
@@ -204,7 +203,7 @@ func (pop *population) New(cap int) Population {
 
 func (pop *population) checkIndex(i int) error {
 	if i < 0 || i >= pop.Len() {
-		return fmt.Errorf("index out of bound")
+		return ErrIndexOutOfBounds
 	}
 	return nil
 }
