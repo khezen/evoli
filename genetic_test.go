@@ -14,8 +14,8 @@ func (c crosserMock) Cross(individual1, individual2 Individual) (Individual, err
 type evaluaterMock struct {
 }
 
-func (e evaluaterMock) Evaluate(individual Individual) (Fitness float64) {
-	return individual.Fitness()
+func (e evaluaterMock) Evaluate(individual Individual) (Fitness float64, err error) {
+	return individual.Fitness(), nil
 }
 
 type mutaterMock struct {

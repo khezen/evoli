@@ -26,8 +26,11 @@ func NewGenetic(s Selecter, survivorSize int, c Crosser, m Mutater, mutationProb
 
 // Next takes a population and produce a the new generation of this population
 func (l genetic) Next(pop Population) (Population, error) {
-	newPop := l.evaluation(pop)
-	newPop, err := l.Selecter.Select(newPop, l.SurvivorSize)
+	newPop, err := l.evaluation(pop)
+	if err != nil {
+		return pop, err
+	}
+	newPop, err = l.Selecter.Select(newPop, l.SurvivorSize)
 	if err != nil {
 		return pop, err
 	}
@@ -42,13 +45,17 @@ func (l genetic) Next(pop Population) (Population, error) {
 	return newPop, nil
 }
 
-func (l genetic) evaluation(pop Population) Population {
+func (l genetic) evaluation(pop Population) (Population, error) {
 	length := pop.Len()
 	for i := 0; i < length; i++ {
 		individual, _ := pop.Get(i)
-		individual.SetFitness(l.Evaluater.Evaluate(individual))
+		fitness, err := l.Evaluater.Evaluate(individual)
+		if err != nil {
+			return pop, err
+		}
+		individual.SetFitness(fitness)
 	}
-	return pop
+	return pop, nil
 }
 
 func (l genetic) crossovers(pop Population) (Population, error) {
