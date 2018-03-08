@@ -28,8 +28,8 @@ type Population interface {
 }
 
 var (
-	// ErrNegativeCapacity -
-	ErrNegativeCapacity = errors.New("ErrNegativeCapacity")
+	// ErrCapacity -
+	ErrCapacity = errors.New("ErrCapacity - capacity must be >= 1")
 	// ErrIndexOutOfBounds -
 	ErrIndexOutOfBounds = errors.New("ErrIndexOutOfBounds")
 )
@@ -39,8 +39,8 @@ type population []Individual
 
 // NewPopulation is population constructor
 func NewPopulation(capacity int) Population {
-	if capacity < 0 {
-		panic(ErrNegativeCapacity)
+	if capacity < 1 {
+		panic(ErrCapacity)
 	}
 	pop := population(make([]Individual, 0, capacity))
 	return &pop

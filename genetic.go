@@ -1,6 +1,7 @@
 package evoli
 
 import (
+	"errors"
 	"math/rand"
 )
 
@@ -19,8 +20,21 @@ type genetic struct {
 	Evaluater           Evaluater
 }
 
+var (
+	// ErrSurvivorSize - survivorSize < 1
+	ErrSurvivorSize = errors.New("ErrSurvivorSize - survivorSize must be >= 1")
+	// ErrMutationProb - 0<= mutationProbability <= 1
+	ErrMutationProb = errors.New("ErrMutationProb - mutation probability must be 0 <= mutationProbability <= 1")
+)
+
 // NewGenetic is the constructor for Genetic
 func NewGenetic(s Selecter, survivorSize int, c Crosser, m Mutater, mutationProbability float64, e Evaluater) Evolution {
+	if survivorSize < 1 {
+		panic(ErrSurvivorSize)
+	}
+	if mutationProbability < 0 || mutationProbability > 1 {
+		panic(ErrMutationProb)
+	}
 	return &genetic{s, survivorSize, c, m, mutationProbability, e}
 }
 
