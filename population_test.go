@@ -9,7 +9,6 @@ func TestNewPopulation(t *testing.T) {
 	cases := []struct {
 		in, expected int
 	}{
-		{0, 0},
 		{1, 1},
 		{7, 7},
 	}
@@ -30,7 +29,6 @@ func TestNewPopulationTS(t *testing.T) {
 	cases := []struct {
 		in, expected int
 	}{
-		{0, 0},
 		{1, 1},
 		{7, 7},
 	}
@@ -74,9 +72,7 @@ func TestCap(t *testing.T) {
 		expected int
 	}{
 		{NewPopulation(7), 7},
-		{NewPopulation(0), 0},
 		{NewPopulationTS(7), 7},
-		{NewPopulationTS(0), 0},
 	}
 	for _, c := range cases {
 		got := c.in.Cap()
@@ -91,12 +87,10 @@ func TestSetCap(t *testing.T) {
 		pop          Population
 		in, expected int
 	}{
-		{NewPopulation(0), 0, 0},
-		{NewPopulation(0), 1, 1},
-		{NewPopulation(0), 7, 7},
-		{NewPopulationTS(0), 0, 0},
-		{NewPopulationTS(0), 1, 1},
-		{NewPopulationTS(0), 7, 7},
+		{NewPopulation(2), 1, 1},
+		{NewPopulation(2), 7, 7},
+		{NewPopulationTS(2), 1, 1},
+		{NewPopulationTS(2), 7, 7},
 	}
 	for _, c := range cases {
 		c.pop.SetCap(c.in)

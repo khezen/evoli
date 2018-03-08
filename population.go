@@ -3,8 +3,6 @@ package evoli
 import (
 	"errors"
 	"sort"
-
-	"fmt"
 )
 
 // Population is the population interface
@@ -32,6 +30,8 @@ var (
 	ErrCapacity = errors.New("ErrCapacity - capacity must be >= 1")
 	// ErrIndexOutOfBounds -
 	ErrIndexOutOfBounds = errors.New("ErrIndexOutOfBounds")
+	// ErrNotFound -
+	ErrNotFound = errors.New("ErrNotFound")
 )
 
 // population is a set of individuals in population genetics.
@@ -81,7 +81,7 @@ func (pop *population) Cap() int {
 // SetCap set the resize the population capacity
 func (pop *population) SetCap(newCap int) {
 	if newCap < 0 {
-		panic(ErrNegativeCapacity)
+		panic(ErrCapacity)
 	}
 	currentCap := pop.Cap()
 	if newCap != currentCap {
@@ -179,7 +179,7 @@ func (pop *population) IndexOf(indiv Individual) (int, error) {
 			return i, nil
 		}
 	}
-	return -1, fmt.Errorf("individual not found in population")
+	return -1, ErrNotFound
 }
 
 // Each traverse the population and execute given callback on each individual. Stops if the callbak return false.
