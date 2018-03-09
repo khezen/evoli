@@ -22,6 +22,11 @@ type pool struct {
 	populations map[Evolution]Population
 }
 
+// NewPool - creates a Pool
+func NewPool() Pool {
+	return &pool{nil, make(map[Evolution]Population)}
+}
+
 func (p *pool) Put(e Evolution, pop Population) {
 	switch p.evaluater {
 	case nil:
@@ -35,7 +40,7 @@ func (p *pool) Put(e Evolution, pop Population) {
 	p.populations[e] = pop
 }
 
-func (p *pool) delete(e Evolution) {
+func (p *pool) Delete(e Evolution) {
 	delete(p.populations, e)
 	if len(p.populations) == 0 {
 		p.evaluater = nil
@@ -99,12 +104,28 @@ func (p *pool) Shuffle() {
 }
 
 func (p *pool) Next() error {
+	populationsLen := len(p.populations)
+	results := make([]chan error, 0, populationsLen)
+	for i := 0; i < populationsLen; i++ {
+		results = append(results, make(chan error))
+	}
+	i := 0
 	for evolution, population := range p.populations {
-		newPop, err := evolution.Next(population)
+		go func(errChan chan error) {
+			newPop, err := evolution.Next(population)
+			if err != nil {
+				errChan <- err
+				return
+			}
+			p.populations[evolution] = newPop
+		}(results[i])
+		i++
+	}
+	for _, errChan := range results {
+		err := <-errChan
 		if err != nil {
 			return err
 		}
-		p.populations[evolution] = newPop
 	}
 	return nil
 }
