@@ -111,17 +111,19 @@ func (pop *population) Get(i int) Individual {
 	return (*pop)[i]
 }
 
-// RemoveAt removes and returns the individual at index i
+// RemoveAt removesthe individual at index i without preserving order
 func (pop *population) RemoveAt(i int) {
 	err := pop.checkIndex(i)
 	if err != nil {
 		panic(err)
 	}
-	new := (*pop)[0:i]
-	*pop = append(new, (*pop)[i+1:pop.Len()]...)
+	popLen := pop.Len()
+	(*pop)[i] = (*pop)[popLen-1]
+	(*pop)[popLen-1] = nil
+	*pop = (*pop)[:popLen-1]
 }
 
-// Remove removes all given individuals
+// Remove removes all given individuals without preserving order
 func (pop *population) Remove(individuals ...Individual) {
 	for _, indiv := range individuals {
 		i, err := pop.IndexOf(indiv)
