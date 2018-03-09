@@ -2,8 +2,10 @@ package evoli
 
 import "math/rand"
 
-// ErrPoolEvaluater - all evolution of he pool must shqre the same evaluater operator
-var ErrPoolEvaluater = "ErrPoolEvaluater - all evolution of he pool must shqre the same evaluater operator"
+var (
+	// ErrPoolEvaluater - all evolution of a pool must share the same evaluater operator
+	ErrPoolEvaluater = "ErrPoolEvaluater - all evolution of a pool must share the same evaluater operator"
+)
 
 // Pool -
 type Pool interface {
