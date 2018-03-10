@@ -1,6 +1,7 @@
 package evoli
 
 import (
+	"sync"
 	"testing"
 )
 
@@ -154,9 +155,9 @@ func TestShuffle(t *testing.T) {
 }
 
 func TestPoolNext(t *testing.T) {
-	i1, i2, i3, i4, i5, i6 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1), NewIndividual(0), NewIndividual(100), NewIndividual(42)
-	i7, i8, i9, i10, i11, i12 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1), NewIndividual(0), NewIndividual(100), NewIndividual(42)
-	pop1, pop2 := &population{i1, i2, i3, i4, i5, i6}, &population{i7, i8, i9, i10, i11, i12}
+	i1, i2, i3, i4, i5, i6 := NewIndividualTS(0.2), NewIndividualTS(0.7), NewIndividualTS(1), NewIndividualTS(0), NewIndividualTS(100), NewIndividualTS(42)
+	i7, i8, i9, i10, i11, i12 := NewIndividualTS(0.2), NewIndividualTS(0.7), NewIndividualTS(1), NewIndividualTS(0), NewIndividualTS(100), NewIndividualTS(42)
+	pop1, pop2 := &populationTS{population{i1, i2, i3, i4, i5, i6}, sync.RWMutex{}}, &populationTS{population{i7, i8, i9, i10, i11, i12}, sync.RWMutex{}}
 	gen := NewGenetic(NewTruncationSelecter(), 2, crosserMock{}, mutaterMock{}, 0.05, evaluaterMock{})
 	cases := []struct {
 		pool        Pool
@@ -172,6 +173,55 @@ func TestPoolNext(t *testing.T) {
 			c.pool.Put(pop, gen)
 		}
 		c.pool.Next()
+		populations := c.pool.Populations()
+		for _, pop := range populations {
+			if pop.Len() != 6 {
+				t.Errorf("expected %v got %v", 6, pop.Len())
+			}
+			individuals := pop.Slice()
+			for _, cpop := range c.populations {
+				different := false
+				cindividuals := cpop.Slice()
+				for _, indiv := range individuals {
+					has := false
+					for _, cindiv := range cindividuals {
+						if indiv == cindiv {
+							has = true
+							break
+						}
+					}
+					if !has {
+						different = true
+						break
+					}
+				}
+				if !different {
+					t.Error("Next produced the same populations")
+				}
+			}
+		}
+	}
+}
+
+func TestPoolNextAsync(t *testing.T) {
+	i1, i2, i3, i4, i5, i6 := NewIndividualTS(0.2), NewIndividualTS(0.7), NewIndividualTS(1), NewIndividualTS(0), NewIndividualTS(100), NewIndividualTS(42)
+	i7, i8, i9, i10, i11, i12 := NewIndividualTS(0.2), NewIndividualTS(0.7), NewIndividualTS(1), NewIndividualTS(0), NewIndividualTS(100), NewIndividualTS(42)
+	pop1, pop2 := &populationTS{population{i1, i2, i3, i4, i5, i6}, sync.RWMutex{}}, &populationTS{population{i7, i8, i9, i10, i11, i12}, sync.RWMutex{}}
+	gen := NewGenetic(NewTruncationSelecter(), 2, crosserMock{}, mutaterMock{}, 0.05, evaluaterMock{})
+	cases := []struct {
+		pool        Pool
+		populations []Population
+	}{
+		{NewPool(), []Population{pop1, pop2}},
+		{NewPoolTS(), []Population{pop1, pop2}},
+	}
+	for _, c := range cases {
+		for _, cpop := range c.populations {
+			pop := cpop.New(cpop.Cap())
+			pop.Add(cpop.Slice()...)
+			c.pool.Put(pop, gen)
+		}
+		c.pool.NextAsync()
 		populations := c.pool.Populations()
 		for _, pop := range populations {
 			if pop.Len() != 6 {

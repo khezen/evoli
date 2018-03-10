@@ -19,6 +19,7 @@ type Pool interface {
 	Min() Individual
 	Shuffle()
 	Next() error
+	NextAsync() error
 }
 
 type pool struct {
@@ -135,6 +136,19 @@ func (p *pool) Shuffle() {
 }
 
 func (p *pool) Next() error {
+	populations := make(map[Population]Evolution)
+	for population, evolution := range p.populations {
+		newPop, err := evolution.Next(population)
+		if err != nil {
+			return err
+		}
+		populations[newPop] = evolution
+	}
+	p.populations = populations
+	return nil
+}
+
+func (p *pool) NextAsync() error {
 	populationsLen := len(p.populations)
 	type ResultSet struct {
 		pop       Population
@@ -147,14 +161,14 @@ func (p *pool) Next() error {
 	}
 	i := 0
 	for population, evolution := range p.populations {
-		go func(resChan chan ResultSet) {
+		go func(population Population, evolution Evolution, resChan chan ResultSet) {
 			newPop, err := evolution.Next(population)
 			if err != nil {
 				resChan <- ResultSet{nil, nil, err}
 				return
 			}
 			resChan <- ResultSet{newPop, evolution, nil}
-		}(results[i])
+		}(population, evolution, results[i])
 		i++
 	}
 	populations := make(map[Population]Evolution)

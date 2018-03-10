@@ -70,7 +70,13 @@ func (p *poolTS) Shuffle() {
 }
 
 func (p *poolTS) Next() error {
-	p.RLock()
-	defer p.RUnlock()
+	p.Lock()
+	defer p.Unlock()
 	return p.pool.Next()
+}
+
+func (p *poolTS) NextAsync() error {
+	p.Lock()
+	defer p.Unlock()
+	return p.pool.NextAsync()
 }
