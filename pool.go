@@ -13,8 +13,8 @@ type Pool interface {
 	Delete(Population)
 	Has(Population) bool
 	Evolution(Population) Evolution
-	// Populations() []Population
-	// Individuals() []Individual
+	Populations() []Population
+	Individuals() []Individual
 	Max() Individual
 	Min() Individual
 	Shuffle()
@@ -60,6 +60,26 @@ func (p *pool) Evolution(pop Population) Evolution {
 	return p.populations[pop]
 }
 
+func (p *pool) Populations() []Population {
+	populations := make([]Population, 0, len(p.populations))
+	for pop := range p.populations {
+		populations = append(populations, pop)
+	}
+	return populations
+}
+
+func (p *pool) Individuals() []Individual {
+	individualsLen := 0
+	for pop := range p.populations {
+		individualsLen += pop.Len()
+	}
+	individuals := make([]Individual, 0, individualsLen)
+	for pop := range p.populations {
+		individuals = append(individuals, pop.Slice()...)
+	}
+	return individuals
+}
+
 func (p *pool) Max() Individual {
 	var max Individual
 	for pop := range p.populations {
@@ -83,18 +103,18 @@ func (p *pool) Min() Individual {
 }
 
 func (p *pool) Shuffle() {
-	allIndivCap := 0
+	individualsCap := 0
 	populationSlice := make([]Population, 0, len(p.populations))
 	for pop := range p.populations {
 		capacity := pop.Cap()
 		populationSlice = append(populationSlice, pop.New(capacity))
-		allIndivCap += capacity
+		individualsCap += capacity
 	}
-	allIndiv := make([]Individual, 0, allIndivCap)
+	individuals := make([]Individual, 0, individualsCap)
 	for pop := range p.populations {
-		allIndiv = append(allIndiv, pop.Slice()...)
+		individuals = append(individuals, pop.Slice()...)
 	}
-	for _, indiv := range allIndiv {
+	for _, indiv := range individuals {
 		populationSliceLen := len(populationSlice)
 		i := rand.Intn(populationSliceLen)
 		pop := populationSlice[i]

@@ -39,6 +39,18 @@ func (p *poolTS) Evolution(pop Population) Evolution {
 	return p.pool.Evolution(pop)
 }
 
+func (p *poolTS) Populations() []Population {
+	p.RLock()
+	defer p.RUnlock()
+	return p.pool.Populations()
+}
+
+func (p *poolTS) Individuals() []Individual {
+	p.RLock()
+	defer p.RUnlock()
+	return p.pool.Individuals()
+}
+
 func (p *poolTS) Max() Individual {
 	p.RLock()
 	defer p.RUnlock()
