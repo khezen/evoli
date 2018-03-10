@@ -104,11 +104,14 @@ func (p *pool) Min() Individual {
 
 func (p *pool) Shuffle() {
 	individualsCap := 0
-	populationSlice := make([]Population, 0, len(p.populations))
-	for pop := range p.populations {
+	populationSlice := make([]*Population, 0, len(p.populations))
+	populationMap := make(map[*Population]Evolution)
+	for pop, evolution := range p.populations {
 		capacity := pop.Cap()
-		populationSlice = append(populationSlice, pop.New(capacity))
 		individualsCap += capacity
+		newPop := pop.New(capacity)
+		populationSlice = append(populationSlice, &newPop)
+		populationMap[&newPop] = evolution
 	}
 	individuals := make([]Individual, 0, individualsCap)
 	for pop := range p.populations {
@@ -117,14 +120,18 @@ func (p *pool) Shuffle() {
 	for _, indiv := range individuals {
 		populationSliceLen := len(populationSlice)
 		i := rand.Intn(populationSliceLen)
-		pop := populationSlice[i]
-		pop.Add(indiv)
-		if pop.Len() == pop.Cap() {
+		(*populationSlice[i]).Add(indiv)
+		if (*populationSlice[i]).Len() == (*populationSlice[i]).Cap() {
 			populationSlice[i] = populationSlice[populationSliceLen-1]
 			populationSlice[populationSliceLen-1] = nil
 			populationSlice = populationSlice[:populationSliceLen-1]
 		}
 	}
+	populations := make(map[Population]Evolution)
+	for pop, evolution := range populationMap {
+		populations[*pop] = evolution
+	}
+	p.populations = populations
 }
 
 func (p *pool) Next() error {

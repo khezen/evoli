@@ -1,6 +1,8 @@
 package evoli
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestPoolCRUD(t *testing.T) {
 	gen, pop := NewGenetic(NewTruncationSelecter(), 5, crosserMock{}, mutaterMock{}, 1, evaluaterMock{}), NewPopulationTS(10)
@@ -102,10 +104,71 @@ func TestCollections(t *testing.T) {
 	}
 }
 
-func testShuffle(t *testing.T) {
+func TestShuffle(t *testing.T) {
+	i1, i2, i3, i4, i5, i6 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1), NewIndividual(0), NewIndividual(100), NewIndividual(42)
+	i7, i8, i9, i10, i11, i12 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1), NewIndividual(0), NewIndividual(100), NewIndividual(42)
+	pop1, pop2 := &population{i1, i2, i3, i4, i5, i6}, &population{i7, i8, i9, i10, i11, i12}
+	gen := NewGenetic(NewTruncationSelecter(), 5, crosserMock{}, mutaterMock{}, 1, evaluaterMock{})
+	cases := []struct {
+		pool        Pool
+		populations []Population
+	}{
+		{NewPool(), []Population{pop1, pop2}},
+		{NewPoolTS(), []Population{pop1, pop2}},
+	}
+	for _, c := range cases {
+		for _, cpop := range c.populations {
+			pop := cpop.New(cpop.Cap())
+			pop.Add(cpop.Slice()...)
+			c.pool.Put(pop, gen)
+		}
+		c.pool.Shuffle()
+		populations := c.pool.Populations()
+		for _, pop := range populations {
+			if pop.Len() != 6 {
+				t.Errorf("expected %v got %v", 6, pop.Len())
+			}
+			individuals := pop.Slice()
+			for _, cpop := range c.populations {
+				different := false
+				cindividuals := cpop.Slice()
+				for _, indiv := range individuals {
+					has := false
+					for _, cindiv := range cindividuals {
+						if indiv == cindiv {
+							has = true
+							break
+						}
+					}
+					if !has {
+						different = true
+						break
+					}
+				}
+				if !different {
+					t.Error("shuffle produced the same populations")
+				}
+			}
 
+		}
+	}
 }
 
 func testNext(t *testing.T) {
-
+	i1, i2, i3, i4, i5, i6 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1), NewIndividual(0), NewIndividual(100), NewIndividual(42)
+	pop1, pop2 := &population{i1, i2, i3}, &population{i4, i5, i6}
+	gen := NewGenetic(NewTruncationSelecter(), 5, crosserMock{}, mutaterMock{}, 1, evaluaterMock{})
+	cases := []struct {
+		pool        Pool
+		populations map[Population]Evolution
+	}{
+		{NewPool(), map[Population]Evolution{pop1: gen, pop2: gen}},
+		{NewPoolTS(), map[Population]Evolution{pop1: gen, pop2: gen}},
+	}
+	for _, c := range cases {
+		for pop, evolution := range c.populations {
+			c.pool.Put(pop, evolution)
+		}
+		c.pool.Next()
+	}
 }
