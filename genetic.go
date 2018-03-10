@@ -27,7 +27,7 @@ var (
 	ErrMutationProb = errors.New("ErrMutationProb - mutation probability must be 0 <= mutationProbability <= 1")
 )
 
-// NewGenetic is the constructor for Genetic
+// NewGenetic - constructor for Genetic Algorithm
 func NewGenetic(s Selecter, survivorSize int, c Crosser, m Mutater, mutationProbability float64, e Evaluater) Evolution {
 	if survivorSize < 1 {
 		panic(ErrSurvivorSize)
