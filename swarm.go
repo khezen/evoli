@@ -41,7 +41,7 @@ func (s *swarm) evaluation(pop Population) (Population, error) {
 		if err != nil {
 			return pop, err
 		}
-		if fitness >= individual.Fitness() {
+		if individual.Best() == nil || fitness > individual.Best().Fitness() {
 			individual.SetBest(individual)
 		}
 		individual.SetFitness(fitness)
@@ -59,6 +59,7 @@ func (s *swarm) positioning(pop Population) (Population, error) {
 		if err != nil {
 			return nil, err
 		}
+		newIndiv.SetBest(pBest)
 		newPop.Add(newIndiv)
 	}
 	return newPop, nil
