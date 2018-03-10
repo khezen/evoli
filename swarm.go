@@ -1,24 +1,24 @@
 package evoli
 
 var (
-	// ErrLearningCoef - learningCoef1 & learningCoef2 must be > 0
-	ErrLearningCoef = "ErrLearningCoef - learningCoef1 & learningCoef2 must be > 0"
+	// ErrLearningCoef - c1 & c2 must be > 0
+	ErrLearningCoef = "ErrLearningCoef - c1 & c2 must be > 0"
 )
 
 type swarm struct {
-	positioner                   Positioner
-	learningCoef1, learningCoef2 float64
-	evaluater                    Evaluater
+	positioner Positioner
+	c1, c2     float64
+	evaluater  Evaluater
 }
 
 // NewSwarm - constructor for particles swarm optimization algorithm
-// typical value for coef is learningCoef1 = learningCoef2 = 2
+// typical value for learning coef is c1 = c2 = 2
 // the bigger the coef are the faster the population converge
-func NewSwarm(positioner Positioner, learningCoef1, learningCoef2 float64, evaluater Evaluater) Evolution {
-	if learningCoef1 <= 0 || learningCoef2 <= 0 {
+func NewSwarm(positioner Positioner, c1, c2 float64, evaluater Evaluater) Evolution {
+	if c1 <= 0 || c2 <= 0 {
 		panic(ErrLearningCoef)
 	}
-	return &swarm{positioner, learningCoef1, learningCoef2, evaluater}
+	return &swarm{positioner, c1, c2, evaluater}
 }
 
 func (s *swarm) Next(pop Population) (Population, error) {
@@ -55,7 +55,7 @@ func (s *swarm) positioning(pop Population) (Population, error) {
 	individuals := pop.Slice()
 	for _, indiv := range individuals {
 		pBest := indiv.Best()
-		newIndiv, err := s.positioner.Position(indiv, pBest, gBest, s.learningCoef1, s.learningCoef2)
+		newIndiv, err := s.positioner.Position(indiv, pBest, gBest, s.c1, s.c2)
 		if err != nil {
 			return nil, err
 		}

@@ -1,26 +1,21 @@
 package evoli
 
-import (
-	"testing"
-)
+import "testing"
 
-func TestNewGenetic(t *testing.T) {
+func TestNewSwarm(t *testing.T) {
 	errorCases := []struct {
-		s            Selecter
-		survivorSize int
-		c            Crosser
-		m            Mutater
-		mutaionProb  float64
-		e            Evaluater
+		p      Positioner
+		c1, c2 float64
+		e      Evaluater
 	}{
-		{NewTruncationSelecter(), 10, crosserMock{}, mutaterMock{}, 0.01, evaluaterMock{}},
+		{positionerMock{}, 2, 2, evaluaterMock{}},
 	}
 	for _, c := range errorCases {
-		_ = NewGenetic(c.s, c.survivorSize, c.c, c.m, c.mutaionProb, c.e)
+		_ = NewSwarm(c.p, c.c1, c.c2, c.e)
 	}
 }
 
-func TestGeneticNext(t *testing.T) {
+func TestSwarmNext(t *testing.T) {
 	i1, i2, i3, i4, i5, i6 := NewIndividual(1), NewIndividual(-2), NewIndividual(3), NewIndividual(4), NewIndividual(5), NewIndividual(6)
 	pop := population{i1, i2, i3, i4, i5, i6}
 	cpy := NewPopulation(pop.Cap())
@@ -28,7 +23,7 @@ func TestGeneticNext(t *testing.T) {
 	cases := []struct {
 		genetic Genetic
 	}{
-		{NewGenetic(NewTruncationSelecter(), 5, crosserMock{}, mutaterMock{}, 1, evaluaterMock{})},
+		{NewSwarm(positionerMock{}, 2, 2, evaluaterMock{})},
 	}
 	for _, c := range cases {
 		newPop, _ := c.genetic.Next(&pop)

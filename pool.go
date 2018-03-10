@@ -3,7 +3,7 @@ package evoli
 import "math/rand"
 
 var (
-	// ErrPoolEvaluater - all evolution of a pool must share the same evaluater operator
+	// ErrPoolEvaluater - all evolutions of a pool must share the same evaluater operator
 	ErrPoolEvaluater = "ErrPoolEvaluater - all evolution of a pool must share the same evaluater operator"
 )
 
