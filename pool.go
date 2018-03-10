@@ -9,10 +9,12 @@ var (
 
 // Pool -
 type Pool interface {
-	Put(Evolution, Population)
-	Delete(Evolution)
-	Has(Evolution) bool
-	Get(Evolution) Population
+	Put(Population, Evolution)
+	Delete(Population)
+	Has(Population) bool
+	Evolution(Population) Evolution
+	// Populations() []Population
+	// Individuals() []Individual
 	Max() Individual
 	Min() Individual
 	Shuffle()
@@ -21,15 +23,15 @@ type Pool interface {
 
 type pool struct {
 	evaluater   Evaluater
-	populations map[Evolution]Population
+	populations map[Population]Evolution
 }
 
 // NewPool - creates a Pool
 func NewPool() Pool {
-	return &pool{nil, make(map[Evolution]Population)}
+	return &pool{nil, make(map[Population]Evolution)}
 }
 
-func (p *pool) Put(e Evolution, pop Population) {
+func (p *pool) Put(pop Population, e Evolution) {
 	switch p.evaluater {
 	case nil:
 		p.evaluater = e.Evaluater()
@@ -39,28 +41,28 @@ func (p *pool) Put(e Evolution, pop Population) {
 	default:
 		panic(ErrPoolEvaluater)
 	}
-	p.populations[e] = pop
+	p.populations[pop] = e
 }
 
-func (p *pool) Delete(e Evolution) {
-	delete(p.populations, e)
+func (p *pool) Delete(pop Population) {
+	delete(p.populations, pop)
 	if len(p.populations) == 0 {
 		p.evaluater = nil
 	}
 }
 
-func (p *pool) Has(e Evolution) bool {
-	_, ok := p.populations[e]
+func (p *pool) Has(pop Population) bool {
+	_, ok := p.populations[pop]
 	return ok
 }
 
-func (p *pool) Get(e Evolution) Population {
-	return p.populations[e]
+func (p *pool) Evolution(pop Population) Evolution {
+	return p.populations[pop]
 }
 
 func (p *pool) Max() Individual {
 	var max Individual
-	for _, pop := range p.populations {
+	for pop := range p.populations {
 		outsider := pop.Max()
 		if max == nil || max.Fitness() < outsider.Fitness() {
 			max = outsider
@@ -71,7 +73,7 @@ func (p *pool) Max() Individual {
 
 func (p *pool) Min() Individual {
 	var min Individual
-	for _, pop := range p.populations {
+	for pop := range p.populations {
 		outsider := pop.Min()
 		if min == nil || min.Fitness() > outsider.Fitness() {
 			min = outsider
@@ -83,13 +85,13 @@ func (p *pool) Min() Individual {
 func (p *pool) Shuffle() {
 	allIndivCap := 0
 	populationSlice := make([]Population, 0, len(p.populations))
-	for _, pop := range p.populations {
+	for pop := range p.populations {
 		capacity := pop.Cap()
 		populationSlice = append(populationSlice, pop.New(capacity))
 		allIndivCap += capacity
 	}
 	allIndiv := make([]Individual, 0, allIndivCap)
-	for _, pop := range p.populations {
+	for pop := range p.populations {
 		allIndiv = append(allIndiv, pop.Slice()...)
 	}
 	for _, indiv := range allIndiv {
@@ -112,14 +114,15 @@ func (p *pool) Next() error {
 		results = append(results, make(chan error))
 	}
 	i := 0
-	for evolution, population := range p.populations {
+	for population, evolution := range p.populations {
 		go func(errChan chan error) {
 			newPop, err := evolution.Next(population)
 			if err != nil {
 				errChan <- err
 				return
 			}
-			p.populations[evolution] = newPop
+			delete(p.populations, population)
+			p.populations[newPop] = evolution
 		}(results[i])
 		i++
 	}

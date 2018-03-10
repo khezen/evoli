@@ -13,33 +13,51 @@ func TestPoolCRUD(t *testing.T) {
 		{NewPoolTS(), gen, pop},
 	}
 	for _, c := range cases {
-		c.pool.Put(c.e, c.p)
-		has := c.pool.Has(c.e)
+		c.pool.Put(c.p, c.e)
+		has := c.pool.Has(c.p)
 		if !has {
 			t.Error("expected true, got false")
 		}
-		pop := c.pool.Get(c.e)
-		if pop != c.p {
-			t.Errorf("expected %v, got %v", c.p, pop)
+		e := c.pool.Evolution(c.p)
+		if e != c.e {
+			t.Errorf("expected %v, got %v", c.e, e)
 		}
-		c.pool.Delete(c.e)
-		has = c.pool.Has(c.e)
+		c.pool.Delete(c.p)
+		has = c.pool.Has(c.p)
 		if has {
 			t.Errorf("expected false, got true")
 		}
-		pop = c.pool.Get(c.e)
-		if pop != nil {
-			t.Errorf("expected nil, got %v", pop)
+		e = c.pool.Evolution(c.p)
+		if e != nil {
+			t.Errorf("expected nil, got %v", e)
 		}
 	}
 }
 
-func testMax(t *testing.T) {
-
-}
-
-func testMin(t *testing.T) {
-
+func testMinMax(t *testing.T) {
+	i1, i2, i3, i4, i5, i6 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1), NewIndividual(0), NewIndividual(100), NewIndividual(42)
+	pop1, pop2 := &population{i1, i2, i3}, &population{i4, i5, i6}
+	gen := NewGenetic(NewTruncationSelecter(), 5, crosserMock{}, mutaterMock{}, 1, evaluaterMock{})
+	cases := []struct {
+		pool        Pool
+		populations map[Population]Evolution
+		min, max    Individual
+	}{
+		{NewPool(), map[Population]Evolution{pop1: gen, pop2: gen}, i1, i5},
+	}
+	for _, c := range cases {
+		for pop, evolution := range c.populations {
+			c.pool.Put(pop, evolution)
+		}
+		max := c.pool.Max()
+		if max != c.max {
+			t.Errorf("expected %v got %v", c.max, max)
+		}
+		min := c.pool.Min()
+		if max != c.max {
+			t.Errorf("expected %v got %v", c.min, min)
+		}
+	}
 }
 
 func testShuffle(t *testing.T) {

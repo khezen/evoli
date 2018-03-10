@@ -15,28 +15,28 @@ func NewPoolTS() Pool {
 	}
 }
 
-func (p *poolTS) Put(e Evolution, pop Population) {
+func (p *poolTS) Put(pop Population, e Evolution) {
 	p.Lock()
 	defer p.Unlock()
-	p.pool.Put(e, pop)
+	p.pool.Put(pop, e)
 }
 
-func (p *poolTS) Delete(e Evolution) {
+func (p *poolTS) Delete(pop Population) {
 	p.Lock()
 	defer p.Unlock()
-	p.pool.Delete(e)
+	p.pool.Delete(pop)
 }
 
-func (p *poolTS) Has(e Evolution) bool {
+func (p *poolTS) Has(pop Population) bool {
 	p.RLock()
 	defer p.RUnlock()
-	return p.pool.Has(e)
+	return p.pool.Has(pop)
 }
 
-func (p *poolTS) Get(e Evolution) Population {
+func (p *poolTS) Evolution(pop Population) Evolution {
 	p.RLock()
 	defer p.RUnlock()
-	return p.pool.Get(e)
+	return p.pool.Evolution(pop)
 }
 
 func (p *poolTS) Max() Individual {
