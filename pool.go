@@ -136,28 +136,35 @@ func (p *pool) Shuffle() {
 
 func (p *pool) Next() error {
 	populationsLen := len(p.populations)
-	results := make([]chan error, 0, populationsLen)
+	type ResultSet struct {
+		pop       Population
+		evolution Evolution
+		err       error
+	}
+	results := make([]chan ResultSet, 0, populationsLen)
 	for i := 0; i < populationsLen; i++ {
-		results = append(results, make(chan error))
+		results = append(results, make(chan ResultSet))
 	}
 	i := 0
 	for population, evolution := range p.populations {
-		go func(errChan chan error) {
+		go func(resChan chan ResultSet) {
 			newPop, err := evolution.Next(population)
 			if err != nil {
-				errChan <- err
+				resChan <- ResultSet{nil, nil, err}
 				return
 			}
-			delete(p.populations, population)
-			p.populations[newPop] = evolution
+			resChan <- ResultSet{newPop, evolution, nil}
 		}(results[i])
 		i++
 	}
-	for _, errChan := range results {
-		err := <-errChan
-		if err != nil {
-			return err
+	populations := make(map[Population]Evolution)
+	for _, resChan := range results {
+		res := <-resChan
+		if res.err != nil {
+			return res.err
 		}
+		populations[res.pop] = res.evolution
 	}
+	p.populations = populations
 	return nil
 }
