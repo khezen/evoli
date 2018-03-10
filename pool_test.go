@@ -34,7 +34,7 @@ func TestPoolCRUD(t *testing.T) {
 	}
 }
 
-func testMinMax(t *testing.T) {
+func TestMinMax(t *testing.T) {
 	i1, i2, i3, i4, i5, i6 := NewIndividual(0.2), NewIndividual(0.7), NewIndividual(1), NewIndividual(0), NewIndividual(100), NewIndividual(42)
 	pop1, pop2 := &population{i1, i2, i3}, &population{i4, i5, i6}
 	gen := NewGenetic(NewTruncationSelecter(), 5, crosserMock{}, mutaterMock{}, 1, evaluaterMock{})
