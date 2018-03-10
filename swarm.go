@@ -12,6 +12,8 @@ type swarm struct {
 }
 
 // NewSwarm - constructor for particles swarm optimization algorithm
+// typical value for coef is learningCoef1 = learningCoef2 = 2
+// the bigger the coef are the faster the population converge
 func NewSwarm(positioner Positioner, learningCoef1, learningCoef2 float64, evaluater Evaluater) Evolution {
 	if learningCoef1 <= 0 || learningCoef2 <= 0 {
 		panic(ErrLearningCoef)
