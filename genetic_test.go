@@ -26,7 +26,7 @@ func TestGeneticNext(t *testing.T) {
 	cpy := NewPopulation(pop.Cap())
 	cpy.Add(pop...)
 	cases := []struct {
-		genetic Genetic
+		genetic Evolution
 	}{
 		{NewGenetic(NewTruncationSelecter(), 5, crosserMock{}, mutaterMock{}, 1, evaluaterMock{})},
 	}

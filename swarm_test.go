@@ -21,12 +21,12 @@ func TestSwarmNext(t *testing.T) {
 	cpy := NewPopulation(pop.Cap())
 	cpy.Add(pop...)
 	cases := []struct {
-		genetic Genetic
+		swarm Evolution
 	}{
 		{NewSwarm(positionerMock{}, 2, 2, evaluaterMock{})},
 	}
 	for _, c := range cases {
-		newPop, _ := c.genetic.Next(&pop)
+		newPop, _ := c.swarm.Next(&pop)
 		isNewPopDifferent := false
 		for i := 0; i < newPop.Len(); i++ {
 			indiv := newPop.Get(i)

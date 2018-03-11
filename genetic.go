@@ -5,11 +5,6 @@ import (
 	"math/rand"
 )
 
-// Genetic for genetic algorithm step
-type Genetic interface {
-	Next(pop Population) (Population, error)
-}
-
 // genetic is a genetic algorithm implementation
 type genetic struct {
 	selecter            Selecter
