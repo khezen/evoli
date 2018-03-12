@@ -4,4 +4,4 @@
 
 # *evoli*
 
-Genetic Algorithm written in Go
+Genetic Algorithm and Particle Swarm Optimization written in Go
