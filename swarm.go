@@ -76,37 +76,37 @@ func (s *swarm) SetPopulation(pop Population) {
 	s.evolution.SetPopulation(pop)
 }
 
-type swarmTS struct {
+type swarmSync struct {
 	swarm
 	sync.RWMutex
 }
 
-// NewSwarmTS - constructor for particles swarm optimization algorithm (sync impl)
+// NewSwarmSync - constructor for particles swarm optimization algorithm (sync impl)
 // typical value for learning coef is c1 = c2 = 2
 // the bigger are the coefficients the faster the population converge
-func NewSwarmTS(pop Population, positioner Positioner, c1, c2 float64, evaluater Evaluater) Evolution {
-	return &swarmTS{*NewSwarm(pop, positioner, c1, c2, evaluater).(*swarm), sync.RWMutex{}}
+func NewSwarmSync(pop Population, positioner Positioner, c1, c2 float64, evaluater Evaluater) Evolution {
+	return &swarmSync{*NewSwarm(pop, positioner, c1, c2, evaluater).(*swarm), sync.RWMutex{}}
 }
 
-func (s *swarmTS) Next() error {
+func (s *swarmSync) Next() error {
 	s.Lock()
 	defer s.Unlock()
 	return s.swarm.Next()
 }
 
-func (s *swarmTS) Population() Population {
+func (s *swarmSync) Population() Population {
 	s.RLock()
 	defer s.RUnlock()
 	return s.swarm.Population()
 }
 
-func (s *swarmTS) SetPopulation(pop Population) {
+func (s *swarmSync) SetPopulation(pop Population) {
 	s.Lock()
 	defer s.Unlock()
 	s.swarm.SetPopulation(pop)
 }
 
-func (s *swarmTS) Alpha() Individual {
+func (s *swarmSync) Alpha() Individual {
 	s.RLock()
 	defer s.RUnlock()
 	return s.swarm.Alpha()

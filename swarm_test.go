@@ -13,7 +13,7 @@ func TestNewSwarm(t *testing.T) {
 	}
 	for _, c := range errorCases {
 		_ = NewSwarm(NewPopulation(1), c.p, c.c1, c.c2, c.e)
-		_ = NewSwarmTS(NewPopulation(1), c.p, c.c1, c.c2, c.e)
+		_ = NewSwarmSync(NewPopulation(1), c.p, c.c1, c.c2, c.e)
 	}
 }
 
@@ -27,7 +27,7 @@ func TestSwarmNext(t *testing.T) {
 		swarm Evolution
 	}{
 		{NewSwarm(&pop, positionerMock{}, 2, 2, evaluaterMock{})},
-		{NewSwarmTS(&pop, positionerMock{}, 2, 2, evaluaterMock{})},
+		{NewSwarmSync(&pop, positionerMock{}, 2, 2, evaluaterMock{})},
 	}
 	for _, c := range cases {
 		_ = c.swarm.Next()
