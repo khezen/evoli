@@ -2,6 +2,7 @@ package evoli
 
 import "testing"
 
+// To be completed
 func TestNewSwarm(t *testing.T) {
 	errorCases := []struct {
 		p      Positioner
@@ -11,10 +12,12 @@ func TestNewSwarm(t *testing.T) {
 		{positionerMock{}, 2, 2, evaluaterMock{}},
 	}
 	for _, c := range errorCases {
-		_ = NewSwarm(c.p, c.c1, c.c2, c.e)
+		_ = NewSwarm(NewPopulation(1), c.p, c.c1, c.c2, c.e)
+		_ = NewSwarmTS(NewPopulation(1), c.p, c.c1, c.c2, c.e)
 	}
 }
 
+// To be completed
 func TestSwarmNext(t *testing.T) {
 	i1, i2, i3, i4, i5, i6 := NewIndividual(1), NewIndividual(-2), NewIndividual(3), NewIndividual(4), NewIndividual(5), NewIndividual(6)
 	pop := population{i1, i2, i3, i4, i5, i6}
@@ -23,20 +26,10 @@ func TestSwarmNext(t *testing.T) {
 	cases := []struct {
 		swarm Evolution
 	}{
-		{NewSwarm(positionerMock{}, 2, 2, evaluaterMock{})},
+		{NewSwarm(&pop, positionerMock{}, 2, 2, evaluaterMock{})},
+		{NewSwarmTS(&pop, positionerMock{}, 2, 2, evaluaterMock{})},
 	}
 	for _, c := range cases {
-		newPop, _ := c.swarm.Next(&pop)
-		isNewPopDifferent := false
-		for i := 0; i < newPop.Len(); i++ {
-			indiv := newPop.Get(i)
-			if !cpy.Has(indiv) {
-				isNewPopDifferent = true
-				break
-			}
-		}
-		if !isNewPopDifferent {
-			t.Errorf("the new Generation should be different from the previous one")
-		}
+		_ = c.swarm.Next()
 	}
 }

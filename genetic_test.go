@@ -4,8 +4,9 @@ import (
 	"testing"
 )
 
+// To be completed
 func TestNewGenetic(t *testing.T) {
-	errorCases := []struct {
+	cases := []struct {
 		s            Selecter
 		survivorSize int
 		c            Crosser
@@ -15,11 +16,13 @@ func TestNewGenetic(t *testing.T) {
 	}{
 		{NewTruncationSelecter(), 10, crosserMock{}, mutaterMock{}, 0.01, evaluaterMock{}},
 	}
-	for _, c := range errorCases {
-		_ = NewGenetic(c.s, c.survivorSize, c.c, c.m, c.mutaionProb, c.e)
+	for _, c := range cases {
+		_ = NewGenetic(NewPopulation(1), c.s, c.survivorSize, c.c, c.m, c.mutaionProb, c.e)
+		_ = NewGeneticSync(NewPopulation(1), c.s, c.survivorSize, c.c, c.m, c.mutaionProb, c.e)
 	}
 }
 
+// To be completed
 func TestGeneticNext(t *testing.T) {
 	i1, i2, i3, i4, i5, i6 := NewIndividual(1), NewIndividual(-2), NewIndividual(3), NewIndividual(4), NewIndividual(5), NewIndividual(6)
 	pop := population{i1, i2, i3, i4, i5, i6}
@@ -28,20 +31,10 @@ func TestGeneticNext(t *testing.T) {
 	cases := []struct {
 		genetic Evolution
 	}{
-		{NewGenetic(NewTruncationSelecter(), 5, crosserMock{}, mutaterMock{}, 1, evaluaterMock{})},
+		{NewGenetic(&pop, NewTruncationSelecter(), 5, crosserMock{}, mutaterMock{}, 1, evaluaterMock{})},
+		{NewGeneticSync(&pop, NewTruncationSelecter(), 5, crosserMock{}, mutaterMock{}, 1, evaluaterMock{})},
 	}
 	for _, c := range cases {
-		newPop, _ := c.genetic.Next(&pop)
-		isNewPopDifferent := false
-		for i := 0; i < newPop.Len(); i++ {
-			indiv := newPop.Get(i)
-			if !cpy.Has(indiv) {
-				isNewPopDifferent = true
-				break
-			}
-		}
-		if !isNewPopDifferent {
-			t.Errorf("the new Generation should be different from the previous one")
-		}
+		c.genetic.Next()
 	}
 }

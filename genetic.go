@@ -3,16 +3,17 @@ package evoli
 import (
 	"errors"
 	"math/rand"
+	"sync"
 )
 
 // genetic is a genetic algorithm implementation
 type genetic struct {
+	evolution
 	selecter            Selecter
 	SurvivorSize        int
 	crosser             Crosser
 	mutater             Mutater
 	MutationProbability float64
-	evaluater           Evaluater
 }
 
 var (
@@ -23,42 +24,43 @@ var (
 )
 
 // NewGenetic - constructor for Genetic Algorithm
-func NewGenetic(s Selecter, survivorSize int, c Crosser, m Mutater, mutationProbability float64, e Evaluater) Evolution {
+func NewGenetic(pop Population, s Selecter, survivorSize int, c Crosser, m Mutater, mutationProbability float64, e Evaluater) Evolution {
 	if survivorSize < 1 {
 		panic(ErrSurvivorSize)
 	}
 	if mutationProbability < 0 || mutationProbability > 1 {
 		panic(ErrMutationProb)
 	}
-	return &genetic{s, survivorSize, c, m, mutationProbability, e}
+	return &genetic{newEvolution(pop, e), s, survivorSize, c, m, mutationProbability}
 }
 
 // Next takes a population and produce a the new generation of this population
-func (l *genetic) Next(pop Population) (Population, error) {
-	newPop, err := l.evaluation(pop)
+func (g *genetic) Next() error {
+	newPop, err := g.evaluation(g.pop)
 	if err != nil {
-		return pop, err
+		return err
 	}
-	newPop, err = l.selecter.Select(newPop, l.SurvivorSize)
+	newPop, err = g.selecter.Select(newPop, g.SurvivorSize)
 	if err != nil {
-		return pop, err
+		return err
 	}
-	newPop, err = l.crossovers(newPop)
+	newPop, err = g.crossovers(newPop)
 	if err != nil {
-		return pop, err
+		return err
 	}
-	newPop, err = l.mutations(newPop)
+	newPop, err = g.mutations(newPop)
 	if err != nil {
-		return pop, err
+		return err
 	}
-	return newPop, nil
+	g.pop = newPop
+	return nil
 }
 
-func (l *genetic) evaluation(pop Population) (Population, error) {
+func (g *genetic) evaluation(pop Population) (Population, error) {
 	length := pop.Len()
 	for i := 0; i < length; i++ {
 		individual := pop.Get(i)
-		fitness, err := l.evaluater.Evaluate(individual)
+		fitness, err := g.evaluater.Evaluate(individual)
 		if err != nil {
 			return pop, err
 		}
@@ -67,7 +69,7 @@ func (l *genetic) evaluation(pop Population) (Population, error) {
 	return pop, nil
 }
 
-func (l *genetic) crossovers(pop Population) (Population, error) {
+func (g *genetic) crossovers(pop Population) (Population, error) {
 	newBorns := NewPopulation(pop.Cap() - pop.Len())
 	capacity := newBorns.Cap()
 	for newBorns.Len() < capacity {
@@ -81,7 +83,7 @@ func (l *genetic) crossovers(pop Population) (Population, error) {
 			}
 		}
 		indiv1, indiv2 := pop.Get(i), pop.Get(j)
-		newBorn, err := l.crosser.Cross(indiv1, indiv2)
+		newBorn, err := g.crosser.Cross(indiv1, indiv2)
 		if err != nil {
 			return nil, err
 		}
@@ -91,11 +93,11 @@ func (l *genetic) crossovers(pop Population) (Population, error) {
 	return pop, nil
 }
 
-func (l *genetic) mutations(pop Population) (Population, error) {
+func (g *genetic) mutations(pop Population) (Population, error) {
 	for i := 0; i < pop.Len(); i++ {
-		if rand.Float64() <= l.MutationProbability {
+		if rand.Float64() <= g.MutationProbability {
 			indiv := pop.Get(i)
-			mutant, err := l.mutater.Mutate(indiv)
+			mutant, err := g.mutater.Mutate(indiv)
 			if err != nil {
 				return nil, err
 			}
@@ -105,6 +107,36 @@ func (l *genetic) mutations(pop Population) (Population, error) {
 	return pop, nil
 }
 
-func (l *genetic) Evaluater() Evaluater {
-	return l.evaluater
+type geneticSync struct {
+	genetic
+	sync.RWMutex
+}
+
+// NewGeneticSync - constructor for Genetic Algorithm (sync impl)
+func NewGeneticSync(pop Population, s Selecter, survivorSize int, c Crosser, m Mutater, mutationProbability float64, e Evaluater) Evolution {
+	return &geneticSync{*NewGenetic(pop, s, survivorSize, c, m, mutationProbability, e).(*genetic), sync.RWMutex{}}
+}
+
+func (s *geneticSync) Next() error {
+	s.Lock()
+	defer s.Unlock()
+	return s.genetic.Next()
+}
+
+func (s *geneticSync) Population() Population {
+	s.RLock()
+	defer s.RUnlock()
+	return s.genetic.Population()
+}
+
+func (s *geneticSync) SetPopulation(pop Population) {
+	s.Lock()
+	defer s.Unlock()
+	s.genetic.SetPopulation(pop)
+}
+
+func (s *geneticSync) Alpha() Individual {
+	s.RLock()
+	defer s.RUnlock()
+	return s.genetic.Alpha()
 }

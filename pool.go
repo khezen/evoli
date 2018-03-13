@@ -9,30 +9,29 @@ var (
 
 // Pool -
 type Pool interface {
-	Put(Population, Evolution)
-	Delete(Population)
-	Has(Population) bool
-	Evolution(Population) Evolution
+	Add(Evolution)
+	Delete(Evolution)
+	Has(Evolution) bool
+	Evolutions() []Evolution
 	Populations() []Population
 	Individuals() []Individual
-	Max() Individual
-	Min() Individual
+	Alpha() Individual
 	Shuffle()
 	Next() error
 	NextAsync() error
 }
 
 type pool struct {
-	evaluater   Evaluater
-	populations map[Population]Evolution
+	evaluater  Evaluater
+	evolutions []Evolution
 }
 
 // NewPool - creates a Pool
-func NewPool() Pool {
-	return &pool{nil, make(map[Population]Evolution)}
+func NewPool(length int) Pool {
+	return &pool{nil, make([]Evolution, 0, length)}
 }
 
-func (p *pool) Put(pop Population, e Evolution) {
+func (p *pool) Add(e Evolution) {
 	switch p.evaluater {
 	case nil:
 		p.evaluater = e.Evaluater()
@@ -42,143 +41,127 @@ func (p *pool) Put(pop Population, e Evolution) {
 	default:
 		panic(ErrPoolEvaluater)
 	}
-	p.populations[pop] = e
+	p.evolutions = append(p.evolutions, e)
 }
 
-func (p *pool) Delete(pop Population) {
-	delete(p.populations, pop)
-	if len(p.populations) == 0 {
+func (p *pool) Delete(e Evolution) {
+	length := len(p.evolutions)
+	for i := range p.evolutions {
+		if p.evolutions[i] == e {
+			p.evolutions[i] = p.evolutions[length-1]
+			p.evolutions[length-1] = nil
+			p.evolutions = p.evolutions[:length-1]
+			break
+		}
+	}
+	if len(p.evolutions) == 0 {
 		p.evaluater = nil
 	}
 }
 
-func (p *pool) Has(pop Population) bool {
-	_, ok := p.populations[pop]
-	return ok
+func (p *pool) Has(e Evolution) bool {
+	for i := range p.evolutions {
+		if p.evolutions[i] == e {
+			return true
+		}
+	}
+	return false
 }
 
-func (p *pool) Evolution(pop Population) Evolution {
-	return p.populations[pop]
+func (p *pool) Evolutions() []Evolution {
+	return p.evolutions
 }
 
 func (p *pool) Populations() []Population {
-	populations := make([]Population, 0, len(p.populations))
-	for pop := range p.populations {
-		populations = append(populations, pop)
+	populations := make([]Population, 0, len(p.evolutions))
+	for _, e := range p.evolutions {
+		populations = append(populations, e.Population())
 	}
 	return populations
 }
 
 func (p *pool) Individuals() []Individual {
 	individualsLen := 0
-	for pop := range p.populations {
-		individualsLen += pop.Len()
+	for _, e := range p.evolutions {
+		individualsLen += e.Population().Len()
 	}
 	individuals := make([]Individual, 0, individualsLen)
-	for pop := range p.populations {
-		individuals = append(individuals, pop.Slice()...)
+	for _, e := range p.evolutions {
+		individuals = append(individuals, e.Population().Slice()...)
 	}
 	return individuals
 }
 
-func (p *pool) Max() Individual {
-	var max Individual
-	for pop := range p.populations {
-		outsider := pop.Max()
-		if max == nil || max.Fitness() < outsider.Fitness() {
-			max = outsider
+func (p *pool) Alpha() Individual {
+	var alpha Individual
+	for _, e := range p.evolutions {
+		outsider := e.Alpha()
+		if alpha == nil || alpha.Fitness() < outsider.Fitness() {
+			alpha = outsider
 		}
 	}
-	return max
-}
-
-func (p *pool) Min() Individual {
-	var min Individual
-	for pop := range p.populations {
-		outsider := pop.Min()
-		if min == nil || min.Fitness() > outsider.Fitness() {
-			min = outsider
-		}
-	}
-	return min
+	return alpha
 }
 
 func (p *pool) Shuffle() {
 	individualsCap := 0
-	populationSlice := make([]*Population, 0, len(p.populations))
-	populationMap := make(map[*Population]Evolution)
-	for pop, evolution := range p.populations {
+	prevPopulations := make([]Population, 0, len(p.evolutions))
+	nextPopulations := make([]Population, 0, len(p.evolutions))
+	for _, e := range p.evolutions {
+		pop := e.Population()
 		capacity := pop.Cap()
 		individualsCap += capacity
 		newPop := pop.New(capacity)
-		populationSlice = append(populationSlice, &newPop)
-		populationMap[&newPop] = evolution
+		prevPopulations = append(prevPopulations, newPop)
 	}
 	individuals := make([]Individual, 0, individualsCap)
-	for pop := range p.populations {
-		individuals = append(individuals, pop.Slice()...)
+	for _, e := range p.evolutions {
+		individuals = append(individuals, e.Population().Slice()...)
 	}
 	for _, indiv := range individuals {
-		populationSliceLen := len(populationSlice)
-		i := rand.Intn(populationSliceLen)
-		(*populationSlice[i]).Add(indiv)
-		if (*populationSlice[i]).Len() == (*populationSlice[i]).Cap() {
-			populationSlice[i] = populationSlice[populationSliceLen-1]
-			populationSlice[populationSliceLen-1] = nil
-			populationSlice = populationSlice[:populationSliceLen-1]
+		prevPopulationsLen := len(prevPopulations)
+		i := rand.Intn(prevPopulationsLen)
+		prevPopulations[i].Add(indiv)
+		if prevPopulations[i].Len() == prevPopulations[i].Cap() {
+			nextPopulations = append(nextPopulations, prevPopulations[i])
+			prevPopulations[i] = prevPopulations[prevPopulationsLen-1]
+			prevPopulations[prevPopulationsLen-1] = nil
+			prevPopulations = prevPopulations[:prevPopulationsLen-1]
 		}
 	}
-	populations := make(map[Population]Evolution)
-	for pop, evolution := range populationMap {
-		populations[*pop] = evolution
+	for i := range p.evolutions {
+		p.evolutions[i].SetPopulation(nextPopulations[i])
 	}
-	p.populations = populations
 }
 
 func (p *pool) Next() error {
-	populations := make(map[Population]Evolution)
-	for population, evolution := range p.populations {
-		newPop, err := evolution.Next(population)
+	for _, e := range p.evolutions {
+		err := e.Next()
 		if err != nil {
 			return err
 		}
-		populations[newPop] = evolution
 	}
-	p.populations = populations
 	return nil
 }
 
 func (p *pool) NextAsync() error {
-	populationsLen := len(p.populations)
-	type ResultSet struct {
-		pop       Population
-		evolution Evolution
-		err       error
-	}
-	results := make([]chan ResultSet, 0, populationsLen)
-	for i := 0; i < populationsLen; i++ {
-		results = append(results, make(chan ResultSet))
+	evolutionsLen := len(p.evolutions)
+	results := make([]chan error, 0, evolutionsLen)
+	for i := 0; i < evolutionsLen; i++ {
+		results = append(results, make(chan error))
 	}
 	i := 0
-	for population, evolution := range p.populations {
-		go func(population Population, evolution Evolution, resChan chan ResultSet) {
-			newPop, err := evolution.Next(population)
-			if err != nil {
-				resChan <- ResultSet{nil, nil, err}
-				return
-			}
-			resChan <- ResultSet{newPop, evolution, nil}
-		}(population, evolution, results[i])
+	for _, e := range p.evolutions {
+		go func(e Evolution, errChan chan error) {
+			errChan <- e.Next()
+		}(e, results[i])
 		i++
 	}
-	populations := make(map[Population]Evolution)
-	for _, resChan := range results {
-		res := <-resChan
-		if res.err != nil {
-			return res.err
+	for _, errChan := range results {
+		err := <-errChan
+		if err != nil {
+			return err
 		}
-		populations[res.pop] = res.evolution
 	}
-	p.populations = populations
 	return nil
 }

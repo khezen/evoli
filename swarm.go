@@ -1,36 +1,40 @@
 package evoli
 
+import "sync"
+
 var (
 	// ErrLearningCoef - c1 & c2 must be > 0
 	ErrLearningCoef = "ErrLearningCoef - c1 & c2 must be > 0"
 )
 
 type swarm struct {
+	evolution
+	bests      map[Individual]Individual
 	positioner Positioner
 	c1, c2     float64
-	evaluater  Evaluater
 }
 
 // NewSwarm - constructor for particles swarm optimization algorithm
 // typical value for learning coef is c1 = c2 = 2
 // the bigger are the coefficients the faster the population converge
-func NewSwarm(positioner Positioner, c1, c2 float64, evaluater Evaluater) Evolution {
+func NewSwarm(pop Population, positioner Positioner, c1, c2 float64, evaluater Evaluater) Evolution {
 	if c1 <= 0 || c2 <= 0 {
 		panic(ErrLearningCoef)
 	}
-	return &swarm{positioner, c1, c2, evaluater}
+	return &swarm{newEvolution(pop, evaluater), make(map[Individual]Individual), positioner, c1, c2}
 }
 
-func (s *swarm) Next(pop Population) (Population, error) {
-	newPop, err := s.evaluation(pop)
+func (s *swarm) Next() error {
+	newPop, err := s.evaluation(s.pop)
 	if err != nil {
-		return pop, err
+		return err
 	}
-	newPop, err = s.positioning(pop)
+	newPop, err = s.positioning(newPop)
 	if err != nil {
-		return pop, err
+		return err
 	}
-	return newPop, nil
+	s.pop = newPop
+	return nil
 }
 
 func (s *swarm) evaluation(pop Population) (Population, error) {
@@ -41,8 +45,9 @@ func (s *swarm) evaluation(pop Population) (Population, error) {
 		if err != nil {
 			return pop, err
 		}
-		if individual.Best() == nil || fitness > individual.Best().Fitness() {
-			individual.SetBest(individual)
+		best, exists := s.bests[individual]
+		if !exists || fitness > best.Fitness() {
+			s.bests[individual] = individual
 		}
 		individual.SetFitness(fitness)
 	}
@@ -54,17 +59,50 @@ func (s *swarm) positioning(pop Population) (Population, error) {
 	gBest := pop.Max()
 	individuals := pop.Slice()
 	for _, indiv := range individuals {
-		pBest := indiv.Best()
+		pBest := s.bests[indiv]
 		newIndiv, err := s.positioner.Position(indiv, pBest, gBest, s.c1, s.c2)
 		if err != nil {
 			return nil, err
 		}
-		newIndiv.SetBest(pBest)
+		delete(s.bests, indiv)
+		s.bests[newIndiv] = pBest
 		newPop.Add(newIndiv)
 	}
 	return newPop, nil
 }
 
-func (s *swarm) Evaluater() Evaluater {
-	return s.evaluater
+type swarmTS struct {
+	swarm
+	sync.RWMutex
+}
+
+// NewSwarmTS - constructor for particles swarm optimization algorithm (sync impl)
+// typical value for learning coef is c1 = c2 = 2
+// the bigger are the coefficients the faster the population converge
+func NewSwarmTS(pop Population, positioner Positioner, c1, c2 float64, evaluater Evaluater) Evolution {
+	return &swarmTS{*NewSwarm(pop, positioner, c1, c2, evaluater).(*swarm), sync.RWMutex{}}
+}
+
+func (s *swarmTS) Next() error {
+	s.Lock()
+	defer s.Unlock()
+	return s.swarm.Next()
+}
+
+func (s *swarmTS) Population() Population {
+	s.RLock()
+	defer s.RUnlock()
+	return s.swarm.Population()
+}
+
+func (s *swarmTS) SetPopulation(pop Population) {
+	s.Lock()
+	defer s.Unlock()
+	s.swarm.SetPopulation(pop)
+}
+
+func (s *swarmTS) Alpha() Individual {
+	s.RLock()
+	defer s.RUnlock()
+	return s.swarm.Alpha()
 }

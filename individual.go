@@ -7,8 +7,6 @@ type Individual interface {
 	Fitness() float64
 	SetFitness(float64)
 	Equal(Individual) bool
-	Best() Individual
-	SetBest(Individual)
 }
 
 // individual https://en.wikipedia.org/wiki/individual
@@ -50,19 +48,19 @@ func (indiv *individual) SetBest(best Individual) {
 }
 
 // individual https://en.wikipedia.org/wiki/individual
-type individualTS struct {
+type individualSync struct {
 	individual
 	fitMut  sync.RWMutex
 	bestMut sync.RWMutex
 }
 
-// NewIndividualTS is the constructor for threadsafe individuals
-func NewIndividualTS(fitness float64) Individual {
+// NewIndividualSync is the constructor for threadsafe individuals
+func NewIndividualSync(fitness float64) Individual {
 	indiv := individual{
 		fitness,
 		nil,
 	}
-	return &individualTS{
+	return &individualSync{
 		indiv,
 		sync.RWMutex{},
 		sync.RWMutex{},
@@ -70,27 +68,15 @@ func NewIndividualTS(fitness float64) Individual {
 }
 
 // Fitness returns the strength of a individual regarding to its environement. Higher is stronger.
-func (indiv *individualTS) Fitness() float64 {
+func (indiv *individualSync) Fitness() float64 {
 	indiv.fitMut.RLock()
 	defer indiv.fitMut.RUnlock()
 	return indiv.individual.Fitness()
 }
 
 // SetFitness set the strength of a individual regarding to its environement. Higher is stronger.
-func (indiv *individualTS) SetFitness(Fitness float64) {
+func (indiv *individualSync) SetFitness(Fitness float64) {
 	indiv.fitMut.Lock()
 	defer indiv.fitMut.Unlock()
 	indiv.individual.SetFitness(Fitness)
-}
-
-func (indiv *individualTS) Best() Individual {
-	indiv.bestMut.RLock()
-	defer indiv.bestMut.RUnlock()
-	return indiv.individual.Best()
-}
-
-func (indiv *individualTS) SetBest(best Individual) {
-	indiv.bestMut.Lock()
-	defer indiv.bestMut.Unlock()
-	indiv.individual.SetBest(best)
 }

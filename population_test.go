@@ -25,7 +25,7 @@ func TestNewPopulation(t *testing.T) {
 	}
 }
 
-func TestNewPopulationTS(t *testing.T) {
+func TestNewPopulationSync(t *testing.T) {
 	cases := []struct {
 		in, expected int
 	}{
@@ -34,7 +34,7 @@ func TestNewPopulationTS(t *testing.T) {
 	}
 	for _, c := range cases {
 		var got Population
-		got = NewPopulationTS(c.in)
+		got = NewPopulationSync(c.in)
 		if got.Cap() != c.expected {
 			t.Errorf("expected  %v", c.expected)
 		}
@@ -49,9 +49,9 @@ func TestSort(t *testing.T) {
 		{&population{i1, i2, i3}, &population{i3, i2, i1}},
 		{&population{i1, i3, i2}, &population{i3, i2, i1}},
 		{&population{i3, i2, i1}, &population{i3, i2, i1}},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, &populationTS{population{i3, i2, i1}, sync.RWMutex{}}},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, &populationTS{population{i3, i2, i1}, sync.RWMutex{}}},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, &populationTS{population{i3, i2, i1}, sync.RWMutex{}}},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, &populationSync{population{i3, i2, i1}, sync.RWMutex{}}},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, &populationSync{population{i3, i2, i1}, sync.RWMutex{}}},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, &populationSync{population{i3, i2, i1}, sync.RWMutex{}}},
 	}
 	for _, c := range cases {
 		c.in.Sort()
@@ -72,7 +72,7 @@ func TestCap(t *testing.T) {
 		expected int
 	}{
 		{NewPopulation(7), 7},
-		{NewPopulationTS(7), 7},
+		{NewPopulationSync(7), 7},
 	}
 	for _, c := range cases {
 		got := c.in.Cap()
@@ -89,8 +89,8 @@ func TestSetCap(t *testing.T) {
 	}{
 		{NewPopulation(2), 1, 1},
 		{NewPopulation(2), 7, 7},
-		{NewPopulationTS(2), 1, 1},
-		{NewPopulationTS(2), 7, 7},
+		{NewPopulationSync(2), 1, 1},
+		{NewPopulationSync(2), 7, 7},
 	}
 	for _, c := range cases {
 		c.pop.SetCap(c.in)
@@ -111,10 +111,10 @@ func TestAdd(t *testing.T) {
 		{&population{}, i2, &population{i2}},
 		{&population{i3, i2}, i1, &population{i3, i2, i1}},
 		{&population{i3, i2}, nil, &population{i3, i2, nil}},
-		{&populationTS{population{i1, i2}, sync.RWMutex{}}, i3, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}},
-		{&populationTS{population{}, sync.RWMutex{}}, i2, &populationTS{population{i2}, sync.RWMutex{}}},
-		{&populationTS{population{i3, i2}, sync.RWMutex{}}, i1, &populationTS{population{i3, i2, i1}, sync.RWMutex{}}},
-		{&populationTS{population{i1, i2}, sync.RWMutex{}}, nil, &populationTS{population{i1, i2, nil}, sync.RWMutex{}}},
+		{&populationSync{population{i1, i2}, sync.RWMutex{}}, i3, &populationSync{population{i1, i2, i3}, sync.RWMutex{}}},
+		{&populationSync{population{}, sync.RWMutex{}}, i2, &populationSync{population{i2}, sync.RWMutex{}}},
+		{&populationSync{population{i3, i2}, sync.RWMutex{}}, i1, &populationSync{population{i3, i2, i1}, sync.RWMutex{}}},
+		{&populationSync{population{i1, i2}, sync.RWMutex{}}, nil, &populationSync{population{i1, i2, nil}, sync.RWMutex{}}},
 	}
 	for _, c := range cases {
 		c.in.Add(c.indiv)
@@ -135,7 +135,7 @@ func TestGet(t *testing.T) {
 		pop Population
 	}{
 		{&population{i2, i1, i3}},
-		{&populationTS{population{i2, i1, i3}, sync.RWMutex{}}},
+		{&populationSync{population{i2, i1, i3}, sync.RWMutex{}}},
 	}
 	for _, c := range cases {
 		indiv := c.pop.Get(1)
@@ -153,7 +153,7 @@ func TestRemove(t *testing.T) {
 		expected    []Individual
 	}{
 		{&population{i1, i2, i3}, i2, []Individual{i1, i3}},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, i2, []Individual{i1, i3}},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, i2, []Individual{i1, i3}},
 	}
 	for _, c := range cases {
 		c.pop.Remove(c.toBeRemoved)
@@ -176,7 +176,7 @@ func TestRemoveAt(t *testing.T) {
 		expected         []Individual
 	}{
 		{&population{i1, i2, i3}, 1, []Individual{i1, i3}},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 1, []Individual{i1, i3}},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, 1, []Individual{i1, i3}},
 	}
 	for _, c := range cases {
 		c.pop.RemoveAt(c.indexToBeRemoved)
@@ -199,7 +199,7 @@ func TestReplace(t *testing.T) {
 		indiv Individual
 	}{
 		{&population{i2, i1, i3}, 1, i4},
-		{&populationTS{population{i2, i1, i3}, sync.RWMutex{}}, 1, i4},
+		{&populationSync{population{i2, i1, i3}, sync.RWMutex{}}, 1, i4},
 	}
 	for _, c := range cases {
 		c.pop.Replace(c.index, c.indiv)
@@ -217,7 +217,7 @@ func TestMax(t *testing.T) {
 	if max != i3 {
 		t.Errorf("%v.Max() returned %v instead of %v", pop, max, i3)
 	}
-	pop = &populationTS{population{i2, i1, i3}, sync.RWMutex{}}
+	pop = &populationSync{population{i2, i1, i3}, sync.RWMutex{}}
 	max = pop.Max()
 	if max != i3 {
 		t.Errorf("%v.Max() returned %v instead of %v", pop, max, i3)
@@ -232,7 +232,7 @@ func TestMin(t *testing.T) {
 	if min != i1 {
 		t.Errorf("%v.Min() returned %v instead of %v", pop, min, i1)
 	}
-	pop = &populationTS{population{i2, i1, i3}, sync.RWMutex{}}
+	pop = &populationSync{population{i2, i1, i3}, sync.RWMutex{}}
 	min = pop.Min()
 	if min != i1 {
 		t.Errorf("%v.Min() returned %v instead of %v", pop, min, i1)
@@ -251,11 +251,11 @@ func TestLen(t *testing.T) {
 		{&population{i3, i1}, 12, 2},
 		{&population{i3, i2, i1}, 2, 2},
 		{&population{}, 2, 0},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 3, 3},
-		{&populationTS{population{i1, i3, i2}, sync.RWMutex{}}, 4, 3},
-		{&populationTS{population{i3, i1}, sync.RWMutex{}}, 12, 2},
-		{&populationTS{population{i3, i2, i1}, sync.RWMutex{}}, 2, 2},
-		{&populationTS{population{}, sync.RWMutex{}}, 2, 0},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, 3, 3},
+		{&populationSync{population{i1, i3, i2}, sync.RWMutex{}}, 4, 3},
+		{&populationSync{population{i3, i1}, sync.RWMutex{}}, 12, 2},
+		{&populationSync{population{i3, i2, i1}, sync.RWMutex{}}, 2, 2},
+		{&populationSync{population{}, sync.RWMutex{}}, 2, 0},
 	}
 	for _, c := range cases {
 		c.in.SetCap(c.cap)
@@ -283,15 +283,15 @@ func TestLess(t *testing.T) {
 		{&population{i1, i2, i3}, 2, 0, true},
 		{&population{i1, i2, i3}, 2, 1, true},
 		{&population{i1, i2, i3}, 2, 2, true},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 0, 0, true},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 0, 1, false},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 0, 2, false},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 1, 0, true},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 1, 1, true},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 1, 2, false},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 2, 0, true},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 2, 1, true},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 2, 2, true},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, 0, 0, true},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, 0, 1, false},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, 0, 2, false},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, 1, 0, true},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, 1, 1, true},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, 1, 2, false},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, 2, 0, true},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, 2, 1, true},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, 2, 2, true},
 	}
 	for _, c := range cases {
 		less := c.in.Less(c.i, c.j)
@@ -326,23 +326,23 @@ func TestSwap(t *testing.T) {
 		{&population{i1, i2, i3}, 1000, 1000, &population{i1, i2, i3}},
 		{&population{i1, i2, i3}, -1, 1000, &population{i1, i2, i3}},
 		{&population{i1, i2, i3}, 1000, -1, &population{i1, i2, i3}},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 0, 0, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 0, 1, &populationTS{population{i2, i1, i3}, sync.RWMutex{}}},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 0, 2, &populationTS{population{i3, i2, i1}, sync.RWMutex{}}},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 1, 0, &populationTS{population{i2, i1, i3}, sync.RWMutex{}}},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 1, 1, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 1, 2, &populationTS{population{i1, i3, i2}, sync.RWMutex{}}},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 2, 0, &populationTS{population{i3, i2, i1}, sync.RWMutex{}}},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 2, 1, &populationTS{population{i1, i3, i2}, sync.RWMutex{}}},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 2, 2, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, -1, 0, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 0, -1, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, -1, -1, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 1000, 0, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 0, 1000, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 1000, 1000, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, -1, 1000, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}},
-		{&populationTS{population{i1, i2, i3}, sync.RWMutex{}}, 1000, -1, &populationTS{population{i1, i2, i3}, sync.RWMutex{}}},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, 0, 0, &populationSync{population{i1, i2, i3}, sync.RWMutex{}}},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, 0, 1, &populationSync{population{i2, i1, i3}, sync.RWMutex{}}},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, 0, 2, &populationSync{population{i3, i2, i1}, sync.RWMutex{}}},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, 1, 0, &populationSync{population{i2, i1, i3}, sync.RWMutex{}}},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, 1, 1, &populationSync{population{i1, i2, i3}, sync.RWMutex{}}},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, 1, 2, &populationSync{population{i1, i3, i2}, sync.RWMutex{}}},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, 2, 0, &populationSync{population{i3, i2, i1}, sync.RWMutex{}}},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, 2, 1, &populationSync{population{i1, i3, i2}, sync.RWMutex{}}},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, 2, 2, &populationSync{population{i1, i2, i3}, sync.RWMutex{}}},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, -1, 0, &populationSync{population{i1, i2, i3}, sync.RWMutex{}}},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, 0, -1, &populationSync{population{i1, i2, i3}, sync.RWMutex{}}},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, -1, -1, &populationSync{population{i1, i2, i3}, sync.RWMutex{}}},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, 1000, 0, &populationSync{population{i1, i2, i3}, sync.RWMutex{}}},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, 0, 1000, &populationSync{population{i1, i2, i3}, sync.RWMutex{}}},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, 1000, 1000, &populationSync{population{i1, i2, i3}, sync.RWMutex{}}},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, -1, 1000, &populationSync{population{i1, i2, i3}, sync.RWMutex{}}},
+		{&populationSync{population{i1, i2, i3}, sync.RWMutex{}}, 1000, -1, &populationSync{population{i1, i2, i3}, sync.RWMutex{}}},
 	}
 	for _, c := range cases {
 		c.in.Swap(c.i, c.j)
@@ -366,8 +366,8 @@ func TestContains(t *testing.T) {
 	}{
 		{&population{i1, i2}, i1, true},
 		{&population{i1, i2}, i3, false},
-		{&populationTS{population{i1, i2}, sync.RWMutex{}}, i1, true},
-		{&populationTS{population{i1, i2}, sync.RWMutex{}}, i3, false},
+		{&populationSync{population{i1, i2}, sync.RWMutex{}}, i1, true},
+		{&populationSync{population{i1, i2}, sync.RWMutex{}}, i3, false},
 	}
 	for _, c := range cases {
 		contains := c.in.Has(c.indiv)
@@ -387,9 +387,9 @@ func TestIndexOf(t *testing.T) {
 		{&population{i1, i2}, i1, 0},
 		{&population{i1, i2}, i2, 1},
 		{&population{i1, i2}, i3, -1},
-		{&populationTS{population{i1, i2}, sync.RWMutex{}}, i1, 0},
-		{&populationTS{population{i1, i2}, sync.RWMutex{}}, i2, 1},
-		{&populationTS{population{i1, i2}, sync.RWMutex{}}, i3, -1},
+		{&populationSync{population{i1, i2}, sync.RWMutex{}}, i1, 0},
+		{&populationSync{population{i1, i2}, sync.RWMutex{}}, i2, 1},
+		{&populationSync{population{i1, i2}, sync.RWMutex{}}, i3, -1},
 	}
 	for _, c := range cases {
 		index, _ := c.in.IndexOf(c.indiv)
@@ -412,8 +412,8 @@ func TestEach(t *testing.T) {
 	}{
 		{NewPopulation(4), []Individual{i1, i5, i6, i4}},
 		{NewPopulation(5), []Individual{i1, i3, i5, i2, i6}},
-		{NewPopulationTS(4), []Individual{i1, i5, i6, i4}},
-		{NewPopulationTS(5), []Individual{i1, i3, i5, i2, i6}},
+		{NewPopulationSync(4), []Individual{i1, i5, i6, i4}},
+		{NewPopulationSync(5), []Individual{i1, i3, i5, i2, i6}},
 	}
 	for _, c := range cases {
 		c.pop.Add(c.individuals...)
@@ -443,7 +443,7 @@ func TestSlice(t *testing.T) {
 		slice []Individual
 	}{
 		{NewPopulation(3), []Individual{i1, i2, i3}},
-		{NewPopulationTS(3), []Individual{i1, i2, i3}},
+		{NewPopulationSync(3), []Individual{i1, i2, i3}},
 	}
 	for _, c := range cases {
 		c.pop.Add(c.slice...)

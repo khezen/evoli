@@ -2,22 +2,22 @@ package evoli
 
 import "sync"
 
-type populationTS struct {
+type populationSync struct {
 	population
 	sync.RWMutex
 }
 
-// NewPopulationTS creates a threadsafe population
-func NewPopulationTS(capacity int) Population {
+// NewPopulationSync creates a threadsafe population
+func NewPopulationSync(capacity int) Population {
 	pop := NewPopulation(capacity)
-	return &populationTS{
+	return &populationSync{
 		*pop.(*population),
 		sync.RWMutex{},
 	}
 }
 
 // Len returns the current livings count of a population
-func (p *populationTS) Len() int {
+func (p *populationSync) Len() int {
 	p.RLock()
 	defer p.RUnlock()
 	return p.population.Len()
@@ -25,84 +25,84 @@ func (p *populationTS) Len() int {
 
 // Less reports whether the element with
 // index i should sort before the element with index j.
-func (p *populationTS) Less(i, j int) bool {
+func (p *populationSync) Less(i, j int) bool {
 	p.RLock()
 	defer p.RUnlock()
 	return p.population.Less(i, j)
 }
 
 // Swap swaps the elements with indexes i and j.
-func (p *populationTS) Swap(i, j int) {
+func (p *populationSync) Swap(i, j int) {
 	p.Lock()
 	defer p.Unlock()
 	p.population.Swap(i, j)
 }
 
 // Sort sort the population
-func (p *populationTS) Sort() {
+func (p *populationSync) Sort() {
 	p.Lock()
 	defer p.Unlock()
 	p.population.Sort()
 }
 
 // SetCap set the resize the population capacity
-func (p *populationTS) SetCap(newCap int) {
+func (p *populationSync) SetCap(newCap int) {
 	p.Lock()
 	defer p.Unlock()
 	p.population.SetCap(newCap)
 }
 
 // Add adds an individual to a population. If the populagtion has already reached its capacity, capacity is incremented.
-func (p *populationTS) Add(indiv ...Individual) {
+func (p *populationSync) Add(indiv ...Individual) {
 	p.Lock()
 	defer p.Unlock()
 	p.population.Add(indiv...)
 }
 
 // Get returns the individual at index i
-func (p *populationTS) Get(i int) Individual {
+func (p *populationSync) Get(i int) Individual {
 	p.RLock()
 	defer p.RUnlock()
 	return p.population.Get(i)
 }
 
 // RemoveAt removes and returns the individual at index i
-func (p *populationTS) RemoveAt(i int) {
+func (p *populationSync) RemoveAt(i int) {
 	p.Lock()
 	defer p.Unlock()
 	p.population.RemoveAt(i)
 }
 
 // Remove removes all given individuals
-func (p *populationTS) Remove(individuals ...Individual) {
+func (p *populationSync) Remove(individuals ...Individual) {
 	p.Lock()
 	defer p.Unlock()
 	p.population.Remove(individuals...)
 }
 
 // Replace replaces and returns the individual at index i by the substitute
-func (p *populationTS) Replace(i int, substitute Individual) {
+func (p *populationSync) Replace(i int, substitute Individual) {
 	p.Lock()
 	defer p.Unlock()
 	p.population.Replace(i, substitute)
 }
 
 // Min returns the least Resilent individual
-func (p *populationTS) Min() Individual {
+func (p *populationSync) Min() Individual {
 	p.RLock()
 	defer p.RUnlock()
 	return p.population.Min()
 }
 
 // Max returns the most Resilent individual
-func (p *populationTS) Max() Individual {
+func (p *populationSync) Max() Individual {
 	p.RLock()
 	defer p.RUnlock()
 	return p.population.Max()
 }
 
 // Has return true if the specified individual is in the population
-func (p *populationTS) Has(individuals ...Individual) bool {
+func (p *populationSync) Has(individuals ...Individual) bool {
 	has := true
 	for _, indiv := range individuals {
 		_, err := p.IndexOf(indiv)
@@ -112,26 +112,26 @@ func (p *populationTS) Has(individuals ...Individual) bool {
 }
 
 // IndexOf returns the inde of the specified individual if it exists
-func (p *populationTS) IndexOf(indiv Individual) (int, error) {
+func (p *populationSync) IndexOf(indiv Individual) (int, error) {
 	p.RLock()
 	defer p.RUnlock()
 	return p.population.IndexOf(indiv)
 }
 
 // Each traverse the population and execute given callback on each individual. Stops if the callbak return false.
-func (p *populationTS) Each(f func(indiv Individual) bool) {
+func (p *populationSync) Each(f func(indiv Individual) bool) {
 	p.RLock()
 	defer p.RUnlock()
 	p.population.Each(f)
 }
 
 // Slice returns the population as []Individual
-func (p *populationTS) Slice() []Individual {
+func (p *populationSync) Slice() []Individual {
 	p.RLock()
 	defer p.RUnlock()
 	return p.population.Slice()
 }
 
-func (p *populationTS) New(cap int) Population {
-	return NewPopulationTS(cap)
+func (p *populationSync) New(cap int) Population {
+	return NewPopulationSync(cap)
 }
