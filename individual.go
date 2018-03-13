@@ -39,14 +39,6 @@ func (indiv *individual) Equal(toBeCompared Individual) bool {
 	return indiv == toBeCompared
 }
 
-func (indiv *individual) Best() Individual {
-	return indiv.best
-}
-
-func (indiv *individual) SetBest(best Individual) {
-	indiv.best = best
-}
-
 // individual https://en.wikipedia.org/wiki/individual
 type individualSync struct {
 	individual
