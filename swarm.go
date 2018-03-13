@@ -71,6 +71,11 @@ func (s *swarm) positioning(pop Population) (Population, error) {
 	return newPop, nil
 }
 
+func (s *swarm) SetPopulation(pop Population) {
+	s.bests = make(map[Individual]Individual)
+	s.evolution.SetPopulation(pop)
+}
+
 type swarmTS struct {
 	swarm
 	sync.RWMutex
