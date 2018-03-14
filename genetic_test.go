@@ -36,7 +36,7 @@ func TestNewGenetic(t *testing.T) {
 		if pop != newPop {
 			t.Errorf("expected %v got %v", newPop, pop)
 		}
-		gen = NewGeneticSync(NewPopulation(1), c.s, c.survivorSize, c.c, c.m, c.mutaionProb, c.e)
+		gen = NewGeneticSync(popInit, c.s, c.survivorSize, c.c, c.m, c.mutaionProb, c.e)
 		pop = gen.Population()
 		if pop != popInit {
 			t.Errorf("expected %v got %v", popInit, pop)
