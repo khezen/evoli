@@ -17,8 +17,39 @@ func TestNewGenetic(t *testing.T) {
 		{NewTruncationSelecter(), 10, crosserMock{}, mutaterMock{}, 0.01, evaluaterMock{}},
 	}
 	for _, c := range cases {
-		_ = NewGenetic(NewPopulation(1), c.s, c.survivorSize, c.c, c.m, c.mutaionProb, c.e)
-		_ = NewGeneticSync(NewPopulation(1), c.s, c.survivorSize, c.c, c.m, c.mutaionProb, c.e)
+		i1 := NewIndividual(1)
+		i2 := NewIndividual(2)
+		popInit := NewPopulation(2)
+		newPop := NewPopulation(1)
+		popInit.Add(i1, i2)
+		gen := NewGenetic(popInit, c.s, c.survivorSize, c.c, c.m, c.mutaionProb, c.e)
+		pop := gen.Population()
+		if pop != popInit {
+			t.Errorf("expected %v got %v", popInit, pop)
+		}
+		alpha := gen.Alpha()
+		if alpha != i2 {
+			t.Errorf("expected %v got %v", i2, alpha)
+		}
+		gen.SetPopulation(newPop)
+		pop = gen.Population()
+		if pop != newPop {
+			t.Errorf("expected %v got %v", newPop, pop)
+		}
+		gen = NewGeneticSync(NewPopulation(1), c.s, c.survivorSize, c.c, c.m, c.mutaionProb, c.e)
+		pop = gen.Population()
+		if pop != popInit {
+			t.Errorf("expected %v got %v", popInit, pop)
+		}
+		alpha = gen.Alpha()
+		if alpha != i2 {
+			t.Errorf("expected %v got %v", i2, alpha)
+		}
+		gen.SetPopulation(newPop)
+		pop = gen.Population()
+		if pop != newPop {
+			t.Errorf("expected %v got %v", newPop, pop)
+		}
 	}
 }
 
