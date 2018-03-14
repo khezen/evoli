@@ -66,6 +66,23 @@ func TestCollections(t *testing.T) {
 		for _, evolution := range c.evolutions {
 			c.pool.Add(evolution)
 		}
+		evolutions := c.pool.Evolutions()
+		if len(evolutions) != len(c.evolutions) {
+			t.Errorf("expected %v, got %v", len(c.evolutions), len(evolutions))
+		}
+		for _, e := range evolutions {
+			found := false
+			for _, ce := range c.evolutions {
+				if e == ce {
+					found = true
+					break
+				}
+			}
+			if !found {
+				t.Error("unexpected result")
+			}
+		}
+
 		populations := c.pool.Populations()
 		if len(populations) != len(c.evolutions) {
 			t.Errorf("expected %v, got %v", len(c.evolutions), len(populations))
