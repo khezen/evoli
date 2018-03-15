@@ -4,23 +4,23 @@ import (
 	"testing"
 )
 
-func TestTruncation(t *testing.T) {
+func TestSelecterTruncation(t *testing.T) {
 	testSelecter(t, NewTruncationSelecter())
 }
 
-func TestTournament(t *testing.T) {
+func TestSelecterTournament(t *testing.T) {
 	testSelecter(t, NewTournamentSelecter())
 }
 
-func TestRandom(t *testing.T) {
+func TestSelecterRandom(t *testing.T) {
 	testSelecter(t, NewRandomSelecter())
 }
 
-func TestProportionalToRank(t *testing.T) {
+func TestSelecterProportionalToRank(t *testing.T) {
 	testSelecter(t, NewProportionalToRankSelecter())
 }
 
-func TestProportionalToFitness(t *testing.T) {
+func TestSelecterProportionalToFitness(t *testing.T) {
 	testSelecter(t, NewProportionalToFitnessSelecter())
 }
 
@@ -47,10 +47,5 @@ func testSelecter(t *testing.T, s Selecter) {
 		if capacity != c.expectedCap {
 			t.Errorf("s.Select(%v, %v) returned %v which has a capacity of %v instead of %v", c.in, c.survivalSize, newPop, capacity, c.expectedCap)
 		}
-	}
-	pop := population{i1, i2, i3}
-	_, err := s.Select(&pop, -1)
-	if err == nil {
-		t.Errorf("expected != nil")
 	}
 }

@@ -1,7 +1,6 @@
 package evoli
 
 import (
-	"fmt"
 	"math/rand"
 )
 
@@ -10,20 +9,16 @@ type Selecter interface {
 	Select(pop Population, survivorsSize int) (Population, error)
 }
 
-func checkParams(pop Population, survivorsSize int) error {
+func checkSelectParams(survivorsSize int) {
 	if survivorsSize < 1 {
-		return fmt.Errorf("%d must be >= 1", survivorsSize)
+		panic(ErrSurvivorSize)
 	}
-	return nil
 }
 
 type proportionalToFitnessSelecter struct{}
 
 func (s proportionalToFitnessSelecter) Select(pop Population, survivorsSize int) (Population, error) {
-	err := checkParams(pop, survivorsSize)
-	if err != nil {
-		return nil, err
-	}
+	checkSelectParams(survivorsSize)
 	if survivorsSize >= pop.Len() {
 		return pop, nil
 	}
@@ -87,10 +82,7 @@ func NewProportionalToFitnessSelecter() Selecter {
 type tournamentSelecter struct{}
 
 func (s tournamentSelecter) Select(pop Population, survivorsSize int) (Population, error) {
-	err := checkParams(pop, survivorsSize)
-	if err != nil {
-		return nil, err
-	}
+	checkSelectParams(survivorsSize)
 	if survivorsSize >= pop.Len() {
 		return pop, nil
 	}
@@ -156,10 +148,7 @@ func NewTournamentSelecter() Selecter {
 type truncationSelecter struct{}
 
 func (s truncationSelecter) Select(pop Population, survivorsSize int) (Population, error) {
-	err := checkParams(pop, survivorsSize)
-	if err != nil {
-		return nil, err
-	}
+	checkSelectParams(survivorsSize)
 	pop.Sort()
 	individuals := pop.Slice()
 	var survivors []Individual
@@ -181,10 +170,7 @@ func NewTruncationSelecter() Selecter {
 type randomSelecter struct{}
 
 func (s randomSelecter) Select(pop Population, survivorsSize int) (Population, error) {
-	err := checkParams(pop, survivorsSize)
-	if err != nil {
-		return nil, err
-	}
+	checkSelectParams(survivorsSize)
 	newPop := pop.New(pop.Cap())
 	newPop.Add(pop.Slice()...)
 	size := newPop.Len() - survivorsSize
@@ -202,10 +188,7 @@ func NewRandomSelecter() Selecter {
 type proportionalToRankSelecter struct{}
 
 func (s proportionalToRankSelecter) Select(pop Population, survivorsSize int) (Population, error) {
-	err := checkParams(pop, survivorsSize)
-	if err != nil {
-		return nil, err
-	}
+	checkSelectParams(survivorsSize)
 	if survivorsSize >= pop.Len() {
 		return pop, nil
 	}
