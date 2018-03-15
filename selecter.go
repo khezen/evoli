@@ -11,8 +11,5 @@ func checkParams(pop Population, survivorsSize int) error {
 	if survivorsSize < 1 {
 		return fmt.Errorf("%d must be >= 1", survivorsSize)
 	}
-	if survivorsSize > pop.Cap() {
-		pop.SetCap(survivorsSize)
-	}
 	return nil
 }

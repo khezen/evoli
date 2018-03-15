@@ -35,9 +35,8 @@ func testSelecter(t *testing.T, s Selecter) {
 		{population{i1, i2, i3, i4, i5, i6}, 3, 3, 6},
 		{population{i1, i1, i1, i1, i1, i1, i1, i1, i1, i1, i1, i1, i1}, 1, 1, 13},
 		{population{i1, i2, i4, i5}, 2, 2, 4},
-		{population{i1}, 3, 1, 3},
+		{population{i1}, 3, 1, 1},
 		{population{i3, i6}, 1, 1, 2},
-		{population{}, 3, 0, 3},
 	}
 	for _, c := range cases {
 		newPop, _ := s.Select(&c.in, c.survivalSize)
