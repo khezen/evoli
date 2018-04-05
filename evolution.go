@@ -1,6 +1,6 @@
 package evoli
 
-// Evolution - problem solving algorithm by exploring the range of solutions
+// Evolution - problem solving algorithm exploring the range of solutions
 type Evolution interface {
 	Population() Population
 	SetPopulation(Population)
