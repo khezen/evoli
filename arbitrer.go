@@ -3,7 +3,7 @@ package evoli
 // ErrArbitration - must provide one or more individuals
 var ErrArbitration = "ErrArbitration - must provide one or more individuals"
 
-// Arbitrer - provide the winner between multiple participants
+// Arbitrer - elect the winner between multiple participants
 type Arbitrer interface {
 	Abritrate(participants ...Individual) (winner Individual)
 }
