@@ -2,7 +2,7 @@ package evoli
 
 import "sync"
 
-// Individual is an interface for an individual
+// Individual refers to a potential solution to the problem we want to solve
 type Individual interface {
 	Fitness() float64
 	SetFitness(float64)
