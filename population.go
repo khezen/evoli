@@ -5,7 +5,7 @@ import (
 	"sort"
 )
 
-// Population is the population interface
+// Population contains the current set of solutions seen as Individual
 type Population interface {
 	sort.Interface
 	Sort()
