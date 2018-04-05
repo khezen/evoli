@@ -7,15 +7,16 @@ var (
 	ErrPoolEvaluater = "ErrPoolEvaluater - all evolution of a pool must share the same evaluater operator"
 )
 
-// Pool -
+// Pool - solve one problem with different algorithms(with different pros/cons)
+// It also make sense to have a pool running multiple instances of the same algorithm asynchronously with smaller populations.
 type Pool interface {
 	Add(Evolution)
 	Delete(Evolution)
 	Has(Evolution) bool
-	Evolutions() []Evolution
-	Populations() []Population
-	Individuals() []Individual
 	Alpha() Individual
+	Individuals() []Individual
+	Populations() []Population
+	Evolutions() []Evolution	
 	Shuffle()
 	Next() error
 	NextAsync() error
