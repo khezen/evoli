@@ -36,37 +36,38 @@ func NewGenetic(pop Population, s Selecter, survivorSize int, c Crosser, m Mutat
 
 // Next takes a population and produce a the new generation of this population
 func (g *genetic) Next() error {
-	newPop, err := g.evaluation(g.pop)
+	err := g.evaluation(g.pop)
 	if err != nil {
 		return err
 	}
-	newPop, err = g.selecter.Select(newPop, g.SurvivorSize)
+	survivors, err := g.selecter.Select(g.pop, g.SurvivorSize)
 	if err != nil {
 		return err
 	}
-	newPop, err = g.crossovers(newPop)
+	newBorns, err := g.crossovers(survivors)
 	if err != nil {
 		return err
 	}
-	newPop, err = g.mutations(newPop)
+	newBorns, err = g.mutations(newBorns)
 	if err != nil {
 		return err
 	}
-	g.pop = newPop
+	survivors.Add(newBorns.Slice()...)
+	g.pop = survivors
 	return nil
 }
 
-func (g *genetic) evaluation(pop Population) (Population, error) {
+func (g *genetic) evaluation(pop Population) error {
 	length := pop.Len()
 	for i := 0; i < length; i++ {
 		individual := pop.Get(i)
 		fitness, err := g.evaluater.Evaluate(individual)
 		if err != nil {
-			return pop, err
+			return err
 		}
 		individual.SetFitness(fitness)
 	}
-	return pop, nil
+	return nil
 }
 
 func (g *genetic) crossovers(pop Population) (Population, error) {
@@ -89,8 +90,7 @@ func (g *genetic) crossovers(pop Population) (Population, error) {
 		}
 		newBorns.Add(newBorn)
 	}
-	pop.Add(*newBorns.(*population)...)
-	return pop, nil
+	return newBorns, nil
 }
 
 func (g *genetic) mutations(pop Population) (Population, error) {
