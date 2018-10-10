@@ -1,6 +1,9 @@
 package evoli
 
-import "math/rand"
+import (
+	"math/rand"
+	"sync"
+)
 
 var (
 	// ErrPoolEvaluater - all evolutions of a pool must share the same evaluater operator
@@ -16,7 +19,7 @@ type Pool interface {
 	Alpha() Individual
 	Individuals() []Individual
 	Populations() []Population
-	Evolutions() []Evolution	
+	Evolutions() []Evolution
 	Shuffle()
 	Next() error
 	NextAsync() error
@@ -147,22 +150,18 @@ func (p *pool) Next() error {
 
 func (p *pool) NextAsync() error {
 	evolutionsLen := len(p.evolutions)
-	results := make([]chan error, 0, evolutionsLen)
-	for i := 0; i < evolutionsLen; i++ {
-		results = append(results, make(chan error))
-	}
-	i := 0
+	wg := sync.WaitGroup{}
+	wg.Add(evolutionsLen)
+	var bubbledErr error
 	for _, e := range p.evolutions {
-		go func(e Evolution, errChan chan error) {
-			errChan <- e.Next()
-		}(e, results[i])
-		i++
+		go func(e Evolution) {
+			err := e.Next()
+			if err != nil {
+				bubbledErr = err
+			}
+			wg.Done()
+		}(e)
 	}
-	for _, errChan := range results {
-		err := <-errChan
-		if err != nil {
-			return err
-		}
-	}
-	return nil
+	wg.Wait()
+	return bubbledErr
 }
