@@ -62,12 +62,10 @@ type HEvaluater struct {
 }
 
 func (e HEvaluater) Evaluate(indiv evoli.Individual) (Fitness float64, err error) {
-
 	fIndiv, ok := indiv.(*FIndividual)
 	if !ok {
 		return 0, fmt.Errorf("invalid individual type")
 	}
-
 	return f(fIndiv.x[0], fIndiv.x[1]), nil
 }
 
@@ -84,7 +82,6 @@ func ExampleNewGenetic() {
 			v: []float64{vx, vy},
 		})
 	}
-
 	crosser := HCrosser{}
 	mutater := HMutater{}
 	evaluator := HEvaluater{}
@@ -92,17 +89,17 @@ func ExampleNewGenetic() {
 	selecter := evoli.NewTruncationSelecter()
 	survivorSize := 30
 
-	sw := evoli.NewGenetic(pop, selecter, survivorSize, crosser, mutater, mutationProbability, evaluator)
+	ga := evoli.NewGenetic(pop, selecter, survivorSize, crosser, mutater, mutationProbability, evaluator)
 
 	for i := 0; i < 100; i++ {
-		err := sw.Next()
+		err := ga.Next()
 		if err != nil {
 			panic(err.Error())
 		}
 	}
 
 	// evaluate the latest population
-	for _, v := range sw.Population().Slice() {
+	for _, v := range ga.Population().Slice() {
 		f, err := evaluator.Evaluate(v)
 		if err != nil {
 			panic(err.Error())
@@ -110,7 +107,7 @@ func ExampleNewGenetic() {
 		v.SetFitness(f)
 	}
 
-	fmt.Printf("Max Value: %.2f\n", sw.Alpha().Fitness())
+	fmt.Printf("Max Value: %.2f\n", ga.Alpha().Fitness())
 
 	// Output: Max Value: 1.00
 }

@@ -36,32 +36,26 @@ type FPositioner struct {
 }
 
 func (p *FPositioner) Position(indiv, pBest, gBest evoli.Individual, c1, c2 float64) (evoli.Individual, error) {
-
 	fIndiv, ok1 := indiv.(*FIndividual)
 	fPBest, ok2 := pBest.(*FIndividual)
 	fGBest, ok3 := gBest.(*FIndividual)
 	if !ok1 || !ok2 || !ok3 {
 		return nil, fmt.Errorf("invalid individual type")
 	}
-
 	newIndiv := FIndividual{
 		v: make([]float64, len(fIndiv.v)),
 		x: make([]float64, len(fIndiv.v)),
 	}
-
 	w := 0.9
-
 	for d := range fIndiv.v {
 		rp := rand.Float64()
 		rg := rand.Float64()
-
 		newIndiv.v[d] = w*fIndiv.v[d] +
 			c1*rp*(fPBest.x[d]-fIndiv.x[d]) +
 			c2*rg*(fGBest.x[d]-fIndiv.x[d])
 
 		newIndiv.x[d] = fIndiv.x[d] + newIndiv.v[d]
 	}
-
 	return &newIndiv, nil
 }
 
@@ -69,19 +63,16 @@ type FEvaluater struct {
 }
 
 func (e *FEvaluater) Evaluate(indiv evoli.Individual) (Fitness float64, err error) {
-
 	fIndiv, ok := indiv.(*FIndividual)
 	if !ok {
 		return 0, fmt.Errorf("invalid individual type")
 	}
-
 	return f(fIndiv.x[0], fIndiv.x[1]), nil
 }
 
 func ExampleNewSwarm() {
 
 	pop := evoli.NewPopulation(50)
-
 	for i := 0; i < pop.Cap(); i++ {
 		x := rand.Float64()*20 - 10
 		y := rand.Float64()*20 - 10
@@ -92,7 +83,6 @@ func ExampleNewSwarm() {
 			v: []float64{vx, vy},
 		})
 	}
-
 	positioner := &FPositioner{}
 	evaluator := &FEvaluater{}
 
