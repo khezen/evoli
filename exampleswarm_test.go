@@ -98,7 +98,7 @@ func ExampleNewSwarm() {
 
 	sw := evoli.NewSwarm(pop, positioner, .2, .2, evaluator)
 
-	for i := 0; i < 25; i++ {
+	for i := 0; i < 100; i++ {
 		err := sw.Next()
 		if err != nil {
 			panic(err.Error())

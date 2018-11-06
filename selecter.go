@@ -221,3 +221,40 @@ func (s proportionalToRankSelecter) computeTotalScore(pop Population) float64 {
 func NewProportionalToRankSelecter() Selecter {
 	return proportionalToRankSelecter{}
 }
+
+type newtonMethodSelecter struct{}
+
+func (s newtonMethodSelecter) Select(pop Population, survivorsSize int) (Population, error) {
+	checkSelectParams(survivorsSize)
+	if survivorsSize >= pop.Len() {
+		return pop, nil
+	}
+	newPop := pop.New(pop.Cap())
+	totalScore := s.computeTotalScore(pop)
+	pop.Sort()
+	for newPop.Len() < survivorsSize {
+		for i := 0; i < pop.Len(); i++ {
+			if newPop.Len() >= survivorsSize {
+				break
+			}
+			score := float64(pop.Len() - i)
+			if rand.Float64() <= score/totalScore {
+				indiv := pop.Get(i)
+				pop.RemoveAt(i)
+				newPop.Add(indiv)
+				totalScore -= score
+			}
+		}
+	}
+	return newPop, nil
+}
+
+func (s newtonMethodSelecter) computeTotalScore(pop Population) float64 {
+	n := float64(pop.Len())
+	return n * (n + 1) / 2 // 1+2+3+...+n
+}
+
+// NewNewtonMethodSelecter is the constructor for newton method selection
+func NewNewtonMethodSelecter() Selecter {
+	return newtonMethodSelecter{}
+}
