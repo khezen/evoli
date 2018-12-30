@@ -12,7 +12,9 @@ Genetic Algorithm and Particle Swarm Optimization written in Go
 
 Given `f(x,y) = cos(x^2 * y^2) * 1/(x^2 * y^2 + 1)`
 
-Find `(x,y)` such as `f(x,y)` reaches its maximum (`f(0,0) = 1`)
+Find `(x,y)` such as `f(x,y)` reaches its maximum 
+
+Answer `f(0,0) = 1`
 
 
 ### Particle Swarm Optimization
