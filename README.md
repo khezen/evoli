@@ -10,7 +10,7 @@ Genetic Algorithm and Particle Swarm Optimization written in Go
 
 ### Problem
 
-Find $(x,y)$ such as $f(x,y) = \cos({x}^2 \times {y}^2) \times \frac{1}{{x}^2 \times {y}^2 + 1}$ reaches its maximum.
+Find $`(x,y)`$ such as $`f(x,y) = \cos({x}^2 \times {y}^2) \times \frac{1}{{x}^2 \times {y}^2 + 1}`$ reaches its maximum.
 
 ### Particle Swarm Optimization
 
