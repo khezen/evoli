@@ -91,7 +91,7 @@ func ExampleNewSwarm() {
 	for i := 0; i < 100; i++ {
 		err := sw.Next()
 		if err != nil {
-			panic(err.Error())
+			panic(err)
 		}
 	}
 
@@ -99,7 +99,7 @@ func ExampleNewSwarm() {
 	for _, v := range sw.Population().Slice() {
 		f, err := evaluator.Evaluate(v)
 		if err != nil {
-			panic(err.Error())
+			panic(err)
 		}
 		v.SetFitness(f)
 	}

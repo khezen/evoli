@@ -16,7 +16,6 @@ Find `(x,y)` such as `f(x,y)` reaches its maximum
 
 Answer `f(0,0) = 1`
 
-
 ### Particle Swarm Optimization
 
 ```golang
@@ -112,7 +111,7 @@ func main() {
 	for i := 0; i < 100; i++ {
 		err := sw.Next()
 		if err != nil {
-			panic(err.Error())
+			panic(err)
 		}
 	}
 
@@ -120,7 +119,7 @@ func main() {
 	for _, v := range sw.Population().Slice() {
 		f, err := evaluator.Evaluate(v)
 		if err != nil {
-			panic(err.Error())
+			panic(err)
 		}
 		v.SetFitness(f)
 	}
@@ -231,7 +230,7 @@ func main() {
 	for i := 0; i < 100; i++ {
 		err := ga.Next()
 		if err != nil {
-			panic(err.Error())
+			panic(err)
 		}
 	}
 
@@ -239,7 +238,7 @@ func main() {
 	for _, v := range ga.Population().Slice() {
 		f, err := evaluator.Evaluate(v)
 		if err != nil {
-			panic(err.Error())
+			panic(err)
 		}
 		v.SetFitness(f)
 	}

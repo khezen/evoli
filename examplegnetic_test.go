@@ -94,7 +94,7 @@ func ExampleNewGenetic() {
 	for i := 0; i < 100; i++ {
 		err := ga.Next()
 		if err != nil {
-			panic(err.Error())
+			panic(err)
 		}
 	}
 
@@ -102,7 +102,7 @@ func ExampleNewGenetic() {
 	for _, v := range ga.Population().Slice() {
 		f, err := evaluator.Evaluate(v)
 		if err != nil {
-			panic(err.Error())
+			panic(err)
 		}
 		v.SetFitness(f)
 	}
