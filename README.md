@@ -1,8 +1,8 @@
+# *evoli*
+
 [![GoDoc](https://img.shields.io/badge/go-documentation-blue.svg?style=flat-square)](https://godoc.org/github.com/khezen/evoli)
 [![Build Status](http://img.shields.io/travis/khezen/evoli.svg?style=flat-square)](https://travis-ci.org/khezen/evoli) [![codecov](https://img.shields.io/codecov/c/github/khezen/evoli/master.svg?style=flat-square)](https://codecov.io/gh/khezen/evoli)
 [![Go Report Card](https://goreportcard.com/badge/github.com/khezen/evoli?style=flat-square)](https://goreportcard.com/report/github.com/khezen/evoli)
-
-# *evoli*
 
 Genetic Algorithm and Particle Swarm Optimization written in Go
 
@@ -15,7 +15,6 @@ Given `f(x,y) = cos(x^2 * y^2) * 1/(x^2 * y^2 + 1)`
 Find `(x,y)` such as `f(x,y)` reaches its maximum 
 
 Answer `f(0,0) = 1`
-
 
 ### Particle Swarm Optimization
 
@@ -112,7 +111,7 @@ func main() {
 	for i := 0; i < 100; i++ {
 		err := sw.Next()
 		if err != nil {
-			panic(err.Error())
+			panic(err)
 		}
 	}
 
@@ -120,7 +119,7 @@ func main() {
 	for _, v := range sw.Population().Slice() {
 		f, err := evaluator.Evaluate(v)
 		if err != nil {
-			panic(err.Error())
+			panic(err)
 		}
 		v.SetFitness(f)
 	}
@@ -231,7 +230,7 @@ func main() {
 	for i := 0; i < 100; i++ {
 		err := ga.Next()
 		if err != nil {
-			panic(err.Error())
+			panic(err)
 		}
 	}
 
@@ -239,7 +238,7 @@ func main() {
 	for _, v := range ga.Population().Slice() {
 		f, err := evaluator.Evaluate(v)
 		if err != nil {
-			panic(err.Error())
+			panic(err)
 		}
 		v.SetFitness(f)
 	}
@@ -251,3 +250,16 @@ func main() {
 ```bash
 Max Value: 1.00
 ```
+
+
+## Issues
+
+If you have any problems or questions, please ask for help through a [GitHub issue](https://github.com/khezen/evoli/issues).
+
+## Contributions
+
+Help is always welcome! For example, documentation (like the text you are reading now) can always use improvement. There's always code that can be improved. If you ever see something you think should be fixed, you should own it. If you have no idea what to start on, you can browse the issues labeled with [help wanted](https://github.com/khezen/evoli/labels/help%20wanted).
+
+As a potential contributor, your changes and ideas are welcome at any hour of the day or night, weekdays, weekends, and holidays. Please do not ever hesitate to ask a question or send a pull request.
+
+[Code of conduct](https://github.com/khezen/evoli/blob/master/CODE_OF_CONDUCT.md).
