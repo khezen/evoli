@@ -2,7 +2,6 @@ language: go
 go:
   - master
 install:
-  - go get -t -d -v ./...
   - go build -v ./...
 
 script:
