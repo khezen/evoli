@@ -18,7 +18,7 @@ type selecterBasedArbitrer struct {
 	Selecter
 }
 
-func (a *selecterBasedArbitrer) Abritrate(participants ...Individual) (winner Individual) {
+func (a selecterBasedArbitrer) Abritrate(participants ...Individual) (winner Individual) {
 	checkArbitrersParams(participants)
 	pop := NewPopulation(len(participants))
 	pop.Add(participants...)
@@ -28,25 +28,25 @@ func (a *selecterBasedArbitrer) Abritrate(participants ...Individual) (winner In
 
 // NewProportionalToFitnessArbitrer -  based on fitness value
 func NewProportionalToFitnessArbitrer() Arbitrer {
-	return &selecterBasedArbitrer{NewProportionalToFitnessSelecter()}
+	return selecterBasedArbitrer{NewProportionalToFitnessSelecter()}
 }
 
 // NewProportionalToRankArbitrer - based on rank
 func NewProportionalToRankArbitrer() Arbitrer {
-	return &selecterBasedArbitrer{NewProportionalToRankSelecter()}
+	return selecterBasedArbitrer{NewProportionalToRankSelecter()}
 }
 
 // NewTournamentArbitrer -  High Fitness increase chances to come out vcitorious from a duel
 func NewTournamentArbitrer() Arbitrer {
-	return &selecterBasedArbitrer{NewTournamentSelecter()}
+	return selecterBasedArbitrer{NewTournamentSelecter()}
 }
 
 // NewTruncationArbitrer - take the highest fitness
 func NewTruncationArbitrer() Arbitrer {
-	return &selecterBasedArbitrer{NewTruncationSelecter()}
+	return selecterBasedArbitrer{NewTruncationSelecter()}
 }
 
 // NewRandomArbitrer - choose randomly
 func NewRandomArbitrer() Arbitrer {
-	return &selecterBasedArbitrer{NewRandomSelecter()}
+	return selecterBasedArbitrer{NewRandomSelecter()}
 }
