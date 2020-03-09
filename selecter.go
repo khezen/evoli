@@ -22,16 +22,21 @@ func (s proportionalToFitnessSelecter) Select(pop Population, survivorsSize int)
 	if survivorsSize >= pop.Len() {
 		return pop, nil
 	}
-	newPop := pop.New(pop.Cap())
-	offset := s.computeOffset(pop)
-	totalScore := s.computeTotalScore(pop, offset)
+	var (
+		newPop     = pop.New(pop.Cap())
+		offset     = s.computeOffset(pop)
+		totalScore = s.computeTotalScore(pop, offset)
+		popLen     = pop.Len()
+		i          int
+		score      float64
+	)
 	for newPop.Len() < survivorsSize {
-		for i := 0; i < pop.Len(); i++ {
+		for i = 0; i < popLen; i++ {
 			if newPop.Len() >= survivorsSize {
 				break
 			}
 			indiv := pop.Get(i)
-			score := s.computeScore(indiv, offset)
+			score = s.computeScore(indiv, offset)
 			if totalScore == 0 || rand.Float64() <= score/totalScore {
 				pop.RemoveAt(i)
 				newPop.Add(indiv)
@@ -116,7 +121,7 @@ func (s tournamentSelecter) fightForYourLives(pop Population, index1 int, index2
 	total := r1 + r2
 
 	switch {
-	case total == 0 || rand.Float64() <= r1/total:
+	case total == 0, rand.Float64() <= r1/total:
 		return index1
 	default:
 		return index2
@@ -171,10 +176,13 @@ type randomSelecter struct{}
 
 func (s randomSelecter) Select(pop Population, survivorsSize int) (Population, error) {
 	checkSelectParams(survivorsSize)
-	newPop := pop.New(pop.Cap())
+	var (
+		newPop = pop.New(pop.Cap())
+		count  int
+	)
 	newPop.Add(pop.Slice()...)
 	size := newPop.Len() - survivorsSize
-	for count := 0; count < size; count++ {
+	for count = 0; count < size; count++ {
 		newPop.RemoveAt(rand.Intn(newPop.Len() - 1))
 	}
 	return newPop, nil
@@ -205,7 +213,7 @@ func (s proportionalToRankSelecter) Select(pop Population, survivorsSize int) (P
 			if newPop.Len() >= survivorsSize {
 				break
 			}
-			score = float64(i)
+			score = float64(popLen - i)
 			if rand.Float64() <= score/totalScore {
 				indiv := pop.Get(i)
 				pop.RemoveAt(i)
@@ -220,41 +228,4 @@ func (s proportionalToRankSelecter) Select(pop Population, survivorsSize int) (P
 // NewProportionalToRankSelecter is the constructor for selecter based on ranking across the population
 func NewProportionalToRankSelecter() Selecter {
 	return proportionalToRankSelecter{}
-}
-
-type newtonMethodSelecter struct{}
-
-func (s newtonMethodSelecter) Select(pop Population, survivorsSize int) (Population, error) {
-	checkSelectParams(survivorsSize)
-	if survivorsSize >= pop.Len() {
-		return pop, nil
-	}
-	newPop := pop.New(pop.Cap())
-	totalScore := s.computeTotalScore(pop)
-	pop.Sort()
-	for newPop.Len() < survivorsSize {
-		for i := 0; i < pop.Len(); i++ {
-			if newPop.Len() >= survivorsSize {
-				break
-			}
-			score := float64(pop.Len() - i)
-			if rand.Float64() <= score/totalScore {
-				indiv := pop.Get(i)
-				pop.RemoveAt(i)
-				newPop.Add(indiv)
-				totalScore -= score
-			}
-		}
-	}
-	return newPop, nil
-}
-
-func (s newtonMethodSelecter) computeTotalScore(pop Population) float64 {
-	n := float64(pop.Len())
-	return n * (n + 1) / 2 // 1+2+3+...+n
-}
-
-// NewNewtonMethodSelecter is the constructor for newton method selection
-func NewNewtonMethodSelecter() Selecter {
-	return newtonMethodSelecter{}
 }
