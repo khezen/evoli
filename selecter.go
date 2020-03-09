@@ -194,8 +194,8 @@ func (s proportionalToRankSelecter) Select(pop Population, survivorsSize int) (P
 	}
 	var (
 		newPop     = pop.New(pop.Cap())
-		totalScore = s.computeTotalScore(pop)
 		popLen     = pop.Len()
+		totalScore = float64(popLen * (popLen + 1) / 2) // 1+2+3+...+popLen
 		i          int
 		score      float64
 	)
@@ -215,11 +215,6 @@ func (s proportionalToRankSelecter) Select(pop Population, survivorsSize int) (P
 		}
 	}
 	return newPop, nil
-}
-
-func (s proportionalToRankSelecter) computeTotalScore(pop Population) float64 {
-	n := float64(pop.Len())
-	return n * (n + 1) / 2 // 1+2+3+...+n
 }
 
 // NewProportionalToRankSelecter is the constructor for selecter based on ranking across the population
