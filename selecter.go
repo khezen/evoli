@@ -192,15 +192,20 @@ func (s proportionalToRankSelecter) Select(pop Population, survivorsSize int) (P
 	if survivorsSize >= pop.Len() {
 		return pop, nil
 	}
-	newPop := pop.New(pop.Cap())
-	totalScore := s.computeTotalScore(pop)
+	var (
+		newPop     = pop.New(pop.Cap())
+		totalScore = s.computeTotalScore(pop)
+		popLen     = pop.Len()
+		i          int
+		score      float64
+	)
 	pop.Sort()
 	for newPop.Len() < survivorsSize {
-		for i := 0; i < pop.Len(); i++ {
+		for i = 0; i < popLen; i++ {
 			if newPop.Len() >= survivorsSize {
 				break
 			}
-			score := float64(pop.Len() - i)
+			score = float64(i)
 			if rand.Float64() <= score/totalScore {
 				indiv := pop.Get(i)
 				pop.RemoveAt(i)
