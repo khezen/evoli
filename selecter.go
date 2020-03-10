@@ -44,6 +44,7 @@ func (s proportionalToFitnessSelecter) Select(pop Population, survivorsSize int)
 			}
 		}
 	}
+	pop.Close()
 	return newPop, nil
 }
 
@@ -107,6 +108,7 @@ func (s tournamentSelecter) Select(pop Population, survivorsSize int) (Populatio
 		pop.RemoveAt(survivorIndex)
 		newPop.Add(indiv)
 	}
+	pop.Close()
 	return newPop, nil
 }
 
@@ -158,6 +160,7 @@ func (s truncationSelecter) Select(pop Population, survivorsSize int) (Populatio
 	} else {
 		newPop.Add(pop.Slice()[:survivorsSize]...)
 	}
+	pop.Close()
 	return newPop, nil
 }
 
@@ -179,6 +182,7 @@ func (s randomSelecter) Select(pop Population, survivorsSize int) (Population, e
 	for count = 0; count < size; count++ {
 		newPop.RemoveAt(rand.Intn(newPop.Len() - 1))
 	}
+	pop.Close()
 	return newPop, nil
 }
 
@@ -216,6 +220,7 @@ func (s proportionalToRankSelecter) Select(pop Population, survivorsSize int) (P
 			}
 		}
 	}
+	pop.Close()
 	return newPop, nil
 }
 
