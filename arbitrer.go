@@ -23,6 +23,7 @@ func (a selecterBasedArbitrer) Abritrate(participants ...Individual) (winner Ind
 	pop := NewPopulation(len(participants))
 	pop.Add(participants...)
 	selected, _ := a.Select(pop, 1)
+	defer selected.Close()
 	return selected.Get(0)
 }
 
