@@ -213,4 +213,5 @@ func (pop *population) checkIndex(i int) error {
 
 func (pop *population) Close() {
 	*pop = (*pop)[:0]
+	*pop = nil
 }
