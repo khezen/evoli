@@ -216,7 +216,6 @@ func (s proportionalToRankSelecter) Select(pop Population, survivorsSize int) (P
 				indiv := pop.Get(i)
 				newPop.Add(indiv)
 				pop.RemoveAt(i)
-				i--
 				popLen--
 			}
 		}
