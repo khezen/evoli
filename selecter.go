@@ -155,15 +155,12 @@ type truncationSelecter struct{}
 func (s truncationSelecter) Select(pop Population, survivorsSize int) (Population, error) {
 	checkSelectParams(survivorsSize)
 	pop.Sort()
-	individuals := pop.Slice()
-	var survivors []Individual
-	if len(individuals) < survivorsSize {
-		survivors = individuals
-	} else {
-		survivors = individuals[:survivorsSize]
-	}
 	newPop := pop.New(pop.Cap())
-	newPop.Add(survivors...)
+	if pop.Len() < survivorsSize {
+		newPop.Add(pop.Slice()...)
+	} else {
+		newPop.Add(pop.Slice()[:survivorsSize]...)
+	}
 	return newPop, nil
 }
 
