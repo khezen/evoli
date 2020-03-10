@@ -23,61 +23,33 @@ func (s proportionalToFitnessSelecter) Select(pop Population, survivorsSize int)
 		return pop, nil
 	}
 	var (
-		newPop     = pop.New(pop.Cap())
-		offset     = s.computeOffset(pop)
-		totalScore = s.computeTotalScore(pop, offset)
-		popLen     = pop.Len()
-		i          int
-		score      float64
+		newPop             = pop.New(pop.Cap())
+		minIndiv, maxIndiv = pop.Min(), pop.Max()
+		min, max           = minIndiv.Fitness(), maxIndiv.Fitness()
+		pivot              float64
+		score              float64
 	)
+	if min < 0 {
+		pivot += -min
+	} else {
+		pivot += min
+	}
+	benchmark := max + pivot
 	for newPop.Len() < survivorsSize {
-		for i = 0; i < popLen; i++ {
+		for i := 0; i < pop.Len(); i++ {
 			if newPop.Len() >= survivorsSize {
 				break
 			}
 			indiv := pop.Get(i)
-			score = s.computeScore(indiv, offset)
-			if totalScore == 0 || rand.Float64() <= score/totalScore {
-				pop.RemoveAt(i)
+			score = (indiv.Fitness() + pivot) / benchmark
+			if rand.Float64() <= 0.1+0.8*score {
 				newPop.Add(indiv)
-				totalScore -= score
+				pop.RemoveAt(i)
 			}
 		}
 	}
 	pop.Close()
 	return newPop, nil
-}
-
-func (s proportionalToFitnessSelecter) computeScore(indiv Individual, offset float64) float64 {
-	return indiv.Fitness() + offset
-}
-
-func (s proportionalToFitnessSelecter) computeTotalScore(pop Population, offset float64) float64 {
-	var length, totalScore = pop.Len(), float64(0)
-	for i := 0; i < length; i++ {
-		indiv := pop.Get(i)
-		totalScore += s.computeScore(indiv, offset)
-	}
-	return totalScore
-}
-
-func (s proportionalToFitnessSelecter) computeOffset(pop Population) float64 {
-	minIndiv, maxIndiv := pop.Min(), pop.Max()
-	min, max := minIndiv.Fitness(), maxIndiv.Fitness()
-	var offset float64
-	switch {
-	case min < 0:
-		offset += -min
-	case min > 0:
-		offset += min
-	}
-	switch {
-	case max < 0:
-		offset += -max
-	case max > 0:
-		offset += max
-	}
-	return offset
 }
 
 // NewProportionalToFitnessSelecter is the constructor for selecter based on fitness value
