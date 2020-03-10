@@ -23,6 +23,7 @@ type Population interface {
 	Each(func(item Individual) bool)
 	Slice() []Individual
 	New(cap int) Population
+	Close()
 }
 
 var (
@@ -208,4 +209,8 @@ func (pop *population) checkIndex(i int) error {
 		return ErrIndexOutOfBounds
 	}
 	return nil
+}
+
+func (pop *population) Close() {
+	*pop = (*pop)[:0]
 }

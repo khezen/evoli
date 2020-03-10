@@ -135,3 +135,9 @@ func (p *populationSync) Slice() []Individual {
 func (p *populationSync) New(cap int) Population {
 	return NewPopulationSync(cap)
 }
+
+func (p *populationSync) Close() {
+	p.Lock()
+	defer p.Unlock()
+	p.population.Close()
+}

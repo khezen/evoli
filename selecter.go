@@ -106,7 +106,6 @@ func (s tournamentSelecter) Select(pop Population, survivorsSize int) (Populatio
 		indiv := pop.Get(survivorIndex)
 		pop.RemoveAt(survivorIndex)
 		newPop.Add(indiv)
-
 	}
 	return newPop, nil
 }
@@ -114,12 +113,10 @@ func (s tournamentSelecter) Select(pop Population, survivorsSize int) (Populatio
 func (s tournamentSelecter) fightForYourLives(pop Population, index1 int, index2 int) (survivorIndex int) {
 	i1, i2 := pop.Get(index1), pop.Get(index2)
 	r1, r2 := i1.Fitness(), i2.Fitness()
-
 	offset := s.computeOffset(r1, r2)
 	r1 += offset
 	r2 += offset
 	total := r1 + r2
-
 	switch {
 	case total == 0, rand.Float64() <= r1/total:
 		return index1
