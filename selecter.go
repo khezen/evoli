@@ -220,6 +220,7 @@ func (s proportionalToRankSelecter) Select(pop Population, survivorsSize int) (P
 			}
 		}
 	}
+	pop.Close()
 	return newPop, nil
 }
 
