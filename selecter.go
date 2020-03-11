@@ -23,6 +23,7 @@ func (s proportionalToFitnessSelecter) Select(pop Population, survivorsSize int)
 		return pop, nil
 	}
 	var (
+		leftovers          = pop.New(pop.Len() - survivorsSize)
 		newPop             = pop.New(pop.Cap())
 		minIndiv, maxIndiv Individual
 		min, max           float64
@@ -30,6 +31,8 @@ func (s proportionalToFitnessSelecter) Select(pop Population, survivorsSize int)
 		score              float64
 		benchmark          float64
 	)
+	defer pop.Close()
+	defer leftovers.Close()
 	for newPop.Len() < survivorsSize {
 		minIndiv, maxIndiv = pop.Min(), pop.Max()
 		min, max = minIndiv.Fitness(), maxIndiv.Fitness()
@@ -47,11 +50,13 @@ func (s proportionalToFitnessSelecter) Select(pop Population, survivorsSize int)
 			score = (indiv.Fitness() + pivot) / benchmark
 			if rand.Float64() <= 0.1+0.8*score {
 				newPop.Add(indiv)
-				pop.RemoveAt(i)
+			} else {
+				leftovers.Add(indiv)
 			}
 		}
+		pop.Close()
+		pop = leftovers
 	}
-	pop.Close()
 	return newPop, nil
 }
 
@@ -174,11 +179,14 @@ func (s proportionalToRankSelecter) Select(pop Population, survivorsSize int) (P
 		return pop, nil
 	}
 	var (
+		leftovers  = pop.New(pop.Len() - survivorsSize)
 		newPop     = pop.New(pop.Cap())
 		totalScore float64
 		score      float64
 		popLen     = pop.Len()
 	)
+	defer pop.Close()
+	defer leftovers.Close()
 	pop.Sort()
 	for newPop.Len() < survivorsSize {
 		totalScore = float64(popLen*(popLen+1)) / 2
@@ -186,16 +194,18 @@ func (s proportionalToRankSelecter) Select(pop Population, survivorsSize int) (P
 			if newPop.Len() >= survivorsSize {
 				break
 			}
+			indiv := pop.Get(i)
 			score = float64((popLen-i)*((popLen-i)+1)) / 2
 			if rand.Float64() <= 0.1+0.8*score/totalScore {
-				indiv := pop.Get(i)
 				newPop.Add(indiv)
-				pop.RemoveAt(i)
 				popLen--
+			} else {
+				leftovers.Add(indiv)
 			}
 		}
+		pop.Close()
+		pop = leftovers
 	}
-	pop.Close()
 	return newPop, nil
 }
 
