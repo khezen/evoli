@@ -24,18 +24,21 @@ func (s proportionalToFitnessSelecter) Select(pop Population, survivorsSize int)
 	}
 	var (
 		newPop             = pop.New(pop.Cap())
-		minIndiv, maxIndiv = pop.Min(), pop.Max()
-		min, max           = minIndiv.Fitness(), maxIndiv.Fitness()
+		minIndiv, maxIndiv Individual
+		min, max           float64
 		pivot              float64
 		score              float64
+		benchmark          float64
 	)
-	if min < 0 {
-		pivot += -min
-	} else {
-		pivot += min
-	}
-	benchmark := max + pivot
 	for newPop.Len() < survivorsSize {
+		minIndiv, maxIndiv = pop.Min(), pop.Max()
+		min, max = minIndiv.Fitness(), maxIndiv.Fitness()
+		if min < 0 {
+			pivot += -min
+		} else {
+			pivot += min
+		}
+		benchmark = max + pivot
 		for i := 0; i < pop.Len(); i++ {
 			if newPop.Len() >= survivorsSize {
 				break
