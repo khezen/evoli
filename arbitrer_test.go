@@ -36,7 +36,7 @@ func testArbitrer(t *testing.T, a Arbitrer) {
 		{[]Individual{i3, i6}},
 	}
 	for _, c := range cases {
-		indiv := a.Abritrate(c.in...)
+		indiv, _ := a.Abritrate(c.in...)
 		ok := false
 		for _, inIndiv := range c.in {
 			if indiv == inIndiv {

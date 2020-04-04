@@ -5,7 +5,7 @@ var ErrArbitration = "ErrArbitration - must provide one or more individuals"
 
 // Arbitrer - elect the winner between multiple participants
 type Arbitrer interface {
-	Abritrate(participants ...Individual) (winner Individual)
+	Abritrate(participants ...Individual) (winner Individual, loosers []Individual)
 }
 
 func checkArbitrersParams(participants []Individual) {
@@ -18,13 +18,17 @@ type selecterBasedArbitrer struct {
 	Selecter
 }
 
-func (a selecterBasedArbitrer) Abritrate(participants ...Individual) (winner Individual) {
+func (a selecterBasedArbitrer) Abritrate(participants ...Individual) (winner Individual, loosers []Individual) {
 	checkArbitrersParams(participants)
 	pop := NewPopulation(len(participants))
 	pop.Add(participants...)
-	selected, _ := a.Select(pop, 1)
+	selected, deads, _ := a.Select(pop, 1)
+	var deadsSlice []Individual
+	if deads != nil {
+		deadsSlice = deads.Slice()
+	}
 	defer selected.Close()
-	return selected.Get(0)
+	return selected.Get(0), deadsSlice
 }
 
 // NewProportionalToFitnessArbitrer -  based on fitness value

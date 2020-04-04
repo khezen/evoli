@@ -56,14 +56,13 @@ func TestNewGenetic(t *testing.T) {
 // To be completed
 func TestGeneticNext(t *testing.T) {
 	i1, i2, i3, i4, i5, i6 := NewIndividual(1), NewIndividual(-2), NewIndividual(3), NewIndividual(4), NewIndividual(5), NewIndividual(6)
-	pop := population{i1, i2, i3, i4, i5, i6}
-	cpy := NewPopulation(pop.Cap())
-	cpy.Add(pop...)
+	pop1 := population{i1, i2, i3, i4, i5, i6}
+	pop2 := population{i1, i2, i3, i4, i5, i6}
 	cases := []struct {
 		genetic Evolution
 	}{
-		{NewGenetic(&pop, NewTruncationSelecter(), 5, crosserMock{}, mutaterMock{}, 1, evaluaterMock{})},
-		{NewGeneticSync(&pop, NewTruncationSelecter(), 5, crosserMock{}, mutaterMock{}, 1, evaluaterMock{})},
+		{NewGenetic(&pop1, NewTruncationSelecter(), 5, crosserMock{}, mutaterMock{}, 1, evaluaterMock{})},
+		{NewGeneticSync(&pop2, NewTruncationSelecter(), 5, crosserMock{}, mutaterMock{}, 1, evaluaterMock{})},
 	}
 	for _, c := range cases {
 		c.genetic.Next()

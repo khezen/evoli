@@ -39,7 +39,7 @@ func testSelecter(t *testing.T, s Selecter) {
 		{population{i3, i6}, 1, 1, 2},
 	}
 	for _, c := range cases {
-		newPop, _ := s.Select(&c.in, c.survivalSize)
+		newPop, _, _ := s.Select(&c.in, c.survivalSize)
 		length, capacity := newPop.Len(), newPop.Cap()
 		if length != c.expectedLen {
 			t.Errorf("s.Select(%v, %v) returned %v which has a length of %v instead of %v", c.in, c.survivalSize, newPop, length, c.expectedLen)

@@ -6,7 +6,7 @@ import (
 
 // Selecter is the selecter operator interface
 type Selecter interface {
-	Select(pop Population, survivorsSize int) (Population, error)
+	Select(pop Population, survivorsSize int) (survivors Population, deads Population, err error)
 }
 
 func checkSelectParams(survivorsSize int) {
@@ -17,10 +17,10 @@ func checkSelectParams(survivorsSize int) {
 
 type proportionalToFitnessSelecter struct{}
 
-func (s proportionalToFitnessSelecter) Select(pop Population, survivorsSize int) (Population, error) {
+func (s proportionalToFitnessSelecter) Select(pop Population, survivorsSize int) (survivors, deads Population, err error) {
 	checkSelectParams(survivorsSize)
 	if survivorsSize >= pop.Len() {
-		return pop, nil
+		return pop, nil, nil
 	}
 	var (
 		leftovers          Population
@@ -61,8 +61,7 @@ func (s proportionalToFitnessSelecter) Select(pop Population, survivorsSize int)
 		pop.Close()
 		pop = leftovers
 	}
-	pop.Close()
-	return newPop, nil
+	return newPop, pop, nil
 }
 
 // NewProportionalToFitnessSelecter is the constructor for selecter based on fitness value
@@ -72,10 +71,10 @@ func NewProportionalToFitnessSelecter() Selecter {
 
 type tournamentSelecter struct{}
 
-func (s tournamentSelecter) Select(pop Population, survivorsSize int) (Population, error) {
+func (s tournamentSelecter) Select(pop Population, survivorsSize int) (survivors, deads Population, err error) {
 	checkSelectParams(survivorsSize)
 	if survivorsSize >= pop.Len() {
-		return pop, nil
+		return pop, nil, nil
 	}
 	newPop := pop.New(pop.Cap())
 	for newPop.Len() < survivorsSize {
@@ -93,8 +92,7 @@ func (s tournamentSelecter) Select(pop Population, survivorsSize int) (Populatio
 		pop.RemoveAt(survivorIndex)
 		newPop.Add(indiv)
 	}
-	pop.Close()
-	return newPop, nil
+	return newPop, pop, nil
 }
 
 func (s tournamentSelecter) fightForYourLives(pop Population, index1 int, index2 int) (survivorIndex int) {
@@ -136,17 +134,18 @@ func NewTournamentSelecter() Selecter {
 
 type truncationSelecter struct{}
 
-func (s truncationSelecter) Select(pop Population, survivorsSize int) (Population, error) {
+func (s truncationSelecter) Select(pop Population, survivorsSize int) (survivors, deads Population, err error) {
 	checkSelectParams(survivorsSize)
-	pop.Sort()
-	newPop := pop.New(pop.Cap())
-	if pop.Len() < survivorsSize {
-		newPop.Add(pop.Slice()...)
-	} else {
-		newPop.Add(pop.Slice()[:survivorsSize]...)
+	if pop.Len() <= survivorsSize {
+		return pop, nil, nil
 	}
+	pop.Sort()
+	survivors = pop.New(pop.Cap())
+	deads = pop.New(pop.Cap() - survivorsSize)
+	survivors.Add(pop.Slice()[:survivorsSize]...)
+	deads.Add(pop.Slice()[survivorsSize:]...)
 	pop.Close()
-	return newPop, nil
+	return survivors, deads, nil
 }
 
 // NewTruncationSelecter is the constructor for truncation selecter
@@ -156,19 +155,26 @@ func NewTruncationSelecter() Selecter {
 
 type randomSelecter struct{}
 
-func (s randomSelecter) Select(pop Population, survivorsSize int) (Population, error) {
+func (s randomSelecter) Select(pop Population, survivorsSize int) (survivors, deads Population, err error) {
 	checkSelectParams(survivorsSize)
+	if pop.Len() <= survivorsSize {
+		return pop, nil, nil
+	}
 	var (
-		newPop = pop.New(pop.Cap())
-		count  int
+		deathCount = pop.Cap() - survivorsSize
+		count      int
+		deadIndex  int
 	)
-	newPop.Add(pop.Slice()...)
-	size := newPop.Len() - survivorsSize
-	for count = 0; count < size; count++ {
-		newPop.RemoveAt(rand.Intn(newPop.Len() - 1))
+	survivors = pop.New(pop.Cap())
+	deads = pop.New(deathCount)
+	survivors.Add(pop.Slice()...)
+	for count = 0; count < deathCount; count++ {
+		deadIndex = rand.Intn(survivors.Len() - 1)
+		deads.Add(survivors.Get(deadIndex))
+		survivors.RemoveAt(deadIndex)
 	}
 	pop.Close()
-	return newPop, nil
+	return survivors, deads, nil
 }
 
 // NewRandomSelecter is the constructor for random selecter
@@ -178,10 +184,10 @@ func NewRandomSelecter() Selecter {
 
 type proportionalToRankSelecter struct{}
 
-func (s proportionalToRankSelecter) Select(pop Population, survivorsSize int) (Population, error) {
+func (s proportionalToRankSelecter) Select(pop Population, survivorsSize int) (survivors, deads Population, err error) {
 	checkSelectParams(survivorsSize)
 	if survivorsSize >= pop.Len() {
-		return pop, nil
+		return pop, nil, nil
 	}
 	var (
 		leftovers Population
@@ -215,8 +221,7 @@ func (s proportionalToRankSelecter) Select(pop Population, survivorsSize int) (P
 		pop.Close()
 		pop = leftovers
 	}
-	pop.Close()
-	return newPop, nil
+	return newPop, pop, nil
 }
 
 // NewProportionalToRankSelecter is the constructor for selecter based on ranking across the population

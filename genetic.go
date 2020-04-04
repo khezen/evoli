@@ -40,9 +40,12 @@ func (g *genetic) Next() error {
 	if err != nil {
 		return err
 	}
-	survivors, err := g.selecter.Select(g.pop, g.SurvivorSize)
+	survivors, deads, err := g.selecter.Select(g.pop, g.SurvivorSize)
 	if err != nil {
 		return err
+	}
+	if deads != nil {
+		deads.Close()
 	}
 	newBorns, err := g.crossovers(survivors)
 	if err != nil {
