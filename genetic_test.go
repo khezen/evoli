@@ -65,6 +65,9 @@ func TestGeneticNext(t *testing.T) {
 		{NewGeneticSync(&pop2, NewTruncationSelecter(), 5, crosserMock{}, mutaterMock{}, 1, evaluaterMock{})},
 	}
 	for _, c := range cases {
-		c.genetic.Next()
+		err := c.genetic.Next()
+		if err != nil {
+			t.Error(err)
+		}
 	}
 }

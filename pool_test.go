@@ -183,7 +183,10 @@ func TestPoolNext(t *testing.T) {
 			gen := NewGenetic(pop, NewTruncationSelecter(), 2, crosserMock{}, mutaterMock{}, 0.05, evaluaterMock{})
 			c.pool.Add(gen)
 		}
-		c.pool.Next()
+		err := c.pool.Next()
+		if err != nil {
+			t.Error(err)
+		}
 		populations := c.pool.Populations()
 		for _, pop := range populations {
 			if pop.Len() != 6 {
@@ -232,7 +235,10 @@ func TestPoolNextAsync(t *testing.T) {
 			gen := NewGenetic(pop, NewTruncationSelecter(), 2, crosserMock{}, mutaterMock{}, 0.05, evaluaterMock{})
 			c.pool.Add(gen)
 		}
-		c.pool.NextAsync()
+		err := c.pool.NextAsync()
+		if err != nil {
+			t.Error(err)
+		}
 		populations := c.pool.Populations()
 		for _, pop := range populations {
 			if pop.Len() != 6 {
