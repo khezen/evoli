@@ -90,7 +90,7 @@ func (pop *population) SetCap(newCap int) {
 		switch {
 		case newCap < currentCap:
 			tmp = (*pop)[0:newCap]
-			*pop = make([]Individual, newCap, newCap)
+			*pop = make([]Individual, newCap)
 		case newCap > currentCap:
 			*pop = make([]Individual, pop.Len(), newCap)
 		}

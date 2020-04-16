@@ -33,8 +33,7 @@ func TestNewPopulationSync(t *testing.T) {
 		{7, 7},
 	}
 	for _, c := range cases {
-		var got Population
-		got = NewPopulationSync(c.in)
+		got := NewPopulationSync(c.in)
 		if got.Cap() != c.expected {
 			t.Errorf("expected  %v", c.expected)
 		}

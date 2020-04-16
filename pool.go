@@ -39,7 +39,6 @@ func (p *pool) Add(e Evolution) {
 	switch p.evaluater {
 	case nil:
 		p.evaluater = e.Evaluater()
-		break
 	case e.Evaluater():
 		break
 	default:
