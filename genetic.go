@@ -61,51 +61,90 @@ func (g *genetic) Next() error {
 }
 
 func (g *genetic) evaluation(pop Population) error {
-	length := pop.Len()
+	var (
+		length     = pop.Len()
+		wg         = sync.WaitGroup{}
+		bubbledErr error
+	)
 	for i := 0; i < length; i++ {
-		individual := pop.Get(i)
-		fitness, err := g.evaluater.Evaluate(individual)
-		if err != nil {
-			return err
-		}
-		individual.SetFitness(fitness)
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			individual := pop.Get(i)
+			fitness, err := g.evaluater.Evaluate(individual)
+			if err != nil {
+				bubbledErr = err
+				return
+			}
+			individual.SetFitness(fitness)
+		}(i)
+	}
+	wg.Wait()
+	if bubbledErr != nil {
+		return bubbledErr
 	}
 	return nil
 }
 
 func (g *genetic) crossovers(pop Population) (Population, error) {
-	newBorns := NewPopulation(pop.Cap() - pop.Len())
-	capacity := newBorns.Cap()
-	for newBorns.Len() < capacity {
-		var i, j = rand.Intn(pop.Len()), rand.Intn(pop.Len())
-		if i == j {
-			switch i {
-			case pop.Len() - 1:
-				j = i - 1
-			default:
-				j = i + 1
+	var (
+		newBorns   = NewPopulation(pop.Cap() - pop.Len())
+		capacity   = newBorns.Cap()
+		wg         = sync.WaitGroup{}
+		bubbledErr error
+	)
+	for index := 0; index < capacity; index++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			var i, j = rand.Intn(pop.Len()), rand.Intn(pop.Len())
+			if i == j {
+				switch i {
+				case pop.Len() - 1:
+					j = i - 1
+				default:
+					j = i + 1
+				}
 			}
-		}
-		indiv1, indiv2 := pop.Get(i), pop.Get(j)
-		newBorn, err := g.crosser.Cross(indiv1, indiv2)
-		if err != nil {
-			return nil, err
-		}
-		newBorns.Add(newBorn)
+			indiv1, indiv2 := pop.Get(i), pop.Get(j)
+			newBorn, err := g.crosser.Cross(indiv1, indiv2)
+			if err != nil {
+				bubbledErr = err
+				return
+			}
+			newBorns.Add(newBorn)
+		}()
+	}
+	wg.Wait()
+	if bubbledErr != nil {
+		return nil, bubbledErr
 	}
 	return newBorns, nil
 }
 
 func (g *genetic) mutations(pop Population) (Population, error) {
+	var (
+		wg         = sync.WaitGroup{}
+		bubbledErr error
+	)
 	for i := 0; i < pop.Len(); i++ {
-		if rand.Float64() <= g.MutationProbability {
-			indiv := pop.Get(i)
-			mutant, err := g.mutater.Mutate(indiv)
-			if err != nil {
-				return nil, err
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			if rand.Float64() <= g.MutationProbability {
+				indiv := pop.Get(i)
+				mutant, err := g.mutater.Mutate(indiv)
+				if err != nil {
+					bubbledErr = err
+					return
+				}
+				pop.Replace(i, mutant)
 			}
-			pop.Replace(i, mutant)
-		}
+		}(i)
+	}
+	wg.Wait()
+	if bubbledErr != nil {
+		return nil, bubbledErr
 	}
 	return pop, nil
 }
