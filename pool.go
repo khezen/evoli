@@ -107,29 +107,24 @@ func (p *pool) Alpha() Individual {
 }
 
 func (p *pool) Shuffle() {
-	individualsCap := 0
-	prevPopulations := make([]Population, 0, len(p.evolutions))
+	tmpPopulations := make([]Population, 0, len(p.evolutions))
 	nextPopulations := make([]Population, 0, len(p.evolutions))
 	for _, e := range p.evolutions {
 		pop := e.Population()
 		capacity := pop.Cap()
-		individualsCap += capacity
 		newPop := pop.New(capacity)
-		prevPopulations = append(prevPopulations, newPop)
+		tmpPopulations = append(tmpPopulations, newPop)
 	}
-	individuals := make([]Individual, 0, individualsCap)
-	for _, e := range p.evolutions {
-		individuals = append(individuals, e.Population().Slice()...)
-	}
+	individuals := p.Individuals()
 	for _, indiv := range individuals {
-		prevPopulationsLen := len(prevPopulations)
-		i := rand.Intn(prevPopulationsLen)
-		prevPopulations[i].Add(indiv)
-		if prevPopulations[i].Len() == prevPopulations[i].Cap() {
-			nextPopulations = append(nextPopulations, prevPopulations[i])
-			prevPopulations[i] = prevPopulations[prevPopulationsLen-1]
-			prevPopulations[prevPopulationsLen-1] = nil
-			prevPopulations = prevPopulations[:prevPopulationsLen-1]
+		tmpPopulationsLen := len(tmpPopulations)
+		i := rand.Intn(tmpPopulationsLen)
+		tmpPopulations[i].Add(indiv)
+		if tmpPopulations[i].Len() == tmpPopulations[i].Cap() {
+			nextPopulations = append(nextPopulations, tmpPopulations[i])
+			tmpPopulations[i] = tmpPopulations[tmpPopulationsLen-1]
+			tmpPopulations[tmpPopulationsLen-1] = nil
+			tmpPopulations = tmpPopulations[:tmpPopulationsLen-1]
 		}
 	}
 	for i := range p.evolutions {

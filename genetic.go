@@ -89,6 +89,7 @@ func (g *genetic) evaluation(pop Population) error {
 func (g *genetic) crossovers(pop Population) (Population, error) {
 	var (
 		newBorns   = NewPopulation(pop.Cap() - pop.Len())
+		mut        sync.Mutex
 		capacity   = newBorns.Cap()
 		wg         = sync.WaitGroup{}
 		bubbledErr error
@@ -112,7 +113,9 @@ func (g *genetic) crossovers(pop Population) (Population, error) {
 				bubbledErr = err
 				return
 			}
+			mut.Lock()
 			newBorns.Add(newBorn)
+			mut.Unlock()
 		}()
 	}
 	wg.Wait()
