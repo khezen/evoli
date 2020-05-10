@@ -46,10 +46,11 @@ func (s proportionalToFitnessSelecter) Select(pop Population, survivorsSize int)
 		penalty = 0
 		penaltyStep = benchmark / float64(pop.Len())
 		for i := 0; i < pop.Len(); i++ {
-			if newPop.Len() >= survivorsSize {
-				break
-			}
 			indiv := pop.Get(i)
+			if newPop.Len() >= survivorsSize {
+				leftovers.Add(indiv)
+				continue
+			}
 			score = (indiv.Fitness() + pivot - penalty) / benchmark
 			if rand.Float64() <= 0.1+0.8*score {
 				newPop.Add(indiv)
@@ -205,10 +206,11 @@ func (s proportionalToRankSelecter) Select(pop Population, survivorsSize int) (s
 		penalty = 0
 		benchmark = float64(popLen*(popLen+1)) / 2
 		for i := 0; i < popLen; i++ {
-			if newPop.Len() >= survivorsSize {
-				break
-			}
 			indiv := pop.Get(i)
+			if newPop.Len() >= survivorsSize {
+				leftovers.Add(indiv)
+				continue
+			}
 			n = float64(popLen - i - penalty)
 			score = n * (n + 1) / 2
 			if rand.Float64() <= 0.25+0.5*score/benchmark {
