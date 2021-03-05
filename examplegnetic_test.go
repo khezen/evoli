@@ -49,13 +49,17 @@ func (m HMutater) Mutate(indiv evoli.Individual) (evoli.Individual, error) {
 type HCrosser struct {
 }
 
-func (h HCrosser) Cross(indiv1, indiv2 evoli.Individual) (evoli.Individual, error) {
-	fIndiv1, _ := indiv1.(*HIndividual)
-	fIndiv2, _ := indiv2.(*HIndividual)
+func (h HCrosser) Cross(parent1, parent2 evoli.Individual) (child1, child2 evoli.Individual, err error) {
+	fIndiv1, _ := parent1.(*HIndividual)
+	fIndiv2, _ := parent2.(*HIndividual)
+	w := 0.1 + 0.8*rand.Float64()
 	return &HIndividual{
-		x: []float64{(fIndiv1.x[0] + fIndiv2.x[0]) / 2, (fIndiv1.x[1] + fIndiv2.x[1]) / 2},
-		v: []float64{(fIndiv1.v[0] + fIndiv2.v[0]) / 2, (fIndiv1.v[1] + fIndiv2.v[1]) / 2},
-	}, nil
+			x: []float64{w*fIndiv1.x[0] + (1-w)*fIndiv2.x[0], w*fIndiv1.x[1] + (1-w)*fIndiv2.x[1]},
+			v: []float64{w*fIndiv1.v[0] + (1-w)*fIndiv2.v[0], w*fIndiv1.v[1] + (1-w)*fIndiv2.v[1]},
+		}, &HIndividual{
+			x: []float64{(1-w)*fIndiv1.x[0] + w*fIndiv2.x[0], (1-w)*fIndiv1.x[1] + w*fIndiv2.x[1]},
+			v: []float64{(1-w)*fIndiv1.v[0] + w*fIndiv2.v[0], (1-w)*fIndiv1.v[1] + w*fIndiv2.v[1]},
+		}, nil
 }
 
 type HEvaluater struct {

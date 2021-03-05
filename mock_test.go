@@ -1,10 +1,15 @@
 package evoli
 
+import "math/rand"
+
 type crosserMock struct {
 }
 
-func (c crosserMock) Cross(individual1, individual2 Individual) (Individual, error) {
-	return NewIndividual((individual1.Fitness() + individual2.Fitness()) / 2), nil
+func (c crosserMock) Cross(parent1, parent2 Individual) (child1, child2 Individual, err error) {
+	w := 0.1 + 0.8*rand.Float64()
+	return NewIndividual(w*parent1.Fitness() + (1-w)*parent2.Fitness()),
+		NewIndividual((1-w)*parent1.Fitness() + w*parent2.Fitness()),
+		nil
 }
 
 type evaluaterMock struct {
