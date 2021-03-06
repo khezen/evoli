@@ -47,15 +47,15 @@ func (g *genetic) Next() error {
 	if deads != nil {
 		deads.Close()
 	}
-	newBorns, err := g.crossovers(survivors)
+	offsprings, err := g.crossovers(survivors)
 	if err != nil {
 		return err
 	}
-	newBorns, err = g.mutations(newBorns)
+	offsprings, err = g.mutations(offsprings)
 	if err != nil {
 		return err
 	}
-	survivors.Add(newBorns.Slice()...)
+	survivors.Add(offsprings.Slice()...)
 	g.pop = survivors
 	return nil
 }
@@ -88,15 +88,15 @@ func (g *genetic) evaluation(pop Population) error {
 
 func (g *genetic) crossovers(pop Population) (Population, error) {
 	var (
-		newBorns   = NewPopulation(pop.Cap() - pop.Len())
+		capacity   = pop.Cap() - pop.Len()
+		offsprings = NewPopulation(capacity)
 		mut        sync.Mutex
-		capacity   = newBorns.Cap()
 		wg         = sync.WaitGroup{}
 		bubbledErr error
 	)
-	for index := 0; index < capacity; index++ {
+	for index := 0; index < capacity; index += 2 {
 		wg.Add(1)
-		go func() {
+		go func(index int) {
 			defer wg.Done()
 			var i, j = rand.Intn(pop.Len()), rand.Intn(pop.Len())
 			if i == j {
@@ -108,21 +108,24 @@ func (g *genetic) crossovers(pop Population) (Population, error) {
 				}
 			}
 			indiv1, indiv2 := pop.Get(i), pop.Get(j)
-			newBorn, err := g.crosser.Cross(indiv1, indiv2)
+			child1, child2, err := g.crosser.Cross(indiv1, indiv2)
 			if err != nil {
 				bubbledErr = err
 				return
 			}
 			mut.Lock()
-			newBorns.Add(newBorn)
+			offsprings.Add(child1)
+			if index+1 < capacity {
+				offsprings.Add(child2)
+			}
 			mut.Unlock()
-		}()
+		}(index)
 	}
 	wg.Wait()
 	if bubbledErr != nil {
 		return nil, bubbledErr
 	}
-	return newBorns, nil
+	return offsprings, nil
 }
 
 func (g *genetic) mutations(pop Population) (Population, error) {
