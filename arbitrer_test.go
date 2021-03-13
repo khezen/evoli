@@ -9,7 +9,7 @@ func TestArbitrerTruncation(t *testing.T) {
 }
 
 func TestArbitrerTournament(t *testing.T) {
-	testArbitrer(t, NewTournamentArbitrer())
+	testArbitrer(t, NewTournamentArbitrer(1))
 }
 
 func TestArbitrerRandom(t *testing.T) {

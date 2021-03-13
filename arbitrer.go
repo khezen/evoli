@@ -41,9 +41,14 @@ func NewProportionalToRankArbitrer() Arbitrer {
 	return selecterBasedArbitrer{NewProportionalToRankSelecter()}
 }
 
+// NewStochasticUniversalSamplingArbitrer -  based on fitness value
+func NewStochasticUniversalSamplingArbitrer() Arbitrer {
+	return selecterBasedArbitrer{NewStochasticUniversalSamplingSelecter()}
+}
+
 // NewTournamentArbitrer -  High Fitness increase chances to come out vcitorious from a duel
-func NewTournamentArbitrer() Arbitrer {
-	return selecterBasedArbitrer{NewTournamentSelecter()}
+func NewTournamentArbitrer(p float64) Arbitrer {
+	return selecterBasedArbitrer{NewTournamentSelecter(p)}
 }
 
 // NewTruncationArbitrer - take the highest fitness

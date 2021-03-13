@@ -70,67 +70,102 @@ func NewProportionalToFitnessSelecter() Selecter {
 	return proportionalToFitnessSelecter{}
 }
 
-type tournamentSelecter struct{}
+type stochasticUniversalSampling struct{}
+
+func (s stochasticUniversalSampling) Select(pop Population, survivorsSize int) (survivors, deads Population, err error) {
+	checkSelectParams(survivorsSize)
+	if survivorsSize >= pop.Len() {
+		return pop, nil, nil
+	}
+	survivors = pop.New(pop.Cap())
+	deads = pop.New(pop.Cap() - survivorsSize)
+	var (
+		minIndiv = pop.Min()
+		minFit   = minIndiv.Fitness()
+		offset   float64
+		totalFit float64
+	)
+	if minFit < 0 {
+		offset += minFit
+	}
+	pop.Each(func(indiv Individual) bool {
+		totalFit += indiv.Fitness() + offset
+		return true
+	})
+	step := totalFit / float64(survivorsSize)
+	start := rand.Float64() * step
+	milestones := make([]float64, 0, survivorsSize)
+	for i := 0; i < survivorsSize; i++ {
+		milestones = append(milestones, start+float64(i)*step)
+	}
+	var (
+		survivorIndex int
+		fitSum        float64
+		indiv         Individual
+		resume        bool
+	)
+	pop.Sort()
+	for _, milestone := range milestones {
+		resume = true
+		for resume {
+			indiv = pop.Get(0)
+			fitSum += indiv.Fitness() + offset
+			resume = fitSum < milestone
+			if !resume {
+				survivors.Add(indiv)
+			} else {
+				deads.Add(indiv)
+			}
+			survivorIndex++
+		}
+	}
+	pop.Close()
+	return survivors, deads, nil
+}
+
+// NewStochasticUniversalSamplingSelecter is the constructor for selecter based on fitness value
+func NewStochasticUniversalSamplingSelecter() Selecter {
+	return proportionalToFitnessSelecter{}
+}
+
+type tournamentSelecter struct {
+	p float64
+}
 
 func (s tournamentSelecter) Select(pop Population, survivorsSize int) (survivors, deads Population, err error) {
 	checkSelectParams(survivorsSize)
 	if survivorsSize >= pop.Len() {
 		return pop, nil, nil
 	}
-	newPop := pop.New(pop.Cap())
-	for newPop.Len() < survivorsSize {
-		var i, j = rand.Intn(pop.Len()), rand.Intn(pop.Len())
-		if i == j {
-			switch i {
-			case pop.Len() - 1:
-				j = i - 1
-			default:
-				j = i + 1
+	survivors = pop.New(pop.Cap())
+	var leftovers Population
+	var popLen int
+	pop.Sort()
+	for survivors.Len() < survivorsSize {
+		popLen = pop.Len()
+		leftovers = pop.New(pop.Cap() - survivorsSize + survivors.Len())
+		for i := 0; i < popLen; i++ {
+			indiv := pop.Get(i)
+			if survivors.Len() >= survivorsSize {
+				leftovers.Add(indiv)
+				continue
+			}
+			draw := rand.Float64()
+			if draw <= s.p {
+				survivors.Add(indiv)
+			} else {
+				leftovers.Add(indiv)
 			}
 		}
-		survivorIndex := s.fightForYourLives(pop, i, j)
-		indiv := pop.Get(survivorIndex)
-		pop.RemoveAt(survivorIndex)
-		newPop.Add(indiv)
+		pop.Close()
+		pop = leftovers
 	}
-	return newPop, pop, nil
+	return survivors, pop, nil
 }
 
-func (s tournamentSelecter) fightForYourLives(pop Population, index1 int, index2 int) (survivorIndex int) {
-	i1, i2 := pop.Get(index1), pop.Get(index2)
-	r1, r2 := i1.Fitness(), i2.Fitness()
-	offset := s.computeOffset(r1, r2)
-	r1 += offset
-	r2 += offset
-	total := r1 + r2
-	switch {
-	case total == 0, rand.Float64() <= r1/total:
-		return index1
-	default:
-		return index2
-	}
-}
-
-func (s tournamentSelecter) computeOffset(r1, r2 float64) float64 {
-	var offset float64
-	switch {
-	case r1 < 0:
-		offset += -r1
-	case r1 > 0:
-		offset += r1
-	}
-	switch {
-	case r2 < 0:
-		offset += -r2
-	case r2 > 0:
-		offset += r2
-	}
-	return offset
-}
-
-// NewTournamentSelecter is the constructor for tournament selecter. High Fitness increase chances to come out vitorious from a duel
-func NewTournamentSelecter() Selecter {
-	return tournamentSelecter{}
+// NewTournamentSelecter is the constructor for tournament selecter. High rank increase chances to be selected
+func NewTournamentSelecter(p float64) Selecter {
+	return tournamentSelecter{p}
 }
 
 type truncationSelecter struct{}
