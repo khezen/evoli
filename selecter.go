@@ -86,7 +86,7 @@ func (s stochasticUniversalSampling) Select(pop Population, survivorsSize int) (
 		totalFit float64
 	)
 	if minFit < 0 {
-		offset += minFit
+		offset = -minFit
 	}
 	pop.Each(func(indiv Individual) bool {
 		totalFit += indiv.Fitness() + offset
@@ -99,24 +99,24 @@ func (s stochasticUniversalSampling) Select(pop Population, survivorsSize int) (
 		milestones = append(milestones, start+float64(i)*step)
 	}
 	var (
-		survivorIndex int
-		fitSum        float64
-		indiv         Individual
-		resume        bool
+		fitSum     float64
+		indiv      Individual
+		isSelected bool
+		i          int
 	)
 	pop.Sort()
 	for _, milestone := range milestones {
-		resume = true
-		for resume {
-			indiv = pop.Get(0)
+		isSelected = false
+		for !isSelected {
+			indiv = pop.Get(i)
 			fitSum += indiv.Fitness() + offset
-			resume = fitSum < milestone
-			if !resume {
+			isSelected = fitSum >= milestone
+			if isSelected {
 				survivors.Add(indiv)
 			} else {
 				deads.Add(indiv)
 			}
-			survivorIndex++
+			i++
 		}
 	}
 	pop.Close()
@@ -125,7 +125,7 @@ func (s stochasticUniversalSampling) Select(pop Population, survivorsSize int) (
 
 // NewStochasticUniversalSamplingSelecter is the constructor for selecter based on fitness value
 func NewStochasticUniversalSamplingSelecter() Selecter {
-	return proportionalToFitnessSelecter{}
+	return stochasticUniversalSampling{}
 }
 
 type tournamentSelecter struct {
