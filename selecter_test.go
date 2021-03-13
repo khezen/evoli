@@ -9,7 +9,7 @@ func TestSelecterTruncation(t *testing.T) {
 }
 
 func TestSelecterTournament(t *testing.T) {
-	testSelecter(t, NewTournamentSelecter())
+	testSelecter(t, NewTournamentSelecter(1))
 }
 
 func TestSelecterRandom(t *testing.T) {
