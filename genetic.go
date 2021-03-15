@@ -137,15 +137,13 @@ func (g *genetic) mutations(pop Population) (Population, error) {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
-			if rand.Float64() <= g.MutationProbability {
-				indiv := pop.Get(i)
-				mutant, err := g.mutater.Mutate(indiv)
-				if err != nil {
-					bubbledErr = err
-					return
-				}
-				pop.Replace(i, mutant)
+			indiv := pop.Get(i)
+			mutant, err := g.mutater.Mutate(indiv, g.MutationProbability)
+			if err != nil {
+				bubbledErr = err
+				return
 			}
+			pop.Replace(i, mutant)
 		}(i)
 	}
 	wg.Wait()

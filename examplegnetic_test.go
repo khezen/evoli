@@ -35,15 +35,20 @@ func (i *HIndividual) SetFitness(newFitness float64) {
 type HMutater struct {
 }
 
-func (m HMutater) Mutate(indiv evoli.Individual) (evoli.Individual, error) {
-	x := rand.Float64()*20 - 10
-	y := rand.Float64()*20 - 10
-	vx := rand.Float64()*20 - 10
-	vy := rand.Float64()*20 - 10
-	return &HIndividual{
-		x: []float64{x, y},
-		v: []float64{vx, vy},
-	}, nil
+func (m HMutater) Mutate(indiv evoli.Individual, p float64) (evoli.Individual, error) {
+	if rand.Float64() <= p {
+		x := rand.Float64()*20 - 10
+		y := rand.Float64()*20 - 10
+		vx := rand.Float64()*20 - 10
+		vy := rand.Float64()*20 - 10
+		return &HIndividual{
+			x: []float64{x, y},
+			v: []float64{vx, vy},
+		}, nil
+	} else {
+		return indiv, nil
+	}
+
 }
 
 type HCrosser struct {
