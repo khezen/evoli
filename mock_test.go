@@ -22,7 +22,7 @@ func (e evaluaterMock) Evaluate(individual Individual) (Fitness float64, err err
 type mutaterMock struct {
 }
 
-func (m mutaterMock) Mutate(individual Individual) (Individual, error) {
+func (m mutaterMock) Mutate(individual Individual, p float64) (Individual, error) {
 	return individual, nil
 }
 
