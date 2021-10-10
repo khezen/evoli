@@ -173,10 +173,26 @@ type HMutater struct {
 }
 
 func (m *HMutater) Mutate(indiv evoli.Individual, mutationProbability float64) (evoli.Individual, error) {
-	x := rand.Float64()*20 - 10
-	y := rand.Float64()*20 - 10
-	vx := rand.Float64()*20 - 10
-	vy := rand.Float64()*20 - 10
+	hIndiv1, ok := indiv.(*HIndividual)
+	if !ok {
+		return nil, fmt.Errorf("invalid individual type")
+	}
+	x := hIndiv1.x[0]
+	y := hIndiv1.x[1]
+	vx := hIndiv1.v[0]
+	vy := hIndiv1.v[1]
+	if mutationProbability > rand.Float64() {
+		x = rand.Float64()*20 - 10
+	}
+	if mutationProbability > rand.Float64() {
+		y = rand.Float64()*20 - 10
+	}
+	if mutationProbability > rand.Float64() {
+		vx = rand.Float64()*20 - 10
+	}
+	if mutationProbability > rand.Float64() {
+		vy = rand.Float64()*20 - 10
+	}
 	return &HIndividual{
 		x: []float64{x, y},
 		v: []float64{vx, vy},
@@ -187,14 +203,17 @@ type HCrosser struct {
 }
 
 func (h *HCrosser) Cross(indiv1, indiv2 evoli.Individual) (evoli.Individual, evoli.Individual, error) {
-	hIndiv1, _ := indiv1.(*HIndividual)
-	hIndiv2, _ := indiv2.(*HIndividual)
+	hIndiv1, ok1 := indiv1.(*HIndividual)
+	hIndiv2, ok2 := indiv2.(*HIndividual)
+	if !ok1 || !ok2 {
+		return nil, nil, fmt.Errorf("invalid individual type")
+	}
 	return &HIndividual{
-			x: []float64{(hIndiv1.x[0] + hIndiv2.x[0]) / 2, (hIndiv1.x[1] + hIndiv2.x[1]) / 2},
-			v: []float64{(hIndiv1.v[0] + hIndiv2.v[0]) / 2, (hIndiv1.v[1] + hIndiv2.v[1]) / 2},
+			x: []float64{hIndiv1.x[0], hIndiv2.x[1]},
+			v: []float64{hIndiv1.v[0], hIndiv2.v[1]},
 		}, &HIndividual{
-			x: []float64{(hIndiv1.x[0] + hIndiv2.x[0]) / 2, (hIndiv1.x[1] + hIndiv2.x[1]) / 2},
-			v: []float64{(hIndiv1.v[0] + hIndiv2.v[0]) / 2, (hIndiv1.v[1] + hIndiv2.v[1]) / 2},
+			x: []float64{hIndiv2.x[0], hIndiv1.x[1]},
+			v: []float64{hIndiv2.v[0], hIndiv1.v[1]},
 		}, nil
 }
 
@@ -224,7 +243,7 @@ func main() {
 	crosser := &HCrosser{}
 	mutater := &HMutater{}
 	evaluator := &HEvaluater{}
-	mutationProbability := .02
+	mutationProbability := .20
 	selecter := evoli.NewTruncationSelecter()
 	survivorSize := 30
 
